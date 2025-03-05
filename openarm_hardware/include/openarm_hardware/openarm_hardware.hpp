@@ -29,7 +29,7 @@
 
 namespace openarm_hardware
 {
-class OpenarmHW : public hardware_interface::SystemInterface
+class OpenArmHW : public hardware_interface::SystemInterface
 {
 public:
   TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
