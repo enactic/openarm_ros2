@@ -27,8 +27,17 @@
 #include "rclcpp/macros.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 
+#include "motor.hpp"
+
 namespace openarm_hardware
 {
+
+const std::vector<DM_Motor_Type> MOTORS_TYPES = {DM_Motor_Type::DM4340, DM_Motor_Type::DM4340, DM_Motor_Type::DM4340, DM_Motor_Type::DM4340, DM_Motor_Type::DM4310, DM_Motor_Type::DM4310, DM_Motor_Type::DM4310};
+const std::vector<uint16_t> CAN_DEVICE_IDS = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+const std::vector<uint16_t> CAN_MASTER_IDS = {0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17};
+const std::vector<bool> MOTOR_WITH_TORQUE = {true,true,true,true,true,true,true};
+const Control_Type CONTROL_MODE = Control_Type::MIT;
+
 class OpenArmHW : public hardware_interface::SystemInterface
 {
 public:
@@ -65,6 +74,7 @@ public:
 private:
   std::vector<double> hw_commands_;
   std::vector<double> hw_states_;
+  std::vector<Motor> motors_;
 };
 
 }  // namespace openarm_hardware

@@ -30,7 +30,7 @@ hardware_interface::CallbackReturn OpenArmHW::on_init(
     return CallbackReturn::ERROR;
   }
 
-  // TODO(anyone): read parameters and initialize the hardware
+  
   hw_states_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_commands_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
 
