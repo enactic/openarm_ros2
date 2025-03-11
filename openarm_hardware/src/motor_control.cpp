@@ -28,35 +28,7 @@ void MotorControl::set_zero_position(Motor& motor){
 }
 
 void MotorControl::controlMIT(Motor& motor, double kp, double kd, double q, double dq, double tau) {
-    if (motors_map.find(motor.SlaveID) == motors_map.end()) {
-        std::cerr << "controlMIT ERROR: Motor ID not found" << std::endl;
-        return;
-    }
-
-    uint16_t kp_uint = double_to_uint(kp, 0, 500, 12);
-    uint16_t kd_uint = double_to_uint(kd, 0, 5, 12);
-
-    int motor_index = static_cast<int>(motor.MotorType);
-    double Q_MAX = Limit_Param[motor_index][0];
-    double DQ_MAX = Limit_Param[motor_index][1];
-    double TAU_MAX = Limit_Param[motor_index][2];
-
-    uint16_t q_uint = double_to_uint(q, -Q_MAX, Q_MAX, 16);
-    uint16_t dq_uint = double_to_uint(dq, -DQ_MAX, DQ_MAX, 12);
-    uint16_t tau_uint = double_to_uint(tau, -TAU_MAX, TAU_MAX, 12);
-
-    std::array<uint8_t, 8> data = {
-        static_cast<uint8_t>((q_uint >> 8) & 0xFF),
-        static_cast<uint8_t>(q_uint & 0xFF),
-        static_cast<uint8_t>(dq_uint >> 4),
-        static_cast<uint8_t>(((dq_uint & 0xF) << 4) | ((kp_uint >> 8) & 0xF)),
-        static_cast<uint8_t>(kp_uint & 0xFF),
-        static_cast<uint8_t>(kd_uint >> 4),
-        static_cast<uint8_t>(((kd_uint & 0xF) << 4) | ((tau_uint >> 8) & 0xF)),
-        static_cast<uint8_t>(tau_uint & 0xFF)
-    };
-
-    sendData(motor.SlaveID, data);
+    controlMIT2(motor, kp, kd, q, dq, tau);
     recv();
 }
 
@@ -104,7 +76,7 @@ void MotorControl::recv() {
 
 void MotorControl::processPacket(const can_frame& frame) {
     uint16_t motorID = frame.data[0];
-    uint8_t cmd = 0x11;  // someday fix
+    uint8_t cmd = 0x11; 
 
     if (cmd == 0x11) {
         if (motorID != 0x00) {
