@@ -22,6 +22,19 @@
 
 namespace openarm_hardware
 {
+
+OpenArmHW::OpenArmHW(const std::string& can_device_name
+): 
+  can_bus_(std::make_unique<CANBus>(can_device_name)),
+  motor_control_(MotorControl(*can_bus)) {
+    for(size_t i = 0; i < MOTORS_TYPES.size(); ++i){
+      motors_[i] = std::make_unique<Motor>(MOTORS_TYPES[i], CAN_DEVICE_IDS[i], CAN_MASTER_IDS[i]);
+    }
+    for(const auto& motor: motors_){
+      motor_control_.addMotor(*motor);
+    }
+}
+
 hardware_interface::CallbackReturn OpenArmHW::on_init(
   const hardware_interface::HardwareInfo & info)
 {
@@ -30,9 +43,12 @@ hardware_interface::CallbackReturn OpenArmHW::on_init(
     return CallbackReturn::ERROR;
   }
 
-  
-  hw_states_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
-  hw_commands_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+  pos_states_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+  pos_commands_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+  vel_states_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+  vel_commands_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+  tau_states_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+  tau_ff_commands_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
 
   return CallbackReturn::SUCCESS;
 }
@@ -40,7 +56,7 @@ hardware_interface::CallbackReturn OpenArmHW::on_init(
 hardware_interface::CallbackReturn OpenArmHW::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  // TODO(anyone): prepare the robot to be ready for read calls and write calls of some interfaces
+  // zero position or calibrate to pose
 
   return CallbackReturn::SUCCESS;
 }
@@ -50,9 +66,11 @@ std::vector<hardware_interface::StateInterface> OpenArmHW::export_state_interfac
   std::vector<hardware_interface::StateInterface> state_interfaces;
   for (size_t i = 0; i < info_.joints.size(); ++i)
   {
-    state_interfaces.emplace_back(hardware_interface::StateInterface(
-      // TODO(anyone): insert correct interfaces
-      info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_states_[i]));
+    state_interfaces.emplace_back(
+      hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &pos_states_[i]),
+      hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &vel_states_[i]),
+      hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &tau_states_[i])
+    );
   }
 
   return state_interfaces;
@@ -63,9 +81,11 @@ std::vector<hardware_interface::CommandInterface> OpenArmHW::export_command_inte
   std::vector<hardware_interface::CommandInterface> command_interfaces;
   for (size_t i = 0; i < info_.joints.size(); ++i)
   {
-    command_interfaces.emplace_back(hardware_interface::CommandInterface(
-      // TODO(anyone): insert correct interfaces
-      info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_commands_[i]));
+    command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &pos_commands_[i]),
+      hardware_interface::CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &vel_commands_[i]),
+      hardware_interface::CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_TORQUE, &tau_ff_commands_[i])
+    );
   }
 
   return command_interfaces;
@@ -74,7 +94,9 @@ std::vector<hardware_interface::CommandInterface> OpenArmHW::export_command_inte
 hardware_interface::CallbackReturn OpenArmHW::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  // TODO(anyone): prepare the robot to receive commands
+  for(const auto& motor: motors_){
+    motor_control_.enable(*motor);
+  }
 
   return CallbackReturn::SUCCESS;
 }
@@ -82,7 +104,9 @@ hardware_interface::CallbackReturn OpenArmHW::on_activate(
 hardware_interface::CallbackReturn OpenArmHW::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  // TODO(anyone): prepare the robot to stop receiving commands
+  for(const auto& motor: motors_){
+    motor_control_.disable(*motor);
+  }
 
   return CallbackReturn::SUCCESS;
 }
@@ -90,7 +114,11 @@ hardware_interface::CallbackReturn OpenArmHW::on_deactivate(
 hardware_interface::return_type OpenArmHW::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  // TODO(anyone): read robot states
+  for(size_t i = 0; i < motors_.size(); ++i){
+    pos_state_[i] = motor[i]->getPosition();
+    vel_state_[i] = motor[i]->getVelocity();
+    tau_state_[i] = motor[i]->getTorque();
+  }
 
   return hardware_interface::return_type::OK;
 }
@@ -98,8 +126,9 @@ hardware_interface::return_type OpenArmHW::read(
 hardware_interface::return_type OpenArmHW::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  // TODO(anyone): write robot's commands'
-
+  for(size_t i = 0; i < motors_.size(); ++i){
+    motor_control_.controlMIT(motors_[i], DEFAULT_KP, DEFAULT_KD, pos_commands_[i], vel_commands_[i], tau_ff_commands_[i]);
+  }
   return hardware_interface::return_type::OK;
 }
 
