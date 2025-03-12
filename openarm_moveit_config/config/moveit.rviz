@@ -19,10 +19,6 @@ Visualization Manager:
         Loop Animation: true
         State Display Time: 0.05 s
         Trajectory Topic: display_planned_path
-      Planning Request:
-        Interactive Marker Size: 0.1
-        Planning Group: openarm_arm
-        Query Goal State: true
       Planning Scene Topic: monitored_planning_scene
       Robot Description: robot_description
       Scene Geometry:
@@ -31,7 +27,7 @@ Visualization Manager:
         Robot Alpha: 0.5
       Value: true
   Global Options:
-    Fixed Frame: world
+    Fixed Frame: link1
   Tools:
     - Class: rviz_default_plugins/Interact
     - Class: rviz_default_plugins/MoveCamera
@@ -47,7 +43,7 @@ Visualization Manager:
         Z: 0.30
       Name: Current View
       Pitch: 0.5
-      Target Frame: world
+      Target Frame: link1
       Yaw: -0.623
 Window Geometry:
   Height: 975

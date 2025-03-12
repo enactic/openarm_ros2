@@ -16,13 +16,10 @@ moveit_simple_controller_manager:
       - rev4
       - rev5
       - rev6
-    action_ns: follow_joint_trajectory
-    default: true
-  gripper_controller:
-    type: FollowJointTrajectory
-    joints:
       - rev7
-      - slider_left
-      - slider_right
-    action_ns: follow_joint_trajectory
+  gripper_controller:
+    type: GripperCommand
+    joints:
+      - left_pris1
+    action_ns: gripper_cmd
     default: true

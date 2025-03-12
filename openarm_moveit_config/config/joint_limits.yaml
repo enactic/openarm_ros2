@@ -8,48 +8,48 @@ default_acceleration_scaling_factor: 0.1
 # Specific joint properties can be changed with the keys [max_position, min_position, max_velocity, max_acceleration]
 # Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
 joint_limits:
-  slider_left:
-    has_velocity_limits: true
-    max_velocity: 100.0
+  left_pris1:
+    has_velocity_limits: false
+    max_velocity: 0
     has_acceleration_limits: false
-    max_acceleration: 0.0
-  slider_right:
-    has_velocity_limits: true
-    max_velocity: 100.0
-    has_acceleration_limits: false
-    max_acceleration: 0.0
+    max_acceleration: 0
   rev1:
-    has_velocity_limits: true
-    max_velocity: 0.5
-    has_acceleration_limits: true
-    max_acceleration: 0.5
+    has_velocity_limits: false
+    max_velocity: 0
+    has_acceleration_limits: false
+    max_acceleration: 0
   rev2:
-    has_velocity_limits: true
-    max_velocity: 0.5
-    has_acceleration_limits: true
-    max_acceleration: 0.5
+    has_velocity_limits: false
+    max_velocity: 0
+    has_acceleration_limits: false
+    max_acceleration: 0
   rev3:
-    has_velocity_limits: true
-    max_velocity: 0.5
-    has_acceleration_limits: true
-    max_acceleration: 0.5
+    has_velocity_limits: false
+    max_velocity: 0
+    has_acceleration_limits: false
+    max_acceleration: 0
   rev4:
-    has_velocity_limits: true
-    max_velocity: 0.5
-    has_acceleration_limits: true
-    max_acceleration: 0.5
+    has_velocity_limits: false
+    max_velocity: 0
+    has_acceleration_limits: false
+    max_acceleration: 0
   rev5:
-    has_velocity_limits: true
-    max_velocity: 0.5
-    has_acceleration_limits: true
-    max_acceleration: 0.5
+    has_velocity_limits: false
+    max_velocity: 0
+    has_acceleration_limits: false
+    max_acceleration: 0
   rev6:
-    has_velocity_limits: true
-    max_velocity: 0.5
-    has_acceleration_limits: true
-    max_acceleration: 0.5
+    has_velocity_limits: false
+    max_velocity: 0
+    has_acceleration_limits: false
+    max_acceleration: 0
   rev7:
     has_velocity_limits: false
-    max_velocity: 0.0
+    max_velocity: 0
     has_acceleration_limits: false
-    max_acceleration: 0.0
+    max_acceleration: 0
+  right_pris2:
+    has_velocity_limits: false
+    max_velocity: 0
+    has_acceleration_limits: false
+    max_acceleration: 0
