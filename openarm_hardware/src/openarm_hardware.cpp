@@ -97,6 +97,7 @@ hardware_interface::CallbackReturn OpenArmHW::on_activate(
   for(const auto& motor: motors_){
     motor_control_.enable(*motor);
   }
+  read(rclcpp::Time(0), rclcpp::Duration(0, 0));
 
   return CallbackReturn::SUCCESS;
 }
