@@ -35,4 +35,4 @@ openarm_arm_controller:
       - position
       - velocity
       - effort
-    allow_nonzero_velocity_at_trajectory_end: true
+    allow_nonzero_velocity_at_trajectory_end: false
