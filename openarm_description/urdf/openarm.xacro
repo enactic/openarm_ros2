@@ -19,7 +19,7 @@
         <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
 
         <xacro:include filename="openarm.ros2_control.xacro" />
-        <xacro:openarm_ros2_control name="openarm_control" prefix="${prefix}" initial_positions_file="$(arg initial_positions_file)"/>
+        <xacro:openarm_ros2_control name="OpenArmHW" prefix="${prefix}" initial_positions_file="$(arg initial_positions_file)"/>
 
 
         <link name="${prefix}link1">

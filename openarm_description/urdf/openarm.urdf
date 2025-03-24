@@ -10,10 +10,11 @@
   <!-- side right, left -->
   <!-- recommended prefixes left_, right_, etc. -->
   <!-- zero_pos up, arm -->
-  <ros2_control name="openarm_control" type="system">
+  <ros2_control name="OpenArmHW" type="system">
     <hardware>
       <!-- By default, set up controllers for simulation. This won't work on real hardware -->
       <plugin>mock_components/GenericSystem</plugin>
+      <plugin>openarm_hardware/OpenArmHW</plugin>
     </hardware>
     <joint name="rev1">
       <command_interface name="position"/>
