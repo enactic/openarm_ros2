@@ -28,8 +28,9 @@
 #include "rclcpp/macros.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 
-#include "motor.hpp"
 #include "canbus.hpp"
+#include "motor.hpp"
+#include "motor_control.hpp"
 
 namespace openarm_hardware
 {
@@ -45,7 +46,7 @@ const double DEFAULT_KD = 0.0;
 class OpenArmHW : public hardware_interface::SystemInterface
 {
 public:
-  OpenArmHW(std::string& can_device_name);
+  OpenArmHW();
   
   TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
   hardware_interface::CallbackReturn on_init(

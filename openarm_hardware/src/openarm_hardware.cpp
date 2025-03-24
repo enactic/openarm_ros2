@@ -23,10 +23,11 @@
 namespace openarm_hardware
 {
 
-OpenArmHW::OpenArmHW(const std::string& can_device_name
-): 
-  can_bus_(std::make_unique<CANBus>(can_device_name)),
-  motor_control_(MotorControl(*can_bus)) {
+static const std::string& can_device_name = "can0";
+
+OpenArmHW::OpenArmHW(): 
+  canbus_(std::make_unique<CANBus>(can_device_name)),
+  motor_control_(MotorControl(*canbus_)) {
     for(size_t i = 0; i < MOTORS_TYPES.size(); ++i){
       motors_[i] = std::make_unique<Motor>(MOTORS_TYPES[i], CAN_DEVICE_IDS[i], CAN_MASTER_IDS[i]);
     }
@@ -66,11 +67,9 @@ std::vector<hardware_interface::StateInterface> OpenArmHW::export_state_interfac
   std::vector<hardware_interface::StateInterface> state_interfaces;
   for (size_t i = 0; i < info_.joints.size(); ++i)
   {
-    state_interfaces.emplace_back(
-      hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &pos_states_[i]),
-      hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &vel_states_[i]),
-      hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &tau_states_[i])
-    );
+    state_interfaces.emplace_back(hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &pos_states_[i]));
+    state_interfaces.emplace_back(hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &vel_states_[i]));
+    state_interfaces.emplace_back(hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &tau_states_[i]));
   }
 
   return state_interfaces;
@@ -81,11 +80,9 @@ std::vector<hardware_interface::CommandInterface> OpenArmHW::export_command_inte
   std::vector<hardware_interface::CommandInterface> command_interfaces;
   for (size_t i = 0; i < info_.joints.size(); ++i)
   {
-    command_interfaces.emplace_back(
-      hardware_interface::CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &pos_commands_[i]),
-      hardware_interface::CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &vel_commands_[i]),
-      hardware_interface::CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_TORQUE, &tau_ff_commands_[i])
-    );
+    command_interfaces.emplace_back(hardware_interface::CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &pos_commands_[i]));
+    command_interfaces.emplace_back(hardware_interface::CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &vel_commands_[i]));
+    command_interfaces.emplace_back(hardware_interface::CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &tau_ff_commands_[i]));
   }
 
   return command_interfaces;
@@ -116,9 +113,9 @@ hardware_interface::return_type OpenArmHW::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   for(size_t i = 0; i < motors_.size(); ++i){
-    pos_state_[i] = motor[i]->getPosition();
-    vel_state_[i] = motor[i]->getVelocity();
-    tau_state_[i] = motor[i]->getTorque();
+    pos_states_[i] = motors_[i]->getPosition();
+    vel_states_[i] = motors_[i]->getVelocity();
+    tau_states_[i] = motors_[i]->getTorque();
   }
 
   return hardware_interface::return_type::OK;
@@ -128,7 +125,7 @@ hardware_interface::return_type OpenArmHW::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   for(size_t i = 0; i < motors_.size(); ++i){
-    motor_control_.controlMIT(motors_[i], DEFAULT_KP, DEFAULT_KD, pos_commands_[i], vel_commands_[i], tau_ff_commands_[i]);
+    motor_control_.controlMIT(*motors_[i], DEFAULT_KP, DEFAULT_KD, pos_commands_[i], vel_commands_[i], tau_ff_commands_[i]);
   }
   return hardware_interface::return_type::OK;
 }
