@@ -2,5 +2,4 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm">
     <xacro:include filename="openarm.xacro"/>
     <xacro:openarm/>
-    <xacro:include filename="openarm_sensors.urdf.xacro"/>
 </robot>

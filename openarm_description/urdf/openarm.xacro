@@ -14,6 +14,14 @@
         <xacro:property name="reflect" value="${1 if side=='right' else -1}"/>
         <xacro:property name="rotate" value="${0 if side=='right' else pi}"/>
 
+        <xacro:include filename="openarm_sensors.urdf.xacro"/>
+
+        <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+        <xacro:include filename="openarm.ros2_control.xacro" />
+        <xacro:openarm_ros2_control name="openarm_control" prefix="${prefix}" initial_positions_file="$(arg initial_positions_file)"/>
+
+
         <link name="${prefix}link1">
             <visual>
                 <origin rpy="0 0 0" xyz="0.0 0.0 -0.0007"/>

@@ -10,6 +10,94 @@
   <!-- side right, left -->
   <!-- recommended prefixes left_, right_, etc. -->
   <!-- zero_pos up, arm -->
+  <ros2_control name="openarm_control" type="system">
+    <hardware>
+      <!-- By default, set up controllers for simulation. This won't work on real hardware -->
+      <plugin>mock_components/GenericSystem</plugin>
+    </hardware>
+    <joint name="rev1">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position">
+        <param name="initial_value">0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="rev2">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position">
+        <param name="initial_value">0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="rev3">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position">
+        <param name="initial_value">0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="rev4">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position">
+        <param name="initial_value">0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="rev5">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position">
+        <param name="initial_value">0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="rev6">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position">
+        <param name="initial_value">0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="rev7">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position">
+        <param name="initial_value">0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="left_pris1">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="right_pris2">
+      <state_interface name="position">
+        <param name="initial_value">0</param>
+      </state_interface>
+    </joint>
+  </ros2_control>
   <link name="link1">
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 -0.0007"/>
