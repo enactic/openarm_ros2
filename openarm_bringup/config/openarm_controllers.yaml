@@ -47,36 +47,36 @@ forward_position_controller:
       - rev7
     interface_name: position
 
-# forward_velocity_controller:                  
-#   ros__parameters:
-#     joints:
-#       - rev1
-#       - rev2
-#       - rev3
-#       - rev4
-#       - rev5
-#       - rev6
-#       - rev7
-#     interface_name: velocity
+forward_velocity_controller:                  
+  ros__parameters:
+    joints:
+      - rev1
+      - rev2
+      - rev3
+      - rev4
+      - rev5
+      - rev6
+      - rev7
+    interface_name: velocity
 
-# joint_trajectory_controller:                  
-#   ros__parameters:
-#     joints:
-#       - rev1
-#       - rev2
-#       - rev3
-#       - rev4
-#       - rev5
-#       - rev6
-#       - rev7
+joint_trajectory_controller:                  
+  ros__parameters:
+    joints:
+      - rev1
+      - rev2
+      - rev3
+      - rev4
+      - rev5
+      - rev6
+      - rev7
 
-#     command_interfaces:
-#       - position
-#     state_interfaces:
-#       - position
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
 
     state_publish_rate: 50.0 # Defaults to 50
-    action_monitor_rate: 20.0 # Defaults to 20
+    action_monitor_rate: 50.0 # Defaults to 20
 
     allow_partial_joints_goal: false # Defaults to false
     constraints:
