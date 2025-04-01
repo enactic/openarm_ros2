@@ -6,7 +6,7 @@
         <ros2_control name="${prefix}${name}" type="system">
             <hardware>
                 <!-- By default, set up controllers for simulation. This won't work on real hardware -->
-                <plugin>mock_components/GenericSystem</plugin>
+                <!-- <plugin>mock_components/GenericSystem</plugin> -->
                 <plugin>openarm_hardware/OpenArmHW</plugin>
             </hardware>
             <joint name="${prefix}rev1">
@@ -89,7 +89,7 @@
 
             <joint name="${prefix}right_pris2">
                 <state_interface name="position">
-                  <param name="initial_value">${initial_positions['left_pris1']}</param>
+                  <param name="initial_value">${initial_positions['right_pris2']}</param>
                 </state_interface>
             </joint>
 

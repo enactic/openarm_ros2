@@ -7,6 +7,7 @@
             <hardware>
                 <!-- By default, set up controllers for simulation. This won't work on real hardware -->
                 <plugin>mock_components/GenericSystem</plugin>
+                <plugin>openarm_hardware/</plugin>
             </hardware>
             <joint name="left_rev1">
                 <command_interface name="position"/>
