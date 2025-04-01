@@ -1,0 +1,31 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: openarm_bimanual_description
+    relative_path: urdf/openarm_bimanual.urdf.xacro
+  srdf:
+    relative_path: config/openarm_bimanual.srdf
+  package_settings:
+    author_name: Thomason Zhou
+    author_email: t95zhou@uwaterloo.ca
+    generated_timestamp: 1743487046
+  control_xacro:
+    command:
+      - position
+      - velocity
+      - effort
+    state:
+      - position
+      - velocity
+      - effort
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+      - velocity
+      - effort
+    state:
+      - position
+      - velocity
+      - effort
