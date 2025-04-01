@@ -1,4 +1,4 @@
-#include "canbus.hpp"
+#include "openarm_hardware/canbus.hpp"
 #include <poll.h>
 
 CANBus::CANBus(const std::string& interface) {

@@ -35,9 +35,9 @@
 namespace openarm_hardware
 {
 
-const std::vector<DM_Motor_Type> MOTORS_TYPES = {DM_Motor_Type::DM4340, DM_Motor_Type::DM4340, DM_Motor_Type::DM4340, DM_Motor_Type::DM4340, DM_Motor_Type::DM4310, DM_Motor_Type::DM4310, DM_Motor_Type::DM4310};
-const std::vector<uint16_t> CAN_DEVICE_IDS = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
-const std::vector<uint16_t> CAN_MASTER_IDS = {0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17};
+std::vector<DM_Motor_Type> motor_types{DM_Motor_Type::DM4340, DM_Motor_Type::DM4340, DM_Motor_Type::DM4340, DM_Motor_Type::DM4340, DM_Motor_Type::DM4310, DM_Motor_Type::DM4310, DM_Motor_Type::DM4310};
+std::vector<uint16_t> can_device_ids{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+std::vector<uint16_t> can_master_ids{0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17};
 const std::vector<bool> MOTOR_WITH_TORQUE = {true,true,true,true,true,true,true};
 const Control_Type CONTROL_MODE = Control_Type::MIT;
 const double DEFAULT_KP = 1.0;
@@ -78,9 +78,11 @@ public:
   hardware_interface::return_type write(
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
+  std::size_t arm_dof = 7;
 private:
+  std::string prefix_;
   std::unique_ptr<CANBus> canbus_;
-  MotorControl motor_control_;
+  std::unique_ptr<MotorControl> motor_control_;
   std::vector<double> pos_commands_;
   std::vector<double> pos_states_;
   std::vector<double> vel_commands_;

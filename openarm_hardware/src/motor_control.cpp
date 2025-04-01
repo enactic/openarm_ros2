@@ -1,5 +1,5 @@
-#include "motor_control.hpp"
-#include "motor.hpp"
+#include "openarm_hardware/motor_control.hpp"
+#include "openarm_hardware/motor.hpp"
 
 MotorControl::MotorControl(CANBus& canbus) : canbus_(canbus) {}
 

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm">
     <xacro:include filename="openarm.xacro"/>
-    <xacro:openarm/>
-    <xacro:include filename="openarm_sensors.xacro"/>
-    <xacro:include filename="openarm.ros2_control.xacro" />
-    <xacro:openarm_ros2_control name="OpenArmHW" prefix="${prefix}" initial_positions_file="$(arg initial_positions_file)"/>
+    <xacro:openarm />
+    <xacro:include filename="$(find openarm_description)/urdf/openarm_sensors.xacro"/>
 </robot>

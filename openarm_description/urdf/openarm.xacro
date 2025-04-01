@@ -5,7 +5,7 @@
         <color rgba="${105/255} ${105/255} ${105/255} 1.0"/>
     </material>
 
-    <xacro:macro name="openarm" params="side:='right' prefix:='' zero_pos='up'">
+    <xacro:macro name="openarm" params="side:='right' prefix:='' zero_pos='up' can_device='can0'">
         <!-- side right, left -->
         <!-- recommended prefixes left_, right_, etc. -->
         <!-- zero_pos up, arm -->
@@ -14,7 +14,9 @@
         <xacro:property name="reflect" value="${1 if side=='right' else -1}"/>
         <xacro:property name="rotate" value="${0 if side=='right' else pi}"/>
 
-        <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+        <xacro:include filename="$(find openarm_description)/urdf/openarm.ros2_control.xacro" />
+        <xacro:arg name="initial_positions_file" default="$(find openarm_description)/config/initial_positions.yaml" />
+        <xacro:openarm_ros2_control name="OpenArmHW" prefix="${prefix}" initial_positions_file="$(arg initial_positions_file)" can_device="${can_device}"/>
 
         <link name="${prefix}link1">
             <visual>

@@ -4,8 +4,8 @@
 
   <xacro:include filename="$(find openarm_description)/urdf/openarm.xacro"/>
   <xacro:include filename="openarm_pedestal.urdf"/>
-  <xacro:openarm prefix="right_" side="right" zero_pos="arm"/>
-  <xacro:openarm prefix="left_" side="left" zero_pos="arm"/>
+  <xacro:openarm prefix="right_" side="right" zero_pos="arm" can_device="can0"/>
+  <xacro:openarm prefix="left_" side="left" zero_pos="arm" can_device="can1"/>
 
   <joint name="dummy_joint" type="fixed">
     <parent link="world"/>

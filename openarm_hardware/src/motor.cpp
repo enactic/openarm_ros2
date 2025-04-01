@@ -1,4 +1,4 @@
-#include "motor.hpp"
+#include "openarm_hardware/motor.hpp"
 
 Motor::Motor(DM_Motor_Type motorType, uint16_t slaveID, uint16_t masterID)
     : MotorType(motorType), SlaveID(slaveID), MasterID(masterID),

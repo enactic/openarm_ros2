@@ -16,12 +16,15 @@ find_package(rclcpp_lifecycle REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/openarm_hardware.cpp
+  src/canbus.cpp
+  src/motor.cpp
+  src/motor_control.cpp
 )
 
-target_include_directories(${PROJECT_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
+target_include_directories(
+  ${PROJECT_NAME}
+  PRIVATE
+  include
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -30,24 +33,23 @@ ament_target_dependencies(${PROJECT_NAME}
   rclcpp
   rclcpp_lifecycle
 )
-ament_export_libraries(${PROJECT_NAME})
+
 pluginlib_export_plugin_description_file(hardware_interface openarm_hardware.xml)
 
+install(
+  TARGETS ${PROJECT_NAME}
+  DESTINATION lib
+  )
+  
 install(DIRECTORY include/
-  DESTINATION include
+DESTINATION include
 )
 
-install(TARGETS ${PROJECT_NAME}
-  DESTINATION bin
-)
-install(FILES
-  openarm_hardware.xml
-  DESTINATION share/${PROJECT_NAME}
-)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_gmock REQUIRED)
+  find_package(hardware_interface REQUIRED)
 
   ament_add_gmock(test_openarm_hardware
     test/test_openarm_hardware.cpp
@@ -63,5 +65,19 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+
+ament_export_include_directories(
+  include
+)
+
+ament_export_libraries(
+  ${PROJECT_NAME}
+)
+ament_export_dependencies(
+  hardware_interface
+  pluginlib
+  rclcpp
+)
 
 ament_package()
