@@ -68,12 +68,12 @@ hardware_interface::CallbackReturn OpenArmHW::on_init(
     motor_control_->addMotor(*motor);
   }
 
-  pos_states_.resize(arm_dof, std::numeric_limits<double>::quiet_NaN());
-  pos_commands_.resize(arm_dof, std::numeric_limits<double>::quiet_NaN());
-  vel_states_.resize(arm_dof, std::numeric_limits<double>::quiet_NaN());
-  vel_commands_.resize(arm_dof, std::numeric_limits<double>::quiet_NaN());
-  tau_states_.resize(arm_dof, std::numeric_limits<double>::quiet_NaN());
-  tau_ff_commands_.resize(arm_dof, std::numeric_limits<double>::quiet_NaN());
+  pos_states_.resize(arm_dof, 0.0);
+  pos_commands_.resize(arm_dof, 0.0);
+  vel_states_.resize(arm_dof, 0.0);
+  vel_commands_.resize(arm_dof, 0.0);
+  tau_states_.resize(arm_dof, 0.0);
+  tau_ff_commands_.resize(arm_dof, 0.0);
 
   return CallbackReturn::SUCCESS;
 }
@@ -81,7 +81,13 @@ hardware_interface::CallbackReturn OpenArmHW::on_init(
 hardware_interface::CallbackReturn OpenArmHW::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
+
+  read(rclcpp::Time(0), rclcpp::Duration(0, 0));
   // zero position or calibrate to pose
+  // for (std::size_t i = 0; i < arm_dof; ++i)
+  // {
+  //   motor_control_->set_zero_position(*motors_[i]);
+  // }
 
   return CallbackReturn::SUCCESS;
 }
@@ -116,7 +122,16 @@ std::vector<hardware_interface::CommandInterface> OpenArmHW::export_command_inte
 hardware_interface::CallbackReturn OpenArmHW::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
+  // read(rclcpp::Time(0), rclcpp::Duration(0, 0));
+  // for (std::size_t m = 0; m < arm_dof; ++m){
+  //   if (std::abs(pos_states_[0] - pos_commands_[0]) > START_POS_TOLERANCE_RAD)
+  //   {
+  //     RCLCPP_ERROR(rclcpp::get_logger("OpenArmHW"), "Motor %zu not in start position", m);
+  //     return CallbackReturn::ERROR;
+  //   }
+  // }
   for(const auto& motor: motors_){
+    motor_control_->controlMIT(*motor, 0.0, 0.0, 0.0, 0.0, 0.0);
     motor_control_->enable(*motor);
   }
   read(rclcpp::Time(0), rclcpp::Duration(0, 0));
@@ -128,6 +143,7 @@ hardware_interface::CallbackReturn OpenArmHW::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   for(const auto& motor: motors_){
+    motor_control_->controlMIT(*motor, 0.0, 0.0, 0.0, 0.0, 0.0);
     motor_control_->disable(*motor);
   }
 

@@ -38,10 +38,10 @@ namespace openarm_hardware
 std::vector<DM_Motor_Type> motor_types{DM_Motor_Type::DM4340, DM_Motor_Type::DM4340, DM_Motor_Type::DM4340, DM_Motor_Type::DM4340, DM_Motor_Type::DM4310, DM_Motor_Type::DM4310, DM_Motor_Type::DM4310};
 std::vector<uint16_t> can_device_ids{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 std::vector<uint16_t> can_master_ids{0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17};
-const std::vector<bool> MOTOR_WITH_TORQUE = {true,true,true,true,true,true,true};
-const Control_Type CONTROL_MODE = Control_Type::MIT;
-const double DEFAULT_KP = 1.0;
-const double DEFAULT_KD = 0.0;
+static const Control_Type CONTROL_MODE = Control_Type::MIT;
+static const double DEFAULT_KP = 0.1;
+static const double DEFAULT_KD = 0.0;
+static const double START_POS_TOLERANCE_RAD = 0.001;
 
 class OpenArmHW : public hardware_interface::SystemInterface
 {

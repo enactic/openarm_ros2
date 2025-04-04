@@ -4,6 +4,7 @@
 
   <xacro:include filename="$(find openarm_description)/urdf/openarm.xacro"/>
   <xacro:include filename="openarm_pedestal.urdf"/>
+  <xacro:include filename="openarm_bimanual_sensors.xacro"/>
   <xacro:openarm prefix="right_" side="right" zero_pos="arm" can_device="can0"/>
   <xacro:openarm prefix="left_" side="left" zero_pos="arm" can_device="can1"/>
 

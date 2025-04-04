@@ -4,6 +4,9 @@
     <material name="gray">
         <color rgba="${105/255} ${105/255} ${105/255} 1.0"/>
     </material>
+    <material name="dark_gray">
+        <color rgba="${50/255} ${50/255} ${50/255} 1.0"/>
+    </material>
 
     <xacro:macro name="openarm" params="side:='right' prefix:='' zero_pos='up' can_device='can0'">
         <!-- side right, left -->

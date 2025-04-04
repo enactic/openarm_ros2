@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm_bimanual">
-    <xacro:include filename="openarm_bimanual.urdf.xacro"/>
-    <xacro:include filename="openarm_bimanual_sensors.xacro"/>
-</robot>

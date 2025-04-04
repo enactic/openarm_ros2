@@ -58,7 +58,7 @@ def generate_launch_description():
     joint_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['joint_state_broadcaster'],
+        arguments=['joint_state_broad'],
     )
 
     delayed_joint_broadcaster_spawner = RegisterEventHandler(

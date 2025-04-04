@@ -15,7 +15,7 @@ def generate_launch_description():
             "openarm_bimanual_description"
         )
     )
-    default_model_path = pkg_share / "urdf/openarm_bimanual_wrapper.urdf.xacro"
+    default_model_path = pkg_share / "urdf/openarm_bimanual.urdf.xacro"
     default_rviz_config_path = pkg_share / "rviz/robot_description.rviz"
 
     use_sim_time = LaunchConfiguration("use_sim_time")

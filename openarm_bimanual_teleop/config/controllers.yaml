@@ -9,7 +9,7 @@ controller_manager:
     right_arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-    joint_state_broadcaster:
+    joint_state_broad:
       type: joint_state_broadcaster/JointStateBroadcaster
 
 left_arm_controller:
