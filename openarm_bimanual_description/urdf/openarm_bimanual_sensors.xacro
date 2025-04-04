@@ -1,31 +1,8 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <link name="ego_camera_frame">
-        <visual>
-            <geometry>
-                <box size="0.09 0.025 0.025"/>
-            </geometry>
-            <material name="dark_gray"/>
-        </visual>
-        <collision>
-            <geometry>
-                <box size="0.09 0.025 0.025"/>
-            </geometry>
-        </collision>
-    </link>
-
-    <joint name="ego_camera_joint" type="fixed">
-        <parent link="pedestal_link"/>
-        <child link="ego_camera_frame"/>
-        <origin xyz="0.0 -0.025 0.995216" rpy="0.0 0.0 0.0"/>
-    </joint>
-
-    <link name="ego_camera_optical_frame"/>
-
-    <joint name="ego_camera_optical_joint" type="fixed">
-        <parent link="ego_camera_frame"/>
-        <child link="ego_camera_optical_frame"/>
-        <origin xyz="0.0 0.0 0.0" rpy="${pi/2.0} ${pi/2.0} 0.0"/>
-    </joint>
+    <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro"/>
+    <xacro:sensor_d435i parent="pedestal_link" use_nominal_extrinsics="true">
+        <origin xyz="0.0 -0.025 0.995216" rpy="0.0 0.0 ${-pi/2.0}"/>
+    </xacro:sensor_d435i>
 
 </robot>
