@@ -246,7 +246,7 @@
             <parent link="${prefix}link3"/>
             <child link="${prefix}link4"/>
             <origin rpy="-1.5707963267949054 ${rotate} -1.562038143900564" xyz="-0.0612477 -0.000536432 0.02975"/>
-            <axis xyz="0 0 ${reflect*1}"/>
+            <axis xyz="0 0 -1"/>
             <limit effort="0.0" lower="-3.6651914291880923" upper="0.5235987755982988" velocity="0.0"/>
         </joint>
         <joint name="${prefix}rev4" type="revolute">
@@ -260,7 +260,7 @@
             <parent link="${prefix}link5"/>
             <child link="${prefix}link6"/>
             <origin rpy="1.5707963267948473 -0.5569332500492129 1.556730325338251" xyz="-0.133937 0.00188408 -0.0297547"/>
-            <axis xyz="0 0 1"/>
+            <axis xyz="0 0 -1"/>
             <limit effort="0.0" lower="-2.0943951023931953" upper="2.0943951023931953" velocity="0.0"/>
         </joint>
         <joint name="${prefix}rev6" type="revolute">
@@ -274,7 +274,7 @@
             <parent link="${prefix}link7"/>
             <child link="${prefix}link8"/>
             <origin rpy="-1.5707963267950005 -0.00875904933536772 -0.014066001454933467" xyz="-0.000217313 -0.0154485 0.0355"/>
-            <axis xyz="0 0 1"/>
+            <axis xyz="0 0 -1"/>
             <limit effort="0.0" lower="-0.9599310885968813" upper="0.9599310885968813" velocity="0.0"/>
         </joint>
         <joint name="${prefix}left_pris1" type="prismatic">
@@ -282,14 +282,14 @@
             <child link="${prefix}link_left_jaw"/>
             <origin rpy="1.570796326795101 -0.014066001454929162 0.00875904933542146" xyz="-0.1071 0.0768568 0.0132053"/>
             <axis xyz="0 0 1"/>
-            <limit effort="0.0" lower="0.0" upper="0.0451" velocity="0.0"/>
+            <limit effort="0.0" lower="-0.0451" upper="0.0" velocity="0.0"/>
         </joint>
         <joint name="${prefix}right_pris2" type="prismatic">
             <parent link="${prefix}link8"/>
             <child link="${prefix}link_right_jaw"/>
             <origin rpy="1.570796326794883 -0.014066001454927403 0.008759049336290027" xyz="-0.10571 -0.0781373 0.0132053"/>
             <axis xyz="0 0 1"/>
-            <limit effort="0.0" lower="0.0" upper="0.0451" velocity="0.0"/>
+            <limit effort="0.0" lower="-0.0451" upper="0.0" velocity="0.0"/>
             <mimic joint="${prefix}left_pris1" multiplier="-1.0" offset="0.0"/>
         </joint>
     </xacro:macro>

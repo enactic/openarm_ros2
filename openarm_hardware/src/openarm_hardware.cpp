@@ -52,28 +52,29 @@ hardware_interface::CallbackReturn OpenArmHW::on_init(
   canbus_ = std::make_unique<CANBus>(info.hardware_parameters.at("can_device"));
   motor_control_ = std::make_unique<MotorControl>(*canbus_);
 
-  const bool using_gripper = true;
-  if(using_gripper){
+  if(USING_GRIPPER){
     motor_types.emplace_back(DM_Motor_Type::DM4310);
     can_device_ids.emplace_back(0x08);
     can_master_ids.emplace_back(0x18);
-    ++arm_dof;
+    ++curr_dof;
   }
 
-  motors_.resize(arm_dof);
-  for(size_t i = 0; i < arm_dof; ++i){
+  motors_.resize(curr_dof);
+  for(size_t i = 0; i < curr_dof; ++i){
     motors_[i] = std::make_unique<Motor>(motor_types[i], can_device_ids[i], can_master_ids[i]);
   }
   for(const auto& motor: motors_){
     motor_control_->addMotor(*motor);
   }
 
-  pos_states_.resize(arm_dof, 0.0);
-  pos_commands_.resize(arm_dof, 0.0);
-  vel_states_.resize(arm_dof, 0.0);
-  vel_commands_.resize(arm_dof, 0.0);
-  tau_states_.resize(arm_dof, 0.0);
-  tau_ff_commands_.resize(arm_dof, 0.0);
+  pos_states_.resize(curr_dof, 0.0);
+  pos_commands_.resize(curr_dof, 0.0);
+  vel_states_.resize(curr_dof, 0.0);
+  vel_commands_.resize(curr_dof, 0.0);
+  tau_states_.resize(curr_dof, 0.0);
+  tau_ff_commands_.resize(curr_dof, 0.0);
+  refresh_motors();
+  read(rclcpp::Time(0), rclcpp::Duration(0, 0));
 
   return CallbackReturn::SUCCESS;
 }
@@ -84,7 +85,7 @@ hardware_interface::CallbackReturn OpenArmHW::on_configure(
 
   read(rclcpp::Time(0), rclcpp::Duration(0, 0));
   // zero position or calibrate to pose
-  // for (std::size_t i = 0; i < arm_dof; ++i)
+  // for (std::size_t i = 0; i < curr_dof; ++i)
   // {
   //   motor_control_->set_zero_position(*motors_[i]);
   // }
@@ -96,7 +97,7 @@ hardware_interface::CallbackReturn OpenArmHW::on_configure(
 std::vector<hardware_interface::StateInterface> OpenArmHW::export_state_interfaces()
 {
   std::vector<hardware_interface::StateInterface> state_interfaces;
-  for (size_t i = 0; i < arm_dof; ++i)
+  for (size_t i = 0; i < curr_dof; ++i)
   {
     state_interfaces.emplace_back(hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &pos_states_[i]));
     state_interfaces.emplace_back(hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &vel_states_[i]));
@@ -110,7 +111,7 @@ std::vector<hardware_interface::StateInterface> OpenArmHW::export_state_interfac
 std::vector<hardware_interface::CommandInterface> OpenArmHW::export_command_interfaces()
 {
   std::vector<hardware_interface::CommandInterface> command_interfaces;
-  for (size_t i = 0; i < arm_dof; ++i)
+  for (size_t i = 0; i < curr_dof; ++i)
   {
     command_interfaces.emplace_back(hardware_interface::CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &pos_commands_[i]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &vel_commands_[i]));
@@ -124,7 +125,6 @@ void OpenArmHW::refresh_motors()
 {
   for(const auto& motor: motors_){
     motor_control_->controlMIT(*motor, 0.0, 0.0, 0.0, 0.0, 0.0);
-    motor_control_->enable(*motor);
   }
 }
 
@@ -132,7 +132,7 @@ hardware_interface::CallbackReturn OpenArmHW::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   // read(rclcpp::Time(0), rclcpp::Duration(0, 0));
-  // for (std::size_t m = 0; m < arm_dof; ++m){
+  // for (std::size_t m = 0; m < curr_dof; ++m){
   //   if (std::abs(pos_states_[0] - pos_commands_[0]) > START_POS_TOLERANCE_RAD)
   //   {
   //     RCLCPP_ERROR(rclcpp::get_logger("OpenArmHW"), "Motor %zu not in start position", m);
@@ -162,11 +162,17 @@ hardware_interface::CallbackReturn OpenArmHW::on_deactivate(
 hardware_interface::return_type OpenArmHW::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  for(size_t i = 0; i < arm_dof; ++i){
+  for(size_t i = 0; i < ARM_DOF; ++i){
     pos_states_[i] = motors_[i]->getPosition();
     vel_states_[i] = motors_[i]->getVelocity();
     tau_states_[i] = motors_[i]->getTorque();
   }
+  if(USING_GRIPPER){
+    pos_states_[GRIPPER_INDEX] = -motors_[GRIPPER_INDEX]->getPosition() * GRIPPER_REFERENCE_GEAR_RADIUS_M;
+    vel_states_[GRIPPER_INDEX] = motors_[GRIPPER_INDEX]->getVelocity() * GRIPPER_REFERENCE_GEAR_RADIUS_M;
+    tau_states_[GRIPPER_INDEX] = motors_[GRIPPER_INDEX]->getTorque() * GRIPPER_REFERENCE_GEAR_RADIUS_M;
+  }
+
 
   return hardware_interface::return_type::OK;
 }
@@ -174,9 +180,11 @@ hardware_interface::return_type OpenArmHW::read(
 hardware_interface::return_type OpenArmHW::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  for(size_t i = 0; i < arm_dof; ++i){
-    motor_control_->controlMIT(*motors_[i], 0, 0, 0, 0, 0);
-    // motor_control_->controlMIT(*motors_[i], DEFAULT_KP, DEFAULT_KD, pos_commands_[i], vel_commands_[i], tau_ff_commands_[i]);
+  for(size_t i = 0; i < ARM_DOF; ++i){
+    motor_control_->controlMIT(*motors_[i], DEFAULT_KP, DEFAULT_KD, pos_commands_[i], vel_commands_[i], tau_ff_commands_[i]);
+  }
+  if(USING_GRIPPER){
+    motor_control_->controlMIT(*motors_[GRIPPER_INDEX], DEFAULT_KP, DEFAULT_KD, -pos_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M, vel_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M, tau_ff_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M);
   }
   return hardware_interface::return_type::OK;
 }
