@@ -21,6 +21,13 @@
         <xacro:arg name="initial_positions_file" default="$(find openarm_description)/config/initial_positions.yaml" />
         <xacro:openarm_ros2_control name="OpenArmHW" prefix="${prefix}" initial_positions_file="$(arg initial_positions_file)" can_device="${can_device}"/>
 
+        <link name="${prefix}dummy_link"/>
+
+        <joint name="${prefix}dummy_joint" type="fixed">
+            <parent link="${prefix}dummy_link"/>
+            <child link="${prefix}link1"/>
+        </joint>
+
         <link name="${prefix}link1">
             <visual>
                 <origin rpy="0 0 0" xyz="0.0 0.0 -0.0007"/>

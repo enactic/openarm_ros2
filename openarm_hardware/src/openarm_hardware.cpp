@@ -89,6 +89,7 @@ hardware_interface::CallbackReturn OpenArmHW::on_configure(
   //   motor_control_->set_zero_position(*motors_[i]);
   // }
 
+
   return CallbackReturn::SUCCESS;
 }
 
@@ -119,6 +120,14 @@ std::vector<hardware_interface::CommandInterface> OpenArmHW::export_command_inte
   return command_interfaces;
 }
 
+void OpenArmHW::refresh_motors()
+{
+  for(const auto& motor: motors_){
+    motor_control_->controlMIT(*motor, 0.0, 0.0, 0.0, 0.0, 0.0);
+    motor_control_->enable(*motor);
+  }
+}
+
 hardware_interface::CallbackReturn OpenArmHW::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
@@ -130,8 +139,8 @@ hardware_interface::CallbackReturn OpenArmHW::on_activate(
   //     return CallbackReturn::ERROR;
   //   }
   // }
+  refresh_motors();
   for(const auto& motor: motors_){
-    motor_control_->controlMIT(*motor, 0.0, 0.0, 0.0, 0.0, 0.0);
     motor_control_->enable(*motor);
   }
   read(rclcpp::Time(0), rclcpp::Duration(0, 0));
@@ -142,8 +151,8 @@ hardware_interface::CallbackReturn OpenArmHW::on_activate(
 hardware_interface::CallbackReturn OpenArmHW::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
+  refresh_motors();
   for(const auto& motor: motors_){
-    motor_control_->controlMIT(*motor, 0.0, 0.0, 0.0, 0.0, 0.0);
     motor_control_->disable(*motor);
   }
 
@@ -166,7 +175,8 @@ hardware_interface::return_type OpenArmHW::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   for(size_t i = 0; i < arm_dof; ++i){
-    motor_control_->controlMIT(*motors_[i], DEFAULT_KP, DEFAULT_KD, pos_commands_[i], vel_commands_[i], tau_ff_commands_[i]);
+    motor_control_->controlMIT(*motors_[i], 0, 0, 0, 0, 0);
+    // motor_control_->controlMIT(*motors_[i], DEFAULT_KP, DEFAULT_KD, pos_commands_[i], vel_commands_[i], tau_ff_commands_[i]);
   }
   return hardware_interface::return_type::OK;
 }

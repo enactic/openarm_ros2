@@ -39,8 +39,9 @@ std::vector<DM_Motor_Type> motor_types{DM_Motor_Type::DM4340, DM_Motor_Type::DM4
 std::vector<uint16_t> can_device_ids{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 std::vector<uint16_t> can_master_ids{0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17};
 static const Control_Type CONTROL_MODE = Control_Type::MIT;
-static const double DEFAULT_KP = 0.1;
-static const double DEFAULT_KD = 0.0;
+static const std::size_t MAX_DOF = 8;
+static const std::array<double, MAX_DOF> KP = {80.0, 80.0, 20.0, 55.0, 5.0, 5.0, 5.0, 0.5};
+static const std::array<double, MAX_DOF> KD = {1.25, 0.17, 0.015, 0.07, 0.07, 0.05, 0.05, 0.01};
 static const double START_POS_TOLERANCE_RAD = 0.001;
 
 class OpenArmHW : public hardware_interface::SystemInterface
@@ -78,7 +79,7 @@ public:
   hardware_interface::return_type write(
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
-  std::size_t arm_dof = 7;
+  std::size_t arm_dof = MAX_DOF - 1; // minus gripper
 private:
   std::string prefix_;
   std::unique_ptr<CANBus> canbus_;
@@ -90,6 +91,8 @@ private:
   std::vector<double> tau_ff_commands_;
   std::vector<double> tau_states_;
   std::vector<std::unique_ptr<Motor>> motors_;
+
+  void refresh_motors();
 };
 
 }  // namespace openarm_hardware
