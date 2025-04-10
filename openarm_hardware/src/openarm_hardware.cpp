@@ -49,6 +49,15 @@ hardware_interface::CallbackReturn OpenArmHW::on_init(
   else{
     prefix_ = it->second;
   }
+  it = info.hardware_parameters.find("disable_torque");
+  if (it == info.hardware_parameters.end()){
+    disable_torque_ = false;
+  }
+  else{
+    disable_torque_ = it->second == "true";
+  }
+
+
   canbus_ = std::make_unique<CANBus>(info.hardware_parameters.at("can_device"));
   motor_control_ = std::make_unique<MotorControl>(*canbus_);
 
@@ -134,10 +143,18 @@ hardware_interface::CallbackReturn OpenArmHW::on_activate(
   read(rclcpp::Time(0), rclcpp::Duration(0, 0));
   
   // for (std::size_t m = 0; m < curr_dof; ++m){
-  //   while(std::abs(pos_states_[m] - pos_commands_[m]) > START_POS_TOLERANCE_RAD){
+  //   double diff = pos_states_[m] - pos_commands_[m];
+  //   while(abs(diff) > START_POS_TOLERANCE_RAD){
   //     // linear interpolation
   //     // take the min of max_step and the difference
-  //     double max_step = std::min(POS_JUMP_TOLERANCE_RAD, std::abs(pos_states_[m] - pos_commands_[m]));
+
+  //     double max_step = std::min(POS_JUMP_TOLERANCE_RAD, std::abs(diff));
+  //     if (diff > 0){
+  //       pos_commands_[m] = pos_states_[m] - max_step;
+  //     }
+  //     else{
+  //       pos_commands_[m] = pos_states_[m] + max_step;
+  //     }
   //     motor_control_->controlMIT(*motors_[m], SLOW_KP[m], KD[m], pos_commands_[m], 0.0, 0.0);
   //   }
   // }
@@ -182,10 +199,15 @@ hardware_interface::return_type OpenArmHW::read(
 hardware_interface::return_type OpenArmHW::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  // for(size_t i = 0; i < TOTAL_DOF; ++i){
-  //   motor_control_->controlMIT(*motors_[i], 0.0, 0.0, 0.0, 0.0, 0.0);
-  // }
-  // return hardware_interface::return_type::OK;
+  disable_torque_ = false;
+
+  if (disable_torque_){
+    // refresh motor state on write
+    for(size_t i = 0; i < TOTAL_DOF; ++i){
+      motor_control_->controlMIT(*motors_[i], 0.0, 0.0, 0.0, 0.0, 0.0);
+      return hardware_interface::return_type::OK;
+    }
+  }
 
 
   for(size_t i = 0; i < ARM_DOF; ++i){

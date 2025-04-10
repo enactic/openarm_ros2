@@ -101,6 +101,7 @@ private:
   std::vector<std::unique_ptr<Motor>> motors_;
 
   void refresh_motors();
+  bool disable_torque_;
 };
 
 }  // namespace openarm_hardware
