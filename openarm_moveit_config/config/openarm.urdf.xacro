@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm">
     <!-- Import openarm urdf file -->
-    <xacro:include filename="$(find openarm_description)/urdf/openarm.urdf" />
+    <xacro:include filename="$(find openarm_description)/urdf/openarm.urdf.xacro" />
+
 </robot>

@@ -1,23 +1,16 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm_bimanual">
-  <link name="world"/>
 
   <xacro:include filename="$(find openarm_description)/urdf/openarm.xacro"/>
   <xacro:include filename="openarm_pedestal.urdf"/>
   <xacro:include filename="openarm_bimanual_sensors.xacro"/>
 
+  <link name="world"/>
   <joint name="dummy_joint" type="fixed">
     <parent link="world"/>
     <child link="pedestal_link"/>
     <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
   </joint>
-
-  <!-- <xacro:openarm prefix="left_" side="left" zero_pos="arm" can_device="can1"/>
-  <joint name="left_fixed1" type="fixed">
-    <parent link="pedestal_link"/>
-    <child link="left_dummy_link"/>
-    <origin rpy="3.0144791747751833 -1.5707963267948324 0.12689401604101067" xyz="0.09 0.0 0.893"/>
-  </joint> -->
 
   <xacro:openarm prefix="right_" side="right" zero_pos="arm" can_device="can0"/>
   <joint name="right_fixed1" type="fixed">
@@ -25,4 +18,12 @@
     <child link="right_dummy_link"/>
     <origin rpy="${3.0186531925068127 + pi} -1.5707963267948268 0.12293946108298068" xyz="-0.09 0.0 0.893"/>
   </joint>
+  
+  <xacro:openarm prefix="left_" side="left" zero_pos="arm" can_device="can1"/>
+  <joint name="left_fixed1" type="fixed">
+    <parent link="pedestal_link"/>
+    <child link="left_dummy_link"/>
+    <origin rpy="3.0144791747751833 -1.5707963267948324 0.12689401604101067" xyz="0.09 0.0 0.893"/>
+  </joint>
+
 </robot>

@@ -11,10 +11,6 @@ controller_manager:
       type: joint_trajectory_controller/JointTrajectoryController
 
 
-    both_arms_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
-
-
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
@@ -31,11 +27,9 @@ left_arm_controller:
     command_interfaces:
       - position
       - velocity
-      - effort
     state_interfaces:
       - position
       - velocity
-      - effort
 right_arm_controller:
   ros__parameters:
     joints:
@@ -49,16 +43,6 @@ right_arm_controller:
     command_interfaces:
       - position
       - velocity
-      - effort
     state_interfaces:
       - position
       - velocity
-      - effort
-both_arms_controller:
-  ros__parameters:
-    joints:
-      []
-    command_interfaces:
-      []
-    state_interfaces:
-      []

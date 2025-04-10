@@ -131,12 +131,14 @@ void OpenArmHW::refresh_motors()
 hardware_interface::CallbackReturn OpenArmHW::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  // read(rclcpp::Time(0), rclcpp::Duration(0, 0));
+  read(rclcpp::Time(0), rclcpp::Duration(0, 0));
+  
   // for (std::size_t m = 0; m < curr_dof; ++m){
-  //   if (std::abs(pos_states_[0] - pos_commands_[0]) > START_POS_TOLERANCE_RAD)
-  //   {
-  //     RCLCPP_ERROR(rclcpp::get_logger("OpenArmHW"), "Motor %zu not in start position", m);
-  //     return CallbackReturn::ERROR;
+  //   while(std::abs(pos_states_[m] - pos_commands_[m]) > START_POS_TOLERANCE_RAD){
+  //     // linear interpolation
+  //     // take the min of max_step and the difference
+  //     double max_step = std::min(POS_JUMP_TOLERANCE_RAD, std::abs(pos_states_[m] - pos_commands_[m]));
+  //     motor_control_->controlMIT(*motors_[m], SLOW_KP[m], KD[m], pos_commands_[m], 0.0, 0.0);
   //   }
   // }
   refresh_motors();
@@ -180,11 +182,22 @@ hardware_interface::return_type OpenArmHW::read(
 hardware_interface::return_type OpenArmHW::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
+  // for(size_t i = 0; i < TOTAL_DOF; ++i){
+  //   motor_control_->controlMIT(*motors_[i], 0.0, 0.0, 0.0, 0.0, 0.0);
+  // }
+  // return hardware_interface::return_type::OK;
+
+
   for(size_t i = 0; i < ARM_DOF; ++i){
-    motor_control_->controlMIT(*motors_[i], DEFAULT_KP, DEFAULT_KD, pos_commands_[i], vel_commands_[i], tau_ff_commands_[i]);
+    if (std::abs(pos_commands_[i] - pos_states_[i]) > POS_JUMP_TOLERANCE_RAD)
+    {
+      RCLCPP_ERROR(rclcpp::get_logger("OpenArmHW"), "Position jump detected for joint %s: %f -> %f", info_.joints[i].name.c_str(), pos_states_[i], pos_commands_[i]);
+      return hardware_interface::return_type::ERROR;
+    }
+    motor_control_->controlMIT(*motors_[i], KP.at(i), KD.at(i), pos_commands_[i], vel_commands_[i], tau_ff_commands_[i]);
   }
   if(USING_GRIPPER){
-    motor_control_->controlMIT(*motors_[GRIPPER_INDEX], DEFAULT_KP, DEFAULT_KD, -pos_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M, vel_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M, tau_ff_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M);
+    motor_control_->controlMIT(*motors_[GRIPPER_INDEX], KP.at(GRIPPER_INDEX), KD.at(GRIPPER_INDEX), -pos_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M, vel_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M, tau_ff_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M);
   }
   return hardware_interface::return_type::OK;
 }

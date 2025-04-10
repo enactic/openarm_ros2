@@ -7,25 +7,4 @@ moveit_setup_assistant_config:
   package_settings:
     author_name: Thomason Zhou
     author_email: t95zhou@uwaterloo.ca
-    generated_timestamp: 1741767765
-  control_xacro:
-    command:
-      - position
-      - velocity
-      - effort
-    state:
-      - position
-      - velocity
-      - effort
-  modified_urdf:
-    xacros:
-      - control_xacro
-  control_xacro:
-    command:
-      - position
-      - velocity
-      - effort
-    state:
-      - position
-      - velocity
-      - effort
+    generated_timestamp: 1744186910
