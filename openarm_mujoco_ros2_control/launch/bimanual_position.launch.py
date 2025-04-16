@@ -12,7 +12,6 @@ from launch_ros.substitutions import FindPackageShare
 
 from launch_ros.actions import Node
 import pathlib
-# import xacro
 
 
 def generate_launch_description():
@@ -24,16 +23,13 @@ def generate_launch_description():
                               'urdf',
                               'openarm_bimanual_mujoco.urdf')
 
-    # doc = xacro.parse(open(xacro_file))
-    # xacro.process_doc(doc)
-    robot_description = {'robot_description': open(urdf_file).read()}
+    robot_description = {'robot_description': ParameterValue(open(urdf_file).read(), value_type=str)}
 
     openarm_bimanual_teleop_path = pathlib.Path(FindPackageShare('openarm_bimanual_teleop').find('openarm_bimanual_teleop'))
+    openarm_bimanual_moveit_config_path = pathlib.Path(FindPackageShare('openarm_bimanual_moveit_config').find('openarm_bimanual_moveit_config'))
 
-    controller_config_file = str((openarm_bimanual_teleop_path/ 'config'/ 'controllers.yaml').resolve())
-
-    update_rate = LaunchConfiguration("update_rate")
-    update_rate_launch_arg = DeclareLaunchArgument("update_rate", default_value="100.0")
+    controller_config_file = str((openarm_bimanual_teleop_path/ 'config'/ 'bimanual_controllers.yaml').resolve())
+    controller_config_file = str((openarm_bimanual_moveit_config_path/ 'config'/ 'ros2_controllers.yaml').resolve())
 
 
     node_mujoco_ros2_control = Node(
@@ -42,9 +38,9 @@ def generate_launch_description():
         output='screen',
         parameters=[
             robot_description,
-            # controller_config_file,
-            update_rate,
-            {'mujoco_model_path': ParameterValue(str((openarm_mujoco_ros2_control_path/ 'mjcf'/ 'openarm_bimanual.mjcf.xml').resolve()), value_type=str)},
+            controller_config_file,
+            {'mujoco_model_path': ParameterValue(str((openarm_mujoco_ros2_control_path/ 'mjcf'/ 'openarm_bimanual.mjcf.xml').resolve()), value_type=str),
+             'update_rate': 100},
         ]
     )
 
@@ -61,11 +57,11 @@ def generate_launch_description():
         output='screen'
     )
 
-    load_joint_trajectory_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'joint_trajectory_controller'],
-        output='screen'
-    )
+    # load_joint_trajectory_controller = ExecuteProcess(
+    #     cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+    #          'joint_trajectory_controller'],
+    #     output='screen'
+    # )
 
     return LaunchDescription([
         RegisterEventHandler(
@@ -74,13 +70,13 @@ def generate_launch_description():
                 on_start=[load_joint_state_controller],
             )
         ),
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=load_joint_state_controller,
-                on_exit=[load_joint_trajectory_controller],
-            )
-        ),
-        update_rate_launch_arg,
+        # RegisterEventHandler(
+        #     event_handler=OnProcessExit(
+        #         target_action=load_joint_state_controller,
+        #         on_exit=[load_joint_trajectory_controller],
+        #     )
+        # ),
+        # update_rate_launch_arg,
         node_mujoco_ros2_control,
         node_robot_state_publisher
     ])
