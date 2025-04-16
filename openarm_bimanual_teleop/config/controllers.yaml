@@ -2,49 +2,47 @@ controller_manager:
   ros__parameters:
     update_rate: 100  # Hz
 
-    left_arm_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
-
-
-    right_arm_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
-
     joint_state_broad:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-left_arm_controller:
-  ros__parameters:
-    joints:
-      - left_rev1
-      - left_rev2
-      - left_rev3
-      - left_rev4
-      - left_rev5
-      - left_rev6
-      - left_rev7
-    command_interfaces:
-      - position
-      - velocity
-      - effort
-    state_interfaces:
-      - position
-      - velocity
-      - effort
-right_arm_controller:
-  ros__parameters:
-    joints:
-      - right_rev1
-      - right_rev2
-      - right_rev3
-      - right_rev4
-      - right_rev5
-      - right_rev6
-      - right_rev7
-    command_interfaces:
-      - position
-      - velocity
-      - effort
-    state_interfaces:
-      - position
-      - velocity
-      - effort
+#     left_arm_controller:
+#       type: joint_trajectory_controller/JointTrajectoryController
+
+#     right_arm_controller:
+#       type: joint_trajectory_controller/JointTrajectoryController
+
+
+# left_arm_controller:
+#   ros__parameters:
+#     joints:
+#       - left_rev1
+#       - left_rev2
+#       - left_rev3
+#       - left_rev4
+#       - left_rev5
+#       - left_rev6
+#       - left_rev7
+#     command_interfaces:
+#       - position
+#       - velocity
+#     state_interfaces:
+#       - position
+#       - velocity
+#       - effort
+# right_arm_controller:
+#   ros__parameters:
+#     joints:
+#       - right_rev1
+#       - right_rev2
+#       - right_rev3
+#       - right_rev4
+#       - right_rev5
+#       - right_rev6
+#       - right_rev7
+#     command_interfaces:
+#       - position
+#       - velocity
+#     state_interfaces:
+#       - position
+#       - velocity
+#       - effort

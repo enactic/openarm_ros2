@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm_bimanual">
 
   <xacro:include filename="$(find openarm_description)/urdf/openarm.xacro"/>
-  <xacro:include filename="openarm_pedestal.urdf"/>
+  <xacro:include filename="$(find openarm_bimanual_description)/urdf/openarm_pedestal.urdf"/>
   <!-- <xacro:include filename="openarm_bimanual_sensors.xacro"/> -->
 
   <link name="world"/>

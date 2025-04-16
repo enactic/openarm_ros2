@@ -1,0 +1,246 @@
+<mujoco model="openarm_bimanual">
+  <default>
+    <default class="robot">
+      <default class="motor">
+        <joint armature="0.001" frictionloss="0.1"/>
+        <motor ctrlrange="-0.2 0.2"/>
+      </default>
+      <default class="visual">
+        <geom material="visualgeom" contype="0" conaffinity="0" group="2" />
+      </default>
+      <default class="collision">
+        <geom condim="6" friction="0.8 0.02 0.01" group="3" />
+      </default>
+    </default>
+  </default>
+
+  <compiler angle="radian" meshdir=".."/>
+
+  <asset>
+    <material name="gray" rgba="0.4117647058823529 0.4117647058823529 0.4117647058823529 1.0" />
+    <material name="dark_gray" rgba="0.19607843137254902 0.19607843137254902 0.19607843137254902 1.0" />
+    <material name="default_material" rgba="0.7 0.7 0.7 1" />
+    <mesh name="pedestal_link.stl" file="./meshes/pedestal_link.stl" />
+    <mesh name="link1.stl" file="./meshes/link1.stl" />
+    <mesh name="link2.stl" file="./meshes/link2.stl" />
+    <mesh name="link3.stl" file="./meshes/link3.stl" />
+    <mesh name="link4.stl" file="./meshes/link4.stl" />
+    <mesh name="link5.stl" file="./meshes/link5.stl" />
+    <mesh name="link6_rightarm.stl" file="./meshes/link6_rightarm.stl" />
+    <mesh name="link7_rightarm.stl" file="./meshes/link7_rightarm.stl" />
+    <mesh name="link8.stl" file="./meshes/link8.stl" />
+    <mesh name="left_jaw.stl" file="./meshes/left_jaw.stl" />
+    <mesh name="right_jaw.stl" file="./meshes/right_jaw.stl" />
+    <mesh name="link6_leftarm.stl" file="./meshes/link6_leftarm.stl" />
+    <mesh name="link7_leftarm.stl" file="./meshes/link7_leftarm.stl" />
+  </asset>
+
+  <worldbody>
+    <body name="pedestal_link">
+      <inertial pos="0.0 -0.0180451 0.410247" mass="4.850309883435878" diaginertia="0.6232810322991779 0.6253514495087933 0.02000994027356939" />
+      <geom name="pedestal_link_collision" pos="0.0 0.0 0.489" type="box" size="0.09 0.03 0.489000000000002" class="collision" />
+      <geom name="pedestal_link_visual" material="gray" type="mesh" mesh="pedestal_link.stl" class="visual" />
+      <body name="right_dummy_link" pos="-0.09 0.0 0.893" quat="-0.707106781186572 3.011479954295737e-15 0.707106781186523 -3.0461744238152733e-15">
+        <body name="right_link1">
+          <inertial pos="0.0 2.52845e-05 0.0229621" mass="0.5769283920617254" diaginertia="0.00034035167574060775 0.0004300058300010205 0.0004802171432001996" />
+          <geom name="right_link1_collision" pos="0.0 0.0 0.0289" type="box" size="0.055 0.0365 0.0296" class="collision" />
+          <geom name="right_link1_visual" pos="0.0 0.0 -0.0007" material="gray" type="mesh" mesh="link1.stl" class="visual" />
+          <body name="right_link2" pos="0.0 0.0 0.05325">
+            <joint name="right_rev1" type="hinge" class="motor" range="-2.0943951023931953 2.0943951023931953" axis="0 0 1" />
+            <inertial pos="-0.000225878 -0.00183836 0.0278368" mass="0.16257504134917358" diaginertia="0.00023903110213294374 0.00010490798314778774 0.00019737368685935776" />
+            <geom name="right_link2_collision" pos="0.0 0.0 0.0371236" type="box" size="0.0295000000074506 0.04100000000000001 0.0371235749318674" class="collision" />
+            <geom name="right_link2_visual" pos="0.0 0.0 -0.05395" material="gray" type="mesh" mesh="link2.stl" class="visual" />
+            <body name="right_link3" pos="0.0 -0.02975 0.04475" quat="0.7071067811865475 -0.7071067811865476 0.0 0.0">
+              <joint name="right_rev2" type="hinge" class="motor" range="-3.141592653589793 0" axis="0 0 -1" />
+              <inertial pos="-0.00688022 0.0 0.0282752" quat="0.7071067811865476 0.7071067811865475 0.0 0.0" mass="0.4201676469910031" diaginertia="0.00020256001126230057 0.0002970624991387495 0.00032889994351244413" />
+              <geom name="right_link3_collision" pos="-0.0164466 -0.00045542 0.02975" quat="0.7071067811865476 0.7071067811865475 0.0 0.0" type="box" size="0.044945509017209395 0.03499999999999991 0.02951638473901506" class="collision" />
+              <geom name="right_link3_visual" pos="0.0 0.0987 0.02975" quat="0.7071067811865476 0.7071067811865475 0.0 0.0" material="gray" type="mesh" mesh="link3.stl" class="visual" />
+              <body name="right_link4" pos="-0.0612477 -0.000536432 0.02975" quat="0.5021847446228237 -0.5021847446228281 0.4978056671715473 -0.4978056671715428">
+                <joint name="right_rev3" type="hinge" class="motor" range="-3.6651914291880923 0.5235987755982988" axis="0 0 -1" />
+                <inertial pos="0.000781326 -0.0019461 -0.132411" quat="4.348699209552085e-17 0.7101964766624661 -4.310778323155519e-17 0.7040035259401896" mass="0.819475539373447" diaginertia="0.00044078452033976287 0.009208791480530413 0.009170539316023695" />
+                <geom name="right_link4_collision" pos="0.000266276 -0.0125642 -0.132604" quat="4.348699209552085e-17 0.7101964766624661 -4.310778323155519e-17 0.7040035259401896" type="box" size="0.13792336888575168 0.041057145857910315 0.03593286589662931" class="collision" />
+                <geom name="right_link4_visual" pos="-0.0986962 0.0 0.0621144" quat="4.348699209552085e-17 0.7101964766624661 -4.310778323155519e-17 0.7040035259401896" material="gray" type="mesh" mesh="link4.stl" class="visual" />
+                <body name="right_link5" pos="0.0297547 0.0 -0.24175" quat="-0.001005087997693152 -0.707106066865571 0.0010050879976989252 -0.7071060668655987">
+                  <joint name="right_rev4" type="hinge" class="motor" range="-0.3490658503988659 2.792526803190927" axis="0 0 1" />
+                  <inertial pos="-0.0831891 0.00251789 -0.0290107" quat="0.999990411794371 0.0 -0.004379077451273085 0.0" mass="0.4086748254352304" diaginertia="0.00031417157425298747 0.001221711435313989 0.0010755135067660488" />
+                  <geom name="right_link5_collision" pos="-0.0542814 0.00265291 -0.0302022" quat="0.999990411794371 0.0 -0.004379077451273042 0.0" type="box" size="0.08413606610312914 0.032152775241995855 0.041289299835704736" class="collision" />
+                  <geom name="right_link5_visual" pos="0.303864 0.0 -0.128451" quat="0.999990411794371 0.0 -0.00437907745127333 0.0" material="gray" type="mesh" mesh="link5.stl" class="visual" />
+                  <body name="right_link6" pos="-0.133937 0.00188408 -0.0297547" quat="0.34763733296752003 0.6205789736203802 0.33894208576135054 0.6157501804524711">
+                    <joint name="right_rev5" type="hinge" class="motor" range="-2.0943951023931953 2.0943951023931953" axis="0 0 -1" />
+                    <inertial pos="-0.00898536 -0.0135065 -0.0438611" quat="0.34614974610283633 -0.6232694411131999 -0.34046116671956284 -0.6130267131237719" mass="0.3448471958049249" diaginertia="0.00019355980999748924 0.0003486912031865755 0.00028774975153756256" />
+                    <geom name="right_link6_collision" pos="-0.00260794 -0.00312921 -0.0652641" quat="0.34614974610283633 -0.6232694411131999 -0.34046116671956284 -0.6130267131237719" type="box" size="0.06557176502352383 0.029767391626508724 0.044085980975409396" class="collision" />
+                    <geom name="right_link6_visual" pos="-0.0485412 -0.0860404 0.437784" quat="0.3461497461028344 -0.623269441113201 -0.34046116671956095 -0.613026713123773" material="gray" type="mesh" mesh="link6_rightarm.stl" class="visual" />
+                    <body name="right_link7" pos="-0.0187648 -0.0301352 -0.12105" quat="0.34763733296609317 -0.6205789736211915 -0.33894208575997453 -0.6157501804532163">
+                      <joint name="right_rev6" type="hinge" class="motor" range="-1.5707963267948966 1.5707963267948966" axis="0 0 1" />
+                      <inertial pos="5.99432e-05 0.0041433 0.0354274" quat="0.9999904117943706 0.0 -0.004379077451370153 0.0" mass="0.2782138078738053" diaginertia="0.00010424153315648891 0.00012313550743283462 9.221319958512582e-05" />
+                      <geom name="right_link7_collision" pos="-0.000318103 0.0022839 0.0340014" quat="0.9999904117943706 0.0 -0.004379077451370189 0.0" type="box" size="0.029163701087566437 0.022164583493768306 0.04133800811205876" class="collision" />
+                      <geom name="right_link7_visual" pos="0.558839 -0.00358671 -0.0631962" quat="0.9999904117943706 0.0 -0.004379077451370058 0.0" material="gray" type="mesh" mesh="link7_rightarm.stl" class="visual" />
+                      <body name="right_link8" pos="-0.000217313 -0.0154485 0.0355" quat="0.7070607328647779 -0.707104291841532 0.0018762887137826994 -0.008069698920733642">
+                        <joint name="right_rev7" type="hinge" class="motor" range="-0.9599310885968813 0.9599310885968813" axis="0 0 -1" />
+                        <inertial pos="-0.0607602 -0.000341696 0.00876618" quat="0.7070457370075183 0.7071328498167253 -0.004972544435576203 0.004973157086628345" mass="0.31261452743802165" diaginertia="0.00023465661366788053 0.0005065459365215377 0.0003737029250058136" />
+                        <geom name="right_link8_collision" pos="-0.042694 -0.000543176 0.0110286" quat="0.7070457370075183 0.7071328498167253 -0.004972544435576203 0.004973157086628345" type="box" size="0.06519399835871827 0.02590443846344463 0.08006183817204335" class="collision" />
+                        <geom name="right_link8_visual" pos="0.557948 0.103587 0.019724" quat="0.7070457370075183 0.7071328498167253 -0.004972544435576206 0.0049731570866283475" material="gray" type="mesh" mesh="link8.stl" class="visual" />
+                        <body name="right_link_left_jaw" pos="-0.1071 0.0768568 0.0132053" quat="0.707060732864742 0.7071042918415676 -0.0018762887137609321 0.00806969892075141">
+                          <joint name="right_left_pris1" type="slide" class="motor" range="-0.0451 0.0" axis="0 0 -1" />
+                          <inertial pos="-0.0187138 0.00217075 0.0159499" quat="0.9999904117943706 0.0 -0.004379077451349346 0.0" mass="0.04297897856394934" diaginertia="1.1771768742932353e-05 2.3837354480794824e-05 3.0474590214086944e-05" />
+                          <geom name="right_link_left_jaw_collision" pos="0.665265 -0.00286677 -0.0209282" quat="0.9999904117943706 0.0 -0.004379077451349382 0.0" type="mesh" mesh="left_jaw.stl" class="collision" />
+                          <geom name="right_link_left_jaw_visual" pos="0.665265 -0.00286677 -0.0209282" quat="0.9999904117943706 0.0 -0.004379077451349348 0.0" material="gray" type="mesh" mesh="left_jaw.stl" class="visual" />
+                        </body>
+                        <body name="right_link_right_jaw" pos="-0.10571 -0.0781373 0.0132053" quat="0.7070607328648157 0.7071042918414913 -0.0018762887134541077 0.008069698921057647">
+                          <joint name="right_right_pris2" type="slide" class="motor" range="-0.0451 0.0" axis="0 0 1" />
+                          <inertial pos="-0.0187844 -0.00272415 -0.0159503" quat="0.999990411794363 0.0 -0.004379077453115355 0.0" mass="0.042981665301134515" diaginertia="1.1561293087621594e-05 2.370165527871047e-05 3.039652946542647e-05" />
+                          <geom name="right_link_right_jaw_collision" pos="0.665265 -0.00286677 -0.175928" quat="0.999990411794363 0.0 -0.004379077453115391 0.0" type="mesh" mesh="right_jaw.stl" class="collision" />
+                          <geom name="right_link_right_jaw_visual" pos="0.665265 -0.00286677 -0.175928" quat="0.999990411794363 0.0 -0.004379077453115357 0.0" material="gray" type="mesh" mesh="right_jaw.stl" class="visual" />
+                        </body>
+                        <body name="right_gripper_center" pos="-0.13 0.00 0.0132053" />
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="left_dummy_link" pos="0.09 0.0 0.893" quat="7.759180756218564e-05 0.7071067769294417 -7.759180755642636e-05 0.7071067769293966">
+        <body name="left_link1">
+          <inertial pos="0.0 2.52845e-05 0.0229621" mass="0.5769283920617254" diaginertia="0.00034035167574060775 0.0004300058300010205 0.0004802171432001996" />
+          <geom name="left_link1_collision" pos="0.0 0.0 0.0289" type="box" size="0.055 0.0365 0.0296" class="collision" />
+          <geom name="left_link1_visual" pos="0.0 0.0 -0.0007" material="gray" type="mesh" mesh="link1.stl" class="visual" />
+          <body name="left_link2" pos="0.0 0.0 0.05325">
+            <joint name="left_rev1" type="hinge" class="motor" range="-2.0943951023931953 2.0943951023931953" axis="0 0 1" />
+            <inertial pos="-0.000225878 -0.00183836 0.0278368" mass="0.16257504134917358" diaginertia="0.00023903110213294374 0.00010490798314778774 0.00019737368685935776" />
+            <geom name="left_link2_collision" pos="0.0 0.0 0.0371236" type="box" size="0.0295000000074506 0.04100000000000001 0.0371235749318674" class="collision" />
+            <geom name="left_link2_visual" pos="0.0 0.0 -0.05395" material="gray" type="mesh" mesh="link2.stl" class="visual" />
+            <body name="left_link3" pos="0.0 -0.02975 0.04475" quat="0.7071067811865475 -0.7071067811865476 0.0 0.0">
+              <joint name="left_rev2" type="hinge" class="motor" range="0.0 3.141592653589793" axis="0 0 1" />
+              <inertial pos="-0.00688022 0.0 0.0282752" quat="0.7071067811865476 0.7071067811865475 0.0 0.0" mass="0.4201676469910031" diaginertia="0.00020256001126230057 0.0002970624991387495 0.00032889994351244413" />
+              <geom name="left_link3_collision" pos="-0.0164466 -0.00045542 0.02975" quat="0.7071067811865476 0.7071067811865475 0.0 0.0" type="box" size="0.044945509017209395 0.03499999999999991 0.02951638473901506" class="collision" />
+              <geom name="left_link3_visual" pos="0.0 0.0987 0.02975" quat="0.7071067811865476 0.7071067811865475 0.0 0.0" material="gray" type="mesh" mesh="link3.stl" class="visual" />
+              <body name="left_link4" pos="-0.0612477 -0.000536432 0.02975" quat="0.49780566717154734 0.49780566717154273 0.5021847446228237 0.5021847446228281">
+                <joint name="left_rev3" type="hinge" class="motor" range="-3.6651914291880923 0.5235987755982988" axis="0 0 -1" />
+                <inertial pos="0.000781326 -0.0019461 -0.132411" quat="4.348699209552085e-17 0.7101964766624661 -4.310778323155519e-17 0.7040035259401896" mass="0.819475539373447" diaginertia="0.00044078452033976287 0.009208791480530413 0.009170539316023695" />
+                <geom name="left_link4_collision" pos="0.000266276 -0.0125642 -0.132604" quat="4.348699209552085e-17 0.7101964766624661 -4.310778323155519e-17 0.7040035259401896" type="box" size="0.13792336888575168 0.041057145857910315 0.03593286589662931" class="collision" />
+                <geom name="left_link4_visual" pos="-0.0986962 0.0 0.0621144" quat="4.348699209552085e-17 0.7101964766624661 -4.310778323155519e-17 0.7040035259401896" material="gray" type="mesh" mesh="link4.stl" class="visual" />
+                <body name="left_link5" pos="0.0297547 0.0 -0.24175" quat="-0.001005087997693152 -0.707106066865571 0.0010050879976989252 -0.7071060668655987">
+                  <joint name="left_rev4" type="hinge" class="motor" range="-0.3490658503988659 2.792526803190927" axis="0 0 1" />
+                  <inertial pos="-0.0831891 0.00251789 -0.0290107" quat="0.999990411794371 0.0 -0.004379077451273085 0.0" mass="0.4086748254352304" diaginertia="0.00031417157425298747 0.001221711435313989 0.0010755135067660488" />
+                  <geom name="left_link5_collision" pos="-0.0542814 0.00265291 -0.0302022" quat="0.999990411794371 0.0 -0.004379077451273042 0.0" type="box" size="0.08413606610312914 0.032152775241995855 0.041289299835704736" class="collision" />
+                  <geom name="left_link5_visual" pos="0.303864 0.0 -0.128451" quat="0.999990411794371 0.0 -0.00437907745127333 0.0" material="gray" type="mesh" mesh="link5.stl" class="visual" />
+                  <body name="left_link6" pos="-0.133937 0.00188408 -0.0297547" quat="0.34763733296752003 0.6205789736203802 0.33894208576135054 0.6157501804524711">
+                    <joint name="left_rev5" type="hinge" class="motor" range="-2.0943951023931953 2.0943951023931953" axis="0 0 -1" />
+                    <inertial pos="-0.00898536 -0.0135065 -0.0438611" quat="0.34614974610283633 -0.6232694411131999 -0.34046116671956284 -0.6130267131237719" mass="0.3448471958049249" diaginertia="0.00019355980999748924 0.0003486912031865755 0.00028774975153756256" />
+                    <geom name="left_link6_collision" pos="-0.00260794 -0.00312921 -0.0652641" quat="0.34614974610283633 -0.6232694411131999 -0.34046116671956284 -0.6130267131237719" type="box" size="0.06557176502352383 0.029767391626508724 0.044085980975409396" class="collision" />
+                    <geom name="left_link6_visual" pos="0.0605412 0.0878404 0.435484" quat="0.34046116671956095 0.613026713123773 0.3461497461028344 -0.623269441113201" material="gray" type="mesh" mesh="link6_leftarm.stl" class="visual" />
+                    <body name="left_link7" pos="-0.0187648 -0.0301352 -0.12105" quat="0.34763733296609317 -0.6205789736211915 -0.33894208575997453 -0.6157501804532163">
+                      <joint name="left_rev6" type="hinge" class="motor" range="-1.5707963267948966 1.5707963267948966" axis="0 0 -1" />
+                      <inertial pos="5.99432e-05 0.0041433 0.0354274" quat="0.9999904117943706 0.0 -0.004379077451370153 0.0" mass="0.2782138078738053" diaginertia="0.00010424153315648891 0.00012313550743283462 9.221319958512582e-05" />
+                      <geom name="left_link7_collision" pos="-0.000318103 0.0022839 0.0340014" quat="0.9999904117943706 0.0 -0.004379077451370189 0.0" type="box" size="0.029163701087566437 0.022164583493768306 0.04133800811205876" class="collision" />
+                      <geom name="left_link7_visual" pos="0.558839 -0.0034132900000000002 0.1341962" quat="-0.004379077451370027 -0.0 0.9999904117943706 -0.0" material="gray" type="mesh" mesh="link7_leftarm.stl" class="visual" />
+                      <body name="left_link8" pos="-0.000217313 -0.0154485 0.0355" quat="0.7070607328647779 -0.707104291841532 0.0018762887137826994 -0.008069698920733642">
+                        <joint name="left_rev7" type="hinge" class="motor" range="-0.9599310885968813 0.9599310885968813" axis="0 0 -1" />
+                        <inertial pos="-0.0607602 -0.000341696 0.00876618" quat="0.7070457370075183 0.7071328498167253 -0.004972544435576203 0.004973157086628345" mass="0.31261452743802165" diaginertia="0.00023465661366788053 0.0005065459365215377 0.0003737029250058136" />
+                        <geom name="left_link8_collision" pos="-0.042694 -0.000543176 0.0110286" quat="0.7070457370075183 0.7071328498167253 -0.004972544435576203 0.004973157086628345" type="box" size="0.06519399835871827 0.02590443846344463 0.08006183817204335" class="collision" />
+                        <geom name="left_link8_visual" pos="0.557948 0.103587 0.019724" quat="0.7070457370075183 0.7071328498167253 -0.004972544435576206 0.0049731570866283475" material="gray" type="mesh" mesh="link8.stl" class="visual" />
+                        <body name="left_link_left_jaw" pos="-0.1071 0.0768568 0.0132053" quat="0.707060732864742 0.7071042918415676 -0.0018762887137609321 0.00806969892075141">
+                          <joint name="left_left_pris1" type="slide" class="motor" range="-0.0451 0.0" axis="0 0 -1" />
+                          <inertial pos="-0.0187138 0.00217075 0.0159499" quat="0.9999904117943706 0.0 -0.004379077451349346 0.0" mass="0.04297897856394934" diaginertia="1.1771768742932353e-05 2.3837354480794824e-05 3.0474590214086944e-05" />
+                          <geom name="left_link_left_jaw_collision" pos="0.665265 -0.00286677 -0.0209282" quat="0.9999904117943706 0.0 -0.004379077451349382 0.0" type="mesh" mesh="left_jaw.stl" class="collision" />
+                          <geom name="left_link_left_jaw_visual" pos="0.665265 -0.00286677 -0.0209282" quat="0.9999904117943706 0.0 -0.004379077451349348 0.0" material="gray" type="mesh" mesh="left_jaw.stl" class="visual" />
+                        </body>
+                        <body name="left_link_right_jaw" pos="-0.10571 -0.0781373 0.0132053" quat="0.7070607328648157 0.7071042918414913 -0.0018762887134541077 0.008069698921057647">
+                          <joint name="left_right_pris2" type="slide" class="motor" range="-0.0451 0.0" axis="0 0 1" />
+                          <inertial pos="-0.0187844 -0.00272415 -0.0159503" quat="0.999990411794363 0.0 -0.004379077453115355 0.0" mass="0.042981665301134515" diaginertia="1.1561293087621594e-05 2.370165527871047e-05 3.039652946542647e-05" />
+                          <geom name="left_link_right_jaw_collision" pos="0.665265 -0.00286677 -0.175928" quat="0.999990411794363 0.0 -0.004379077453115391 0.0" type="mesh" mesh="right_jaw.stl" class="collision" />
+                          <geom name="left_link_right_jaw_visual" pos="0.665265 -0.00286677 -0.175928" quat="0.999990411794363 0.0 -0.004379077453115357 0.0" material="gray" type="mesh" mesh="right_jaw.stl" class="visual" />
+                        </body>
+                        <body name="left_gripper_center" pos="-0.13 0.00 0.0132053" />
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+    <site name="world_site" />
+    <camera name="front_camera" mode="track" fovy="90.0" quat="4.329780281177467e-17 4.329780281177466e-17 0.7071067811865475 0.7071067811865476" pos="0.0 2.0 0.5" />
+    <camera name="side_camera" mode="track" fovy="90.0" quat="-0.5 -0.4999999999999999 0.5 0.5000000000000001" pos="-2.0 0.0 0.5" />
+  </worldbody>
+
+  <tendon>
+    <fixed name="left_split">
+      <joint joint="left_left_pris1" coef="0.5"/>
+      <joint joint="left_right_pris2" coef="0.5"/>
+    </fixed>
+  </tendon>
+  <equality>
+    <joint joint1="left_left_pris1" joint2="left_right_pris2" solimp="0.95 0.99 0.001" solref="0.005 1"/>
+  </equality>
+  <tendon>
+    <fixed name="right_split">
+      <joint joint="right_left_pris1" coef="0.5"/>
+      <joint joint="right_right_pris2" coef="0.5"/>
+    </fixed>
+  </tendon>
+  <equality>
+    <joint joint1="right_left_pris1" joint2="right_right_pris2" solimp="0.95 0.99 0.001" solref="0.005 1"/>
+  </equality>
+
+  <actuator>
+    <motor name="right_rev1_ctrl" joint="right_rev1" class="motor" ctrlrange="-9.5 9.5"/>
+    <motor name="right_rev2_ctrl" joint="right_rev2" class="motor" ctrlrange="-8.0 8.0"/>
+    <motor name="right_rev3_ctrl" joint="right_rev3" class="motor" />
+    <motor name="right_rev4_ctrl" joint="right_rev4" class="motor" ctrlrange="-3.0 3.0"/>
+    <motor name="right_rev5_ctrl" joint="right_rev5" class="motor" />
+    <motor name="right_rev6_ctrl" joint="right_rev6" class="motor" ctrlrange="-0.35 0.35"/>
+    <motor name="right_rev7_ctrl" joint="right_rev7" class="motor" />
+    <motor name="right_left_pris1_ctrl" joint="right_left_pris1" class="motor" ctrlrange="-0.25 0.25"/>
+
+    <motor name="left_rev1_ctrl" joint="left_rev1" class="motor" ctrlrange="-9.5 9.5"/>
+    <motor name="left_rev2_ctrl" joint="left_rev2" class="motor" ctrlrange="-8.0 8.0"/>
+    <motor name="left_rev3_ctrl" joint="left_rev3" class="motor" />
+    <motor name="left_rev4_ctrl" joint="left_rev4" class="motor" ctrlrange="-3.0 3.0"/>
+    <motor name="left_rev5_ctrl" joint="left_rev5" class="motor" />
+    <motor name="left_rev6_ctrl" joint="left_rev6" class="motor" ctrlrange="-0.35 0.35"/>
+    <motor name="left_rev7_ctrl" joint="left_rev7" class="motor" />
+    <motor name="left_left_pris1_ctrl" joint="left_left_pris1" class="motor" ctrlrange="-0.25 0.25"/>
+  </actuator>
+
+  <contact>
+    <exclude body1="right_link1" body2="right_link2" />
+    <exclude body1="right_link1" body2="right_link3" />
+    <exclude body1="right_link1" body2="right_link4" />
+    <exclude body1="right_link2" body2="right_link3" />
+    <exclude body1="right_link3" body2="right_link4" />
+    <exclude body1="right_link4" body2="right_link5" />
+    <exclude body1="right_link5" body2="right_link6" />
+    <exclude body1="right_link6" body2="right_link7" />
+    <exclude body1="right_link6" body2="right_link8" />
+    <exclude body1="right_link7" body2="right_link8" />
+    <exclude body1="right_link8" body2="right_link_left_jaw" />
+    <exclude body1="right_link8" body2="right_link_right_jaw" />
+    <exclude body1="left_link1" body2="left_link2" />
+    <exclude body1="left_link1" body2="left_link3" />
+    <exclude body1="left_link1" body2="left_link4" />
+    <exclude body1="left_link2" body2="left_link4" />
+    <exclude body1="left_link2" body2="left_link3" />
+    <exclude body1="left_link3" body2="left_link4" />
+    <exclude body1="left_link4" body2="left_link5" />
+    <exclude body1="left_link5" body2="left_link6" />
+    <exclude body1="left_link6" body2="left_link7" />
+    <exclude body1="left_link6" body2="left_link8" />
+    <exclude body1="left_link7" body2="left_link8" />
+    <exclude body1="left_link8" body2="left_link_left_jaw" />
+    <exclude body1="left_link8" body2="left_link_right_jaw" />
+  </contact>
+
+  <sensor>
+    <framepos name="base_link_pos" objtype="site" objname="world_site" />
+    <framequat name="base_link_quat" objtype="site" objname="world_site" />
+    <framelinvel name="base_link_vel" objtype="site" objname="world_site" />
+    <frameangvel name="base_link_ang_vel" objtype="site" objname="world_site" />
+  </sensor>
+</mujoco>
