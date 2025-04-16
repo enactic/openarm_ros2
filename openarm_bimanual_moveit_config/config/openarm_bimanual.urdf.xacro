@@ -3,7 +3,7 @@
     <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
 
     <!-- Import openarm_bimanual urdf file -->
-    <!-- <xacro:include filename="$(find openarm_bimanual_description)/urdf/openarm_bimanual.urdf.xacro" /> -->
-    <xacro:include filename="$(find openarm_mujoco_ros2_control)/urdf/openarm_bimanual_mujoco.urdf" />
+    <xacro:include filename="$(find openarm_bimanual_description)/urdf/openarm_bimanual.urdf.xacro" />
+    <!-- <xacro:include filename="$(find openarm_mujoco_ros2_control)/urdf/openarm_bimanual_mujoco.urdf" /> -->
 
 </robot>

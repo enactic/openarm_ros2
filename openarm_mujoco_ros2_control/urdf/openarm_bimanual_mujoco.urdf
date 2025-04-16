@@ -46,7 +46,7 @@
     <hardware>
       <!-- By default, set up controllers for simulation. This won't work on real hardware -->
       <!-- <plugin>mock_components/GenericSystem</plugin> -->
-      <plugin>mujoco_ros2_control/MujocoSystem</plugin>
+      <plugin>mujoco_system_plugins/MujocoSystem</plugin>
     </hardware>
     <joint name="right_rev1">
       <command_interface name="position"/>
