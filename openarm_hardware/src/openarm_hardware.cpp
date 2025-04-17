@@ -71,9 +71,7 @@ hardware_interface::CallbackReturn OpenArmHW::on_init(
   motors_.resize(curr_dof);
   for(size_t i = 0; i < curr_dof; ++i){
     motors_[i] = std::make_unique<Motor>(motor_types[i], can_device_ids[i], can_master_ids[i]);
-  }
-  for(const auto& motor: motors_){
-    motor_control_->addMotor(*motor);
+    motor_control_->addMotor(*motors_[i]);
   }
 
   pos_states_.resize(curr_dof, 0.0);
@@ -201,7 +199,7 @@ hardware_interface::return_type OpenArmHW::write(
 {
   if (disable_torque_){
     // refresh motor state on write
-    for(size_t i = 0; i < TOTAL_DOF; ++i){
+    for(size_t i = 0; i < curr_dof; ++i){
       motor_control_->controlMIT(*motors_[i], 0.0, 0.0, 0.0, 0.0, 0.0);
       return hardware_interface::return_type::OK;
     }
