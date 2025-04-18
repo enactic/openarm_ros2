@@ -15,6 +15,9 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   rclcpp_lifecycle
   realtime_tools
   std_msgs
+  urdf
+  kdl_parser
+  orocos_kdl
 )
 
 find_package(ament_cmake REQUIRED)
