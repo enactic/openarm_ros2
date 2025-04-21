@@ -277,4 +277,5 @@
     <disable_collisions link1="right_link8" link2="right_link_left_jaw" reason="Adjacent"/>
     <disable_collisions link1="right_link8" link2="right_link_right_jaw" reason="Adjacent"/>
     <disable_collisions link1="right_link_left_jaw" link2="right_link_right_jaw" reason="Never"/>
+    <disable_collisions link1="pedestal_link" link2="camera_link" reason="Adjacent"/>
 </robot>
