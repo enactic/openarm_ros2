@@ -1,6 +1,7 @@
 # Default initial positions for openarm_bimanual's ros2_control fake system
 
 initial_positions:
+  left_left_pris1: 0
   left_rev1: 0
   left_rev2: 0
   left_rev3: 0
@@ -8,6 +9,7 @@ initial_positions:
   left_rev5: 0
   left_rev6: 0
   left_rev7: 0
+  right_left_pris1: 0
   right_rev1: 0
   right_rev2: 0
   right_rev3: 0

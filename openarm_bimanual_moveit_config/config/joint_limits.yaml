@@ -53,6 +53,11 @@ joint_limits:
     max_velocity: 0
     has_acceleration_limits: false
     max_acceleration: 0
+  right_left_pris1:
+    has_velocity_limits: false
+    max_velocity: 0
+    has_acceleration_limits: false
+    max_acceleration: 0
   right_rev1:
     has_velocity_limits: false
     max_velocity: 0
@@ -84,6 +89,11 @@ joint_limits:
     has_acceleration_limits: false
     max_acceleration: 0
   right_rev7:
+    has_velocity_limits: false
+    max_velocity: 0
+    has_acceleration_limits: false
+    max_acceleration: 0
+  right_right_pris2:
     has_velocity_limits: false
     max_velocity: 0
     has_acceleration_limits: false

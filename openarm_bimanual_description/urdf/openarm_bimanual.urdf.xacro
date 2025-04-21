@@ -3,7 +3,7 @@
 
   <xacro:include filename="$(find openarm_description)/urdf/openarm.xacro"/>
   <xacro:include filename="$(find openarm_bimanual_description)/urdf/openarm_pedestal.urdf"/>
-  <!-- <xacro:include filename="openarm_bimanual_sensors.xacro"/> -->
+  <xacro:include filename="openarm_bimanual_sensors.xacro"/>
 
   <link name="world"/>
   <joint name="dummy_joint" type="fixed">

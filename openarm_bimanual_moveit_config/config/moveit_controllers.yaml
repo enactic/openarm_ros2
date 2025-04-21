@@ -6,6 +6,11 @@ moveit_simple_controller_manager:
   controller_names:
     - left_arm_controller
     - right_arm_controller
+    - left_gripper_controller
+    - right_gripper_controller
+    - left_side_controller
+    - right_side_controller
+    - upper_body_controller
 
   left_arm_controller:
     type: FollowJointTrajectory
@@ -31,3 +36,58 @@ moveit_simple_controller_manager:
       - right_rev7
     action_ns: follow_joint_trajectory
     default: true
+  left_gripper_controller:
+    type: GripperCommand
+    joints:
+      - left_rev7
+      - left_left_pris1
+    action_ns: gripper_cmd
+    default: true
+  right_gripper_controller:
+    type: GripperCommand
+    joints:
+      - right_rev7
+      - right_left_pris1
+    action_ns: gripper_cmd
+    default: true
+  left_side_controller:
+    type: FollowJointTrajectory
+    joints:
+      - left_rev1
+      - left_rev2
+      - left_rev3
+      - left_rev4
+      - left_rev5
+      - left_rev6
+      - left_rev7
+      - left_left_pris1
+  right_side_controller:
+    type: FollowJointTrajectory
+    joints:
+      - right_rev1
+      - right_rev2
+      - right_rev3
+      - right_rev4
+      - right_rev5
+      - right_rev6
+      - right_rev7
+      - right_left_pris1
+  upper_body_controller:
+    type: FollowJointTrajectory
+    joints:
+      - left_rev1
+      - left_rev2
+      - left_rev3
+      - left_rev4
+      - left_rev5
+      - left_rev6
+      - left_rev7
+      - left_left_pris1
+      - right_rev1
+      - right_rev2
+      - right_rev3
+      - right_rev4
+      - right_rev5
+      - right_rev6
+      - right_rev7
+      - right_left_pris1
