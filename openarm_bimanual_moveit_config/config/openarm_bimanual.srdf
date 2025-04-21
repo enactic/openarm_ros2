@@ -121,6 +121,24 @@
     <group_state name="half_closed" group="right_gripper">
         <joint name="right_left_pris1" value="-0.0225"/>
     </group_state>
+    <group_state name="center grip" group="upper_body">
+        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_rev1" value="0.2"/>
+        <joint name="left_rev2" value="0"/>
+        <joint name="left_rev3" value="0.5"/>
+        <joint name="left_rev4" value="1.6"/>
+        <joint name="left_rev5" value="0"/>
+        <joint name="left_rev6" value="0"/>
+        <joint name="left_rev7" value="0"/>
+        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_rev1" value="-0.2"/>
+        <joint name="right_rev2" value="0"/>
+        <joint name="right_rev3" value="-0.5"/>
+        <joint name="right_rev4" value="1.8379"/>
+        <joint name="right_rev5" value="0.0116"/>
+        <joint name="right_rev6" value="-0.2517"/>
+        <joint name="right_rev7" value="0.0053"/>
+    </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="left_gripper" parent_link="left_link8" group="left_gripper" parent_group="left_side"/>
     <end_effector name="right_gripper" parent_link="right_link8" group="right_gripper" parent_group="right_side"/>
