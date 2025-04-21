@@ -50,6 +50,7 @@ static const double POS_JUMP_TOLERANCE_RAD = 3.1415 / 2.0;
 
 static const bool USING_GRIPPER = true;
 static const double GRIPPER_REFERENCE_GEAR_RADIUS_M = 0.00853;
+static const double GRIPPER_GEAR_DIRECTION_MULTIPLIER = -1.0;
 static const int GRIPPER_INDEX = TOTAL_DOF - 1;
 
 class OpenArmHW : public hardware_interface::SystemInterface

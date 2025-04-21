@@ -185,9 +185,9 @@ hardware_interface::return_type OpenArmHW::read(
     tau_states_[i] = motors_[i]->getTorque();
   }
   if(USING_GRIPPER){
-    pos_states_[GRIPPER_INDEX] = -motors_[GRIPPER_INDEX]->getPosition() * GRIPPER_REFERENCE_GEAR_RADIUS_M;
-    vel_states_[GRIPPER_INDEX] = motors_[GRIPPER_INDEX]->getVelocity() * GRIPPER_REFERENCE_GEAR_RADIUS_M;
-    tau_states_[GRIPPER_INDEX] = motors_[GRIPPER_INDEX]->getTorque() * GRIPPER_REFERENCE_GEAR_RADIUS_M;
+    pos_states_[GRIPPER_INDEX] = -motors_[GRIPPER_INDEX]->getPosition() * GRIPPER_REFERENCE_GEAR_RADIUS_M * GRIPPER_GEAR_DIRECTION_MULTIPLIER;
+    vel_states_[GRIPPER_INDEX] = motors_[GRIPPER_INDEX]->getVelocity() * GRIPPER_REFERENCE_GEAR_RADIUS_M * GRIPPER_GEAR_DIRECTION_MULTIPLIER;
+    tau_states_[GRIPPER_INDEX] = motors_[GRIPPER_INDEX]->getTorque() * GRIPPER_REFERENCE_GEAR_RADIUS_M * GRIPPER_GEAR_DIRECTION_MULTIPLIER;
   }
 
 
@@ -215,7 +215,10 @@ hardware_interface::return_type OpenArmHW::write(
     motor_control_->controlMIT(*motors_[i], KP.at(i), KD.at(i), pos_commands_[i], vel_commands_[i], tau_ff_commands_[i]);
   }
   if(USING_GRIPPER){
-    motor_control_->controlMIT(*motors_[GRIPPER_INDEX], KP.at(GRIPPER_INDEX), KD.at(GRIPPER_INDEX), -pos_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M, vel_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M, tau_ff_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M);
+    motor_control_->controlMIT(*motors_[GRIPPER_INDEX], KP.at(GRIPPER_INDEX), KD.at(GRIPPER_INDEX), 
+    -pos_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M * GRIPPER_GEAR_DIRECTION_MULTIPLIER, 
+    vel_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M * GRIPPER_GEAR_DIRECTION_MULTIPLIER, 
+    tau_ff_commands_[GRIPPER_INDEX] / GRIPPER_REFERENCE_GEAR_RADIUS_M * GRIPPER_GEAR_DIRECTION_MULTIPLIER);
   }
   return hardware_interface::return_type::OK;
 }

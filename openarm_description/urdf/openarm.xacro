@@ -240,8 +240,8 @@
             <parent link="${prefix}link2"/>
             <child link="${prefix}link3"/>
             <origin rpy="-1.5707963267948968 ${pi/2 if zero_pos=='up' else 0.0} 0.0" xyz="0.0 -0.02975 0.04475"/>
-            <axis xyz="0 0 ${reflect * -1}"/>
-            <limit effort="0.0" lower="${-pi/2.0 if zero_pos=='up' else -pi + rotate}" upper="${pi/2 if zero_pos=='up' else 0 + rotate}" velocity="0.0"/>
+            <axis xyz="0 0 1"/>
+            <limit effort="0.0" lower="${-pi/2.0 if zero_pos=='up' else 0}" upper="${pi/2 if zero_pos=='up' else pi}" velocity="0.0"/>
         </joint>
         <joint name="${prefix}rev3" type="revolute">
             <parent link="${prefix}link3"/>
@@ -283,7 +283,7 @@
             <child link="${prefix}link_left_jaw"/>
             <origin rpy="1.570796326795101 -0.014066001454929162 0.00875904933542146" xyz="-0.1071 0.0768568 0.0132053"/>
             <axis xyz="0 0 -1"/>
-            <limit effort="0.0" lower="-0.0451" upper="0.0" velocity="0.0"/>
+            <limit effort="0.0" lower="-0.0451" upper="0.0" velocity="0.1"/>
         </joint>
         <joint name="${prefix}right_pris2" type="prismatic">
             <parent link="${prefix}link8"/>
