@@ -39,55 +39,53 @@ moveit_simple_controller_manager:
   left_gripper_controller:
     type: GripperCommand
     joints:
-      - left_rev7
       - left_left_pris1
     action_ns: gripper_cmd
     default: true
   right_gripper_controller:
     type: GripperCommand
     joints:
-      - right_rev7
       - right_left_pris1
     action_ns: gripper_cmd
     default: true
-  left_side_controller:
-    type: FollowJointTrajectory
-    joints:
-      - left_rev1
-      - left_rev2
-      - left_rev3
-      - left_rev4
-      - left_rev5
-      - left_rev6
-      - left_rev7
-      - left_left_pris1
-  right_side_controller:
-    type: FollowJointTrajectory
-    joints:
-      - right_rev1
-      - right_rev2
-      - right_rev3
-      - right_rev4
-      - right_rev5
-      - right_rev6
-      - right_rev7
-      - right_left_pris1
-  upper_body_controller:
-    type: FollowJointTrajectory
-    joints:
-      - left_rev1
-      - left_rev2
-      - left_rev3
-      - left_rev4
-      - left_rev5
-      - left_rev6
-      - left_rev7
-      - left_left_pris1
-      - right_rev1
-      - right_rev2
-      - right_rev3
-      - right_rev4
-      - right_rev5
-      - right_rev6
-      - right_rev7
-      - right_left_pris1
+  # left_side_controller:
+  #   type: FollowJointTrajectory
+  #   joints:
+  #     - left_rev1
+  #     - left_rev2
+  #     - left_rev3
+  #     - left_rev4
+  #     - left_rev5
+  #     - left_rev6
+  #     - left_rev7
+  #     - left_left_pris1
+  # right_side_controller:
+  #   type: FollowJointTrajectory
+  #   joints:
+  #     - right_rev1
+  #     - right_rev2
+  #     - right_rev3
+  #     - right_rev4
+  #     - right_rev5
+  #     - right_rev6
+  #     - right_rev7
+  #     - right_left_pris1
+  # upper_body_controller:
+  #   type: FollowJointTrajectory
+  #   joints:
+  #     - left_rev1
+  #     - left_rev2
+  #     - left_rev3
+  #     - left_rev4
+  #     - left_rev5
+  #     - left_rev6
+  #     - left_rev7
+  #     - left_left_pris1
+  #     - right_rev1
+  #     - right_rev2
+  #     - right_rev3
+  #     - right_rev4
+  #     - right_rev5
+  #     - right_rev6
+  #     - right_rev7
+  #     - right_left_pris1

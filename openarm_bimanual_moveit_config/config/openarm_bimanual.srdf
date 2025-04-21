@@ -58,8 +58,6 @@
         <link name="right_link8"/>
         <link name="right_link_left_jaw"/>
         <link name="right_link_right_jaw"/>
-        <joint name="right_left_pris1"/>
-        <joint name="right_right_pris2"/>
     </group>
     <group name="left_side">
         <group name="left_arm"/>
@@ -111,8 +109,8 @@
         <joint name="right_rev7" value="0"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="left_gripper" parent_link="left_link8" group="left_arm"/>
-    <end_effector name="right_gripper" parent_link="right_link8" group="right_arm"/>
+    <end_effector name="left_gripper" parent_link="left_link8" group="left_arm" parent_group="left_side"/>
+    <end_effector name="right_gripper" parent_link="right_link8" group="right_arm" parent_group="right_side"/>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="virtual_joint" type="fixed" parent_frame="base_link" child_link="pedestal_link"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
