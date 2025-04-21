@@ -5,12 +5,12 @@
     <!-- Import openarm_bimanual urdf file -->
     <xacro:include filename="$(find openarm_bimanual_description)/urdf/openarm_bimanual.urdf.xacro" />
 
-
-    <!-- <joint name="world_to_pedestal" type="fixed">
+    <link name="base_link"/>
+    <joint name="world_to_pedestal" type="fixed">
         <parent link="world"/>
-        <child link="pedestal_link"/>
+        <child link="base_link"/>
         <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-    </joint> -->
+    </joint>
     <!-- Import control_xacro -->
     <!-- <xacro:include filename="openarm_bimanual.ros2_control.xacro" />
 

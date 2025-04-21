@@ -52,10 +52,8 @@
     <group name="left_gripper">
         <link name="left_link_left_jaw"/>
         <link name="left_link_right_jaw"/>
-        <link name="left_link8"/>
     </group>
     <group name="right_gripper">
-        <link name="right_link8"/>
         <link name="right_link_left_jaw"/>
         <link name="right_link_right_jaw"/>
     </group>
@@ -108,12 +106,28 @@
         <joint name="right_rev6" value="0"/>
         <joint name="right_rev7" value="0"/>
     </group_state>
+    <group_state name="open" group="left_gripper">
+        <joint name="left_left_pris1" value="0"/>
+    </group_state>
+    <group_state name="half_closed" group="left_gripper">
+        <joint name="left_left_pris1" value="-0.0225"/>
+    </group_state>
+    <group_state name="closed" group="left_gripper">
+        <joint name="left_left_pris1" value="-0.0451"/>
+    </group_state>
+    <group_state name="open" group="right_gripper">
+        <joint name="right_left_pris1" value="0"/>
+    </group_state>
+    <group_state name="half_closed" group="right_gripper">
+        <joint name="right_left_pris1" value="-0.0225"/>
+    </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="left_gripper" parent_link="left_link8" group="left_arm" parent_group="left_side"/>
     <end_effector name="right_gripper" parent_link="right_link8" group="right_arm" parent_group="right_side"/>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="virtual_joint" type="fixed" parent_frame="base_link" child_link="pedestal_link"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="camera_link" link2="pedestal_link" reason="Adjacent"/>
     <disable_collisions link1="left_link1" link2="left_link2" reason="Adjacent"/>
     <disable_collisions link1="left_link1" link2="left_link3" reason="User"/>
     <disable_collisions link1="left_link1" link2="left_link4" reason="User"/>
@@ -277,5 +291,4 @@
     <disable_collisions link1="right_link8" link2="right_link_left_jaw" reason="Adjacent"/>
     <disable_collisions link1="right_link8" link2="right_link_right_jaw" reason="Adjacent"/>
     <disable_collisions link1="right_link_left_jaw" link2="right_link_right_jaw" reason="Never"/>
-    <disable_collisions link1="pedestal_link" link2="camera_link" reason="Adjacent"/>
 </robot>
