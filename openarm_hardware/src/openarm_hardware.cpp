@@ -139,27 +139,39 @@ hardware_interface::CallbackReturn OpenArmHW::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   read(rclcpp::Time(0), rclcpp::Duration(0, 0));
-  
-  // for (std::size_t m = 0; m < curr_dof; ++m){
-  //   double diff = pos_states_[m] - pos_commands_[m];
-  //   while(abs(diff) > START_POS_TOLERANCE_RAD){
-  //     // linear interpolation
-  //     // take the min of max_step and the difference
-
-  //     double max_step = std::min(POS_JUMP_TOLERANCE_RAD, std::abs(diff));
-  //     if (diff > 0){
-  //       pos_commands_[m] = pos_states_[m] - max_step;
-  //     }
-  //     else{
-  //       pos_commands_[m] = pos_states_[m] + max_step;
-  //     }
-  //     motor_control_->controlMIT(*motors_[m], SLOW_KP[m], KD[m], pos_commands_[m], 0.0, 0.0);
-  //   }
-  // }
-  refresh_motors();
+  bool zeroed = false;
   for(const auto& motor: motors_){
     motor_control_->enable(*motor);
   }
+
+  while(!zeroed){
+    bool all_zero = true;
+    for (std::size_t m = 0; m < curr_dof; ++m){
+      const double diff = pos_commands_[m] - pos_states_[m];
+      if (std::abs(diff) > START_POS_TOLERANCE_RAD){
+        all_zero = false;
+      }
+  
+      const double max_step = std::min(POS_JUMP_TOLERANCE_RAD, std::abs(diff));
+      double command = pos_states_[m];
+      if (pos_states_[m] < pos_commands_[m]){
+        command += max_step;
+      }
+      else{
+        command -= max_step;
+      }
+      motor_control_->controlMIT(*motors_[m], KP[m], KD[m], command, 0.0, 0.0);
+    
+    }
+    if (all_zero){
+      zeroed = true;
+    }
+    else{
+      sleep(0.01);
+      read(rclcpp::Time(0), rclcpp::Duration(0, 0));
+    }
+  }
+
   read(rclcpp::Time(0), rclcpp::Duration(0, 0));
 
   return CallbackReturn::SUCCESS;
