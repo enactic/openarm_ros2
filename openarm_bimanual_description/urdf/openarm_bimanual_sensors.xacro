@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro"/>
     <xacro:sensor_d435i parent="pedestal_link" use_nominal_extrinsics="true">
-        <origin xyz="0.0 -0.025 0.995216" rpy="0.0 0.0 ${-pi/2.0}"/>
+        <origin xyz="0.0 -0.025 0.995216" rpy="0.0 ${80 * 2.0 * pi / 360.0} ${-pi/2.0}"/>
     </xacro:sensor_d435i>
 
 </robot>
