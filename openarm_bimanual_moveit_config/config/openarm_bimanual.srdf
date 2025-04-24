@@ -125,8 +125,8 @@
         <joint name="left_left_pris1" value="0"/>
         <joint name="left_rev1" value="0.2"/>
         <joint name="left_rev2" value="0"/>
-        <joint name="left_rev3" value="0.5"/>
-        <joint name="left_rev4" value="1.6"/>
+        <joint name="left_rev3" value="0.3384"/>
+        <joint name="left_rev4" value="1.3519"/>
         <joint name="left_rev5" value="0"/>
         <joint name="left_rev6" value="0"/>
         <joint name="left_rev7" value="0"/>
@@ -138,6 +138,60 @@
         <joint name="right_rev5" value="0.0116"/>
         <joint name="right_rev6" value="-0.2517"/>
         <joint name="right_rev7" value="0.0053"/>
+    </group_state>
+    <group_state name="hands_up" group="upper_body">
+        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_rev1" value="0.1"/>
+        <joint name="left_rev2" value="0"/>
+        <joint name="left_rev3" value="0"/>
+        <joint name="left_rev4" value="2.7"/>
+        <joint name="left_rev5" value="0"/>
+        <joint name="left_rev6" value="0"/>
+        <joint name="left_rev7" value="0"/>
+        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_rev1" value="-0.1"/>
+        <joint name="right_rev2" value="0"/>
+        <joint name="right_rev3" value="0"/>
+        <joint name="right_rev4" value="2.7"/>
+        <joint name="right_rev5" value="0"/>
+        <joint name="right_rev6" value="0"/>
+        <joint name="right_rev7" value="0"/>
+    </group_state>
+    <group_state name="wave_1" group="upper_body">
+        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_rev1" value="0.1"/>
+        <joint name="left_rev2" value="0"/>
+        <joint name="left_rev3" value="-0.5179"/>
+        <joint name="left_rev4" value="2.4627"/>
+        <joint name="left_rev5" value="-0.0116"/>
+        <joint name="left_rev6" value="-0.5814"/>
+        <joint name="left_rev7" value="0"/>
+        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_rev1" value="-0.1"/>
+        <joint name="right_rev2" value="0"/>
+        <joint name="right_rev3" value="0"/>
+        <joint name="right_rev4" value="0"/>
+        <joint name="right_rev5" value="0"/>
+        <joint name="right_rev6" value="0"/>
+        <joint name="right_rev7" value="0"/>
+    </group_state>
+    <group_state name="wave_2" group="upper_body">
+        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_rev1" value="0.1"/>
+        <joint name="left_rev2" value="0"/>
+        <joint name="left_rev3" value="0.4541"/>
+        <joint name="left_rev4" value="2.4627"/>
+        <joint name="left_rev5" value="-0.0116"/>
+        <joint name="left_rev6" value="-0.5814"/>
+        <joint name="left_rev7" value="0"/>
+        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_rev1" value="-0.1"/>
+        <joint name="right_rev2" value="0"/>
+        <joint name="right_rev3" value="0"/>
+        <joint name="right_rev4" value="0"/>
+        <joint name="right_rev5" value="0"/>
+        <joint name="right_rev6" value="0"/>
+        <joint name="right_rev7" value="0"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="left_gripper" parent_link="left_link8" group="left_gripper" parent_group="left_side"/>
