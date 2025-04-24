@@ -49,8 +49,15 @@ colcon build
 
 ```sh
 cd ~/ros2_ws
-. install/setup.bash
+source install/setup.bash
 ```
+
+5. Test the installation by launching a demo. It may be necessary to restart your computer once.
+
+```sh
+ros2 launch openarm_bimanual_moveit_config demo.launch.py
+```
+
 
 ## License
 
