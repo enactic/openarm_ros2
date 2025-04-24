@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>openarm_bimanual_teleop</name>
+  <name>openarm_bimanual_bringup</name>
   <version>0.0.0</version>
-  <description>Teleoperation setup for bimanual openarm</description>
+  <description>Bringup for bimanual openarm</description>
   <maintainer email="t95zhou@uwaterloo.ca">Thomason Zhou</maintainer>
   <license>BSD-3-Clause</license>
 
