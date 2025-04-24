@@ -234,7 +234,7 @@
             <child link="${prefix}link2"/>
             <origin rpy="0 0 0" xyz="0.0 0.0 0.05325"/>
             <axis xyz="0 0 1"/>
-            <limit effort="0.0" lower="-2.0943951023931953" upper="2.0943951023931953" velocity="0.0"/>
+            <limit effort="0.0" lower="${-pi/4.0 if side=='right' and zero_pos=='arm' else -2.0943951023931953}" upper="${pi/4.0 if side=='left' and zero_pos=='arm' else 2.0943951023931953}" velocity="0.0"/>
         </joint>
         <joint name="${prefix}rev2" type="revolute">
             <parent link="${prefix}link2"/>
