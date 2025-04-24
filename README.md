@@ -1,5 +1,6 @@
 # ROS2 packages for OpenArm robots
 
+[Quickstart](#installation)
 - openarm_bimanual_description: dual arm urdf with torso and realsense head camera
 - openarm_bimanual_moveit_config: bimanual motion planning with OctoMap occupancy grid mapping
 - openarm_bimanual_bringup: setup scripts for bimanual openarm
@@ -7,7 +8,6 @@
 - openarm_description: single arm urdf
 - openarm_hardware: hardware interface for ros2_control
 - openarm_moveit_config: motion planning with [moveit2](https://github.com/moveit/moveit2)
-
 
 
 ### Description Packages
@@ -23,7 +23,7 @@ https://github.com/user-attachments/assets/a0f962e5-6150-49ce-b18e-9914bcb322ef
 
 ## Installation
 
-1. [Install ROS2](https://docs.ros.org/en/humble/Installation.html) (Humble with Ubuntu 22.04 is recommended)
+1. [Install ROS2](https://docs.ros.org/en/humble/Installation.html) (tested on Humble with Ubuntu 22.04)
 2. [Create a ROS2 workspace](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html)
 
 ```sh
