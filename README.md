@@ -23,10 +23,11 @@ https://github.com/user-attachments/assets/a0f962e5-6150-49ce-b18e-9914bcb322ef
 
 ## Installation
 
-1. [Install ROS2](https://docs.ros.org/en/humble/Installation.html) (tested on Humble with Ubuntu 22.04)
-2. [Create a ROS2 workspace](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html)
+1. [Install ROS2 and ros-dev-tools](https://docs.ros.org/en/humble/Installation.html) (tested on Humble with Ubuntu 22.04)
+2. [Create a ROS2 workspace and source the overlay](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html)
 
 ```sh
+source /opt/ros/humble/setup.bash # change humble to your ROS2 distro
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws/src
 git clone https://github.com/reazon-research/openarm_ros2.git
