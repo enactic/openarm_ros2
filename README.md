@@ -1,6 +1,12 @@
 # ROS2 packages for OpenArm robots
 
 [Quickstart](#installation)
+
+
+https://github.com/user-attachments/assets/90b44ef4-5cdc-4bf5-b56f-be2a5ff264b4
+
+
+
 - openarm_bimanual_description: dual arm urdf with torso and realsense head camera
 - openarm_bimanual_moveit_config: bimanual motion planning with OctoMap occupancy grid mapping
 - openarm_bimanual_bringup: setup scripts for bimanual openarm
