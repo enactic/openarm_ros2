@@ -1,5 +1,6 @@
 // Copyright (c) 2025, Reazon Holdings, Inc.
-// Copyright (c) 2025, Stogl Robotics Consulting UG (haftungsbeschränkt) (template)
+// Copyright (c) 2025, Stogl Robotics Consulting UG (haftungsbeschränkt)
+// (template)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,13 +22,11 @@
 #include "ros2_control_test_assets/components_urdfs.hpp"
 #include "ros2_control_test_assets/descriptions.hpp"
 
-class TestOpenArmHW : public ::testing::Test
-{
-protected:
-  void SetUp() override
-  {
+class TestOpenArmHW : public ::testing::Test {
+ protected:
+  void SetUp() override {
     openarm_hardware_7dof_ =
-      R"(
+        R"(
         <ros2_control name="OpenArmHW7DOF" type="system">
           <hardware>
             <!-- By default, set up controllers for simulation. This won't work on real hardware -->
@@ -123,8 +122,7 @@ protected:
   std::string openarm_hardware_7dof_;
 };
 
-TEST_F(TestOpenArmHW, load_openarm_hardware_7dof)
-{
+TEST_F(TestOpenArmHW, load_openarm_hardware_7dof) {
   auto urdf = ros2_control_test_assets::urdf_head + openarm_hardware_7dof_ +
               ros2_control_test_assets::urdf_tail;
   ASSERT_NO_THROW(hardware_interface::ResourceManager rm(urdf));

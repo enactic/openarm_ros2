@@ -1,5 +1,6 @@
 // Copyright (c) 2025, Reazon Holdings, Inc.
-// Copyright (c) 2025, Stogl Robotics Consulting UG (haftungsbeschränkt) (template)
+// Copyright (c) 2025, Stogl Robotics Consulting UG (haftungsbeschränkt)
+// (template)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,22 +27,27 @@
 #define TEMPLATES__ROS2_CONTROL__VISIBILITY_IMPORT __declspec(dllimport)
 #endif
 #ifdef TEMPLATES__ROS2_CONTROL__VISIBILITY_BUILDING_DLL
-#define TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC TEMPLATES__ROS2_CONTROL__VISIBILITY_EXPORT
+#define TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC \
+  TEMPLATES__ROS2_CONTROL__VISIBILITY_EXPORT
 #else
-#define TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC TEMPLATES__ROS2_CONTROL__VISIBILITY_IMPORT
+#define TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC \
+  TEMPLATES__ROS2_CONTROL__VISIBILITY_IMPORT
 #endif
-#define TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC_TYPE TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
+#define TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC_TYPE \
+  TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
 #define TEMPLATES__ROS2_CONTROL__VISIBILITY_LOCAL
 #else
-#define TEMPLATES__ROS2_CONTROL__VISIBILITY_EXPORT __attribute__((visibility("default")))
+#define TEMPLATES__ROS2_CONTROL__VISIBILITY_EXPORT \
+  __attribute__((visibility("default")))
 #define TEMPLATES__ROS2_CONTROL__VISIBILITY_IMPORT
 #if __GNUC__ >= 4
-#define TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC __attribute__((visibility("default")))
-#define TEMPLATES__ROS2_CONTROL__VISIBILITY_LOCAL __attribute__((visibility("hidden")))
+#define TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC \
+  __attribute__((visibility("default")))
+#define TEMPLATES__ROS2_CONTROL__VISIBILITY_LOCAL \
+  __attribute__((visibility("hidden")))
 #else
 #define TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
 #define TEMPLATES__ROS2_CONTROL__VISIBILITY_LOCAL
 #endif
 #define TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC_TYPE
 #endif
-
