@@ -4,7 +4,7 @@
   <a href="https://build.ros2.org/job/Hdev__openarm__ubuntu_jammy_amd64/" alt="alt="ROS2 build status">
     <img src="https://build.ros2.org/buildStatus/icon?job=Hdev__openarm__ubuntu_jammy_amd64"/>
   </a>
-  <a href="https://github.com/reazon-research/openarm_ros2/tree/main/LICENSE" alt="BSD-3-Clause License">
+  <a href="https://github.com/reazon-research/openarm_ros2/tree/main/LICENSE" alt="Apache 2.0 License">
     <img src="https://img.shields.io/github/license/reazon-research/openarm_ros2"/>
   </a>
 </p>
@@ -76,4 +76,4 @@ ros2 launch openarm_bimanual_moveit_config demo.launch.py
 
 ## License
 
-All packages of `openarm_ros2` are licensed under the [BSD-3-Clause](https://opensource.org/license/bsd-3-clause).
+All packages of `openarm_ros2` are licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
