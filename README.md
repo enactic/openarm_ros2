@@ -4,7 +4,7 @@
   <a href="https://build.ros2.org/job/Hdev__openarm__ubuntu_jammy_amd64/" alt="alt="ROS2 build status">
     <img src="https://build.ros2.org/buildStatus/icon?job=Hdev__openarm__ubuntu_jammy_amd64"/>
   </a>
-  <a href="https://github.com/reazon-research/openarm_ros2/tree/main/LICENSE" alt="Apache 2.0 License">
+  <a href="https://github.com/reazon-research/openarm_ros2/tree/main/LICENSE" alt="Apache License 2.0">
     <img src="https://img.shields.io/github/license/reazon-research/openarm_ros2"/>
   </a>
 </p>
