@@ -77,3 +77,8 @@ ros2 launch openarm_bimanual_moveit_config demo.launch.py
 ## License
 
 All packages of `openarm_ros2` are licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+## Code of Conduct
+
+All participation in the ROS2 packages for OpenArm project is governed by our
+[Code of Conduct](CODE_OF_CONDUCT.md).
