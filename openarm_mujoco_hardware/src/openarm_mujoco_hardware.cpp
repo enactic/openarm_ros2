@@ -20,8 +20,6 @@ hardware_interface::CallbackReturn MujocoHardware::on_init(const hardware_interf
         websocket_port_ = kDefaultWebsocketPort;
     }
     std::cout << "websocket port: " << websocket_port_ << std::endl;
-    KP_ = 100.0;
-    KD_ = 10.0;
     address_ = boost::asio::ip::make_address("127.0.0.1");
     endpoint_ = boost::asio::ip::tcp::endpoint(address_, websocket_port_);
 
@@ -143,21 +141,31 @@ hardware_interface::return_type MujocoHardware::read(const rclcpp::Time & /*time
 }
 hardware_interface::return_type MujocoHardware::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
     // send a websocket message
+
+    nlohmann::json cmd_msg;
+    nlohmann::json& cmd = cmd_msg["cmd"];
+
     for(size_t i = 0; i < cmd_qpos_.size(); ++i) {
-        sim_MIT_control(i);
+        const double qpos_error = cmd_qpos_[i] - qpos_[i];
+        const double qvel_error = cmd_qvel_[i] - qvel_[i];
+        const double qtau_ff = cmd_qtau_ff_[i];
+
+        double cmd_torque = KP_[i] * qpos_error + KD_[i] * qvel_error + qtau_ff;
+
+        if (cmd_torque > MAX_MOTOR_TORQUE) {
+            cmd_torque = MAX_MOTOR_TORQUE;
+        } else if (cmd_torque < -MAX_MOTOR_TORQUE) {
+            cmd_torque = -MAX_MOTOR_TORQUE;
+        }
+        cmd[info_.joints[i].name] = cmd_torque;
     }
+    if (ws_session_) {
+        ws_session_->send_json(cmd_msg);
+    } else {
+        std::cerr << "MuJoCo WebSocket session is not active." << std::endl;
+    }
+
     return hardware_interface::return_type::OK;
-}
-
-void MujocoHardware::sim_MIT_control(const int interface_index) const{
-    const double qpos_error = cmd_qpos_[interface_index] - qpos_[interface_index];
-    const double qvel_error = cmd_qvel_[interface_index] - qvel_[interface_index];
-    const double qtau_ff = cmd_qtau_ff_[interface_index];
-
-    const double cmd_torque = KP_ * qpos_error + KD_ * qvel_error + qtau_ff;
-    
-    std::cout << "torque: "<< cmd_torque << std::endl;
-    // TODO: Send cmd_torque to the simulation environment
 }
 
 
@@ -167,6 +175,24 @@ WebSocketSession::WebSocketSession(boost::asio::ip::tcp::socket socket, MujocoHa
 
 std::shared_ptr<WebSocketSession> WebSocketSession::create(boost::asio::ip::tcp::socket socket, MujocoHardware* hw){
     return std::make_shared<WebSocketSession>(std::move(socket), hw);
+}
+
+void WebSocketSession::send_json(const nlohmann::json& j) {
+    std::shared_ptr<std::string> msg = std::make_shared<std::string>(j.dump());
+    boost::asio::post(
+        ws_.get_executor(),
+        [self = shared_from_this(), msg]() {
+            self->ws_.async_write(
+                boost::asio::buffer(*msg),
+                [self, msg](boost::beast::error_code ec, std::size_t)
+                {
+                    if (ec) {
+                        std::cerr << "send error: " << ec.message() << std::endl;
+                    } 
+                }
+            );
+        }
+    );
 }
 
 

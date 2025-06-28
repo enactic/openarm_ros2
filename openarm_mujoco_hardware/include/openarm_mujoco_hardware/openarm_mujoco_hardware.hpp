@@ -35,12 +35,15 @@ public:
 
     
     friend class WebSocketSession;
-    private:
-    void start_accept();
-    
-    double KP_;
-    double KD_;
-    void sim_MIT_control(const int interface_index) const;
+private:
+    static constexpr size_t TOTAL_DOF = 8;  // Total degrees of freedom, including gripper
+    inline static constexpr std::array<double, TOTAL_DOF> KP_ = {80.0, 80.0, 20.0, 55.0,
+                                                 5.0,  5.0,  5.0,  0.5};
+    inline static constexpr std::array<double, TOTAL_DOF> KD_ = {
+        45.0, 45.0, 10.0, 35.0,
+        3.0,  3.0, 3.0, 0.1
+    };
+    static constexpr double MAX_MOTOR_TORQUE = 20.0;
 
     std::vector<double> qpos_;
     std::vector<double> qvel_;
@@ -62,6 +65,8 @@ public:
     std::thread ioc_thread_;
 
     std::shared_ptr<WebSocketSession> ws_session_;
+    void start_accept();
+
 
 };
 
@@ -73,6 +78,8 @@ public:
         );
     void run();
     WebSocketSession(boost::asio::ip::tcp::socket socket, MujocoHardware* hw);
+
+    void send_json(const nlohmann::json& j);
 private:
     
     void do_handshake();
