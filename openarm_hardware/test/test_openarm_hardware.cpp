@@ -102,14 +102,14 @@ class TestOpenArmHW : public ::testing::Test {
             <state_interface name="velocity"/>
             <state_interface name="effort"/>
           </joint>
-          <joint name="left_pris1">
+          <joint name="gripper">
             <command_interface name="position"/>
             <state_interface name="position">
               <param name="initial_value">0</param>
             </state_interface>
             <state_interface name="velocity"/>
           </joint>
-          <joint name="right_pris2">
+          <joint name="gripper_mimic">
             <state_interface name="position">
               <param name="initial_value">0</param>
             </state_interface>

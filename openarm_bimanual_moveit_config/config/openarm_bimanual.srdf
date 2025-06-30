@@ -66,11 +66,11 @@
     </group>
     <group name="left_gripper">
         <link name="left_link_left_jaw"/>
-        <joint name="left_left_pris1"/>
+        <joint name="left_gripper"/>
     </group>
     <group name="right_gripper">
         <link name="right_link_left_jaw"/>
-        <joint name="right_left_pris1"/>
+        <joint name="right_gripper"/>
     </group>
     <group name="left_side">
         <group name="left_arm"/>
@@ -86,7 +86,7 @@
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="home" group="upper_body">
-        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_gripper" value="0"/>
         <joint name="left_rev1" value="0"/>
         <joint name="left_rev2" value="0"/>
         <joint name="left_rev3" value="0"/>
@@ -94,7 +94,7 @@
         <joint name="left_rev5" value="0"/>
         <joint name="left_rev6" value="0"/>
         <joint name="left_rev7" value="0"/>
-        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_gripper" value="0"/>
         <joint name="right_rev1" value="0"/>
         <joint name="right_rev2" value="0"/>
         <joint name="right_rev3" value="0"/>
@@ -104,7 +104,7 @@
         <joint name="right_rev7" value="0"/>
     </group_state>
     <group_state name="ready" group="upper_body">
-        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_gripper" value="0"/>
         <joint name="left_rev1" value="0.2"/>
         <joint name="left_rev2" value="0"/>
         <joint name="left_rev3" value="0"/>
@@ -112,7 +112,7 @@
         <joint name="left_rev5" value="0"/>
         <joint name="left_rev6" value="0"/>
         <joint name="left_rev7" value="0"/>
-        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_gripper" value="0"/>
         <joint name="right_rev1" value="-0.2"/>
         <joint name="right_rev2" value="0"/>
         <joint name="right_rev3" value="0"/>
@@ -122,22 +122,22 @@
         <joint name="right_rev7" value="0"/>
     </group_state>
     <group_state name="open" group="left_gripper">
-        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_gripper" value="0"/>
     </group_state>
     <group_state name="half_closed" group="left_gripper">
-        <joint name="left_left_pris1" value="-0.0225"/>
+        <joint name="left_gripper" value="-0.0225"/>
     </group_state>
     <group_state name="closed" group="left_gripper">
-        <joint name="left_left_pris1" value="-0.0451"/>
+        <joint name="left_gripper" value="-0.0451"/>
     </group_state>
     <group_state name="open" group="right_gripper">
-        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_gripper" value="0"/>
     </group_state>
     <group_state name="half_closed" group="right_gripper">
-        <joint name="right_left_pris1" value="-0.0225"/>
+        <joint name="right_gripper" value="-0.0225"/>
     </group_state>
     <group_state name="center grip" group="upper_body">
-        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_gripper" value="0"/>
         <joint name="left_rev1" value="0.2"/>
         <joint name="left_rev2" value="0"/>
         <joint name="left_rev3" value="0.3384"/>
@@ -145,7 +145,7 @@
         <joint name="left_rev5" value="0"/>
         <joint name="left_rev6" value="0"/>
         <joint name="left_rev7" value="0"/>
-        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_gripper" value="0"/>
         <joint name="right_rev1" value="-0.2"/>
         <joint name="right_rev2" value="0"/>
         <joint name="right_rev3" value="-0.5"/>
@@ -155,7 +155,7 @@
         <joint name="right_rev7" value="0.0053"/>
     </group_state>
     <group_state name="hands_up" group="upper_body">
-        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_gripper" value="0"/>
         <joint name="left_rev1" value="0.1"/>
         <joint name="left_rev2" value="0"/>
         <joint name="left_rev3" value="0"/>
@@ -163,7 +163,7 @@
         <joint name="left_rev5" value="0"/>
         <joint name="left_rev6" value="0"/>
         <joint name="left_rev7" value="0"/>
-        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_gripper" value="0"/>
         <joint name="right_rev1" value="-0.1"/>
         <joint name="right_rev2" value="0"/>
         <joint name="right_rev3" value="0"/>
@@ -173,7 +173,7 @@
         <joint name="right_rev7" value="0"/>
     </group_state>
     <group_state name="wave_1" group="upper_body">
-        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_gripper" value="0"/>
         <joint name="left_rev1" value="0.1"/>
         <joint name="left_rev2" value="0"/>
         <joint name="left_rev3" value="-0.5179"/>
@@ -181,7 +181,7 @@
         <joint name="left_rev5" value="-0.0116"/>
         <joint name="left_rev6" value="-0.5814"/>
         <joint name="left_rev7" value="0"/>
-        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_gripper" value="0"/>
         <joint name="right_rev1" value="-0.1"/>
         <joint name="right_rev2" value="0"/>
         <joint name="right_rev3" value="0"/>
@@ -191,7 +191,7 @@
         <joint name="right_rev7" value="0"/>
     </group_state>
     <group_state name="wave_2" group="upper_body">
-        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_gripper" value="0"/>
         <joint name="left_rev1" value="0.1"/>
         <joint name="left_rev2" value="0"/>
         <joint name="left_rev3" value="0.4541"/>
@@ -199,7 +199,7 @@
         <joint name="left_rev5" value="-0.0116"/>
         <joint name="left_rev6" value="-0.5814"/>
         <joint name="left_rev7" value="0"/>
-        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_gripper" value="0"/>
         <joint name="right_rev1" value="-0.1"/>
         <joint name="right_rev2" value="0"/>
         <joint name="right_rev3" value="0"/>
@@ -209,7 +209,7 @@
         <joint name="right_rev7" value="0"/>
     </group_state>
     <group_state name="x" group="upper_body">
-        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_gripper" value="0"/>
         <joint name="left_rev1" value="-0.2965"/>
         <joint name="left_rev2" value="-0.1745"/>
         <joint name="left_rev3" value="0.4513"/>
@@ -217,7 +217,7 @@
         <joint name="left_rev5" value="0.5207"/>
         <joint name="left_rev6" value="-0.3384"/>
         <joint name="left_rev7" value="-0.0795"/>
-        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_gripper" value="0"/>
         <joint name="right_rev1" value="0.4715"/>
         <joint name="right_rev2" value="-0.1224"/>
         <joint name="right_rev3" value="-1.0298"/>
@@ -227,7 +227,7 @@
         <joint name="right_rev7" value="0"/>
     </group_state>
     <group_state name="swing_arm_left_forward" group="upper_body">
-        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_gripper" value="0"/>
         <joint name="left_rev1" value="-0.6147"/>
         <joint name="left_rev2" value="-0.0356"/>
         <joint name="left_rev3" value="0.081"/>
@@ -235,7 +235,7 @@
         <joint name="left_rev5" value="0.5207"/>
         <joint name="left_rev6" value="-0.3384"/>
         <joint name="left_rev7" value="-0.0795"/>
-        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_gripper" value="0"/>
         <joint name="right_rev1" value="-0.3876"/>
         <joint name="right_rev2" value="0.0858"/>
         <joint name="right_rev3" value="-0.567"/>
@@ -245,7 +245,7 @@
         <joint name="right_rev7" value="0"/>
     </group_state>
     <group_state name="swing_arm_right_forward" group="upper_body">
-        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_gripper" value="0"/>
         <joint name="left_rev1" value="0.2762"/>
         <joint name="left_rev2" value="0.1553"/>
         <joint name="left_rev3" value="0.081"/>
@@ -253,7 +253,7 @@
         <joint name="left_rev5" value="-0.4281"/>
         <joint name="left_rev6" value="-0.3384"/>
         <joint name="left_rev7" value="-0.0795"/>
-        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_gripper" value="0"/>
         <joint name="right_rev1" value="0.4556"/>
         <joint name="right_rev2" value="-0.0009"/>
         <joint name="right_rev3" value="-0.567"/>
@@ -263,7 +263,7 @@
         <joint name="right_rev7" value="0"/>
     </group_state>
     <group_state name="siu" group="upper_body">
-        <joint name="left_left_pris1" value="0"/>
+        <joint name="left_gripper" value="0"/>
         <joint name="left_rev1" value="0.4512"/>
         <joint name="left_rev2" value="0.2421"/>
         <joint name="left_rev3" value="0.081"/>
@@ -271,7 +271,7 @@
         <joint name="left_rev5" value="-0.4281"/>
         <joint name="left_rev6" value="-0.3384"/>
         <joint name="left_rev7" value="-0.1326"/>
-        <joint name="right_left_pris1" value="0"/>
+        <joint name="right_gripper" value="0"/>
         <joint name="right_rev1" value="-0.4035"/>
         <joint name="right_rev2" value="0.19"/>
         <joint name="right_rev3" value="-0.567"/>
@@ -286,8 +286,8 @@
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="virtual_joint" type="fixed" parent_frame="base_link" child_link="pedestal_link"/>
     <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
-    <passive_joint name="left_right_pris2"/>
-    <passive_joint name="right_right_pris2"/>
+    <passive_joint name="left_gripper_mimic"/>
+    <passive_joint name="right_gripper_mimic"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="camera_link" link2="pedestal_link" reason="Adjacent"/>
     <disable_collisions link1="left_link1" link2="left_link2" reason="Adjacent"/>

@@ -283,20 +283,20 @@
     <axis xyz="0 0 -1"/>
     <limit effort="0.0" lower="-0.9599310885968811" upper="0.9599310885968811" velocity="0.0"/>
   </joint>
-  <joint name="left_pris1" type="prismatic">
+  <joint name="gripper" type="prismatic">
     <parent link="link8"/>
     <child link="link_left_jaw"/>
     <origin rpy="1.570796326795101 -0.014066001454929162 0.00875904933542146" xyz="-0.1071 0.0768568 0.0132053"/>
     <axis xyz="0 0 -1"/>
     <limit effort="0.0" lower="-0.0451" upper="0.0" velocity="0.1"/>
   </joint>
-  <joint name="right_pris2" type="prismatic">
+  <joint name="gripper_mimic" type="prismatic">
     <parent link="link8"/>
     <child link="link_right_jaw"/>
     <origin rpy="1.570796326794883 -0.014066001454927403 0.008759049336290027" xyz="-0.10571 -0.0781373 0.0132053"/>
     <axis xyz="0 0 -1"/>
     <limit effort="0.0" lower="-0.0451" upper="0.0" velocity="0.0"/>
-    <mimic joint="left_pris1" multiplier="-1.0" offset="0.0"/>
+    <mimic joint="gripper" multiplier="-1.0" offset="0.0"/>
   </joint>
   <joint name="virtual_gripper_center" type="fixed">
     <parent link="link8"/>

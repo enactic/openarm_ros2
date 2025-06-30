@@ -135,19 +135,19 @@
                 </state_interface>
                 <state_interface name="velocity"/>
             </joint>
-            <joint name="left_left_pris1">
+            <joint name="left_gripper">
                 <command_interface name="position"/>
                 <command_interface name="velocity"/>
                 <state_interface name="position">
-                  <param name="initial_value">${initial_positions['left_left_pris1']}</param>
+                  <param name="initial_value">${initial_positions['left_gripper']}</param>
                 </state_interface>
                 <state_interface name="velocity"/>
             </joint>
-            <joint name="right_left_pris1">
+            <joint name="right_gripper">
                 <command_interface name="position"/>
                 <command_interface name="velocity"/>
                 <state_interface name="position">
-                  <param name="initial_value">${initial_positions['right_left_pris1']}</param>
+                  <param name="initial_value">${initial_positions['right_gripper']}</param>
                 </state_interface>
                 <state_interface name="velocity"/>
             </joint>

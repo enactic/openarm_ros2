@@ -31,6 +31,10 @@
         <xacro:property name="reflect" value="${1 if side=='right' else -1}"/>
         <xacro:property name="rotate" value="${0 if side=='right' else pi}"/>
 
+        <xacro:include filename="$(find openarm_description)/urdf/openarm.ros2_control.xacro" />
+        <xacro:arg name="initial_positions_file" default="$(find openarm_description)/config/initial_positions.yaml" />
+        <xacro:openarm_ros2_control name="OpenArmHW" prefix="${prefix}" initial_positions_file="$(arg initial_positions_file)" can_device="${can_device}" websocket_port="${1337 if side=='right' else 1338}"/>
+
         <link name="${prefix}dummy_link"/>
 
         <joint name="${prefix}dummy_joint" type="fixed">
@@ -288,20 +292,21 @@
             <axis xyz="0 0 -1"/>
             <limit effort="0.0" lower="${-pi * 11.0 / 36.0}" upper="${pi * 11.0 / 36.0}" velocity="0.0"/>
         </joint>
-        <joint name="${prefix}left_pris1" type="prismatic">
+        <!-- this is used as the actuator interface, the other gripper mimics motion -->
+        <joint name="${prefix}gripper" type="prismatic">
             <parent link="${prefix}link8"/>
             <child link="${prefix}link_left_jaw"/>
             <origin rpy="1.570796326795101 -0.014066001454929162 0.00875904933542146" xyz="-0.1071 0.0768568 0.0132053"/>
             <axis xyz="0 0 -1"/>
             <limit effort="0.0" lower="-0.0451" upper="0.0" velocity="0.1"/>
         </joint>
-        <joint name="${prefix}right_pris2" type="prismatic">
+        <joint name="${prefix}gripper_mimic" type="prismatic">
             <parent link="${prefix}link8"/>
             <child link="${prefix}link_right_jaw"/>
             <origin rpy="1.570796326794883 -0.014066001454927403 0.008759049336290027" xyz="-0.10571 -0.0781373 0.0132053"/>
             <axis xyz="0 0 -1"/>
             <limit effort="0.0" lower="-0.0451" upper="0.0" velocity="0.0"/>
-            <mimic joint="${prefix}left_pris1" multiplier="-1.0" offset="0.0"/>
+            <mimic joint="${prefix}gripper" multiplier="-1.0" offset="0.0"/>
         </joint>
         <joint name="${prefix}virtual_gripper_center" type="fixed">
             <parent link="${prefix}link8"/>

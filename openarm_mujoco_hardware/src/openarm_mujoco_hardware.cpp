@@ -19,7 +19,7 @@ hardware_interface::CallbackReturn MujocoHardware::on_init(const hardware_interf
     else {
         websocket_port_ = kDefaultWebsocketPort;
     }
-    std::cout << "websocket port: " << websocket_port_ << std::endl;
+    std::cerr << "websocket port: " << websocket_port_ << std::endl;
     address_ = boost::asio::ip::make_address("127.0.0.1");
     endpoint_ = boost::asio::ip::tcp::endpoint(address_, websocket_port_);
 
@@ -98,6 +98,7 @@ hardware_interface::CallbackReturn MujocoHardware::on_cleanup(const rclcpp_lifec
 }
 
 hardware_interface::CallbackReturn MujocoHardware::on_shutdown(const rclcpp_lifecycle::State& /*previous_state*/) {
+    clear_cmd_torque();
     ioc_.stop();
     if(ioc_thread_.joinable()) ioc_thread_.join();
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -107,11 +108,24 @@ hardware_interface::CallbackReturn MujocoHardware::on_activate(const rclcpp_life
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
+void MujocoHardware::clear_cmd_torque() {
+    nlohmann::json cmd_msg;
+    nlohmann::json& cmd = cmd_msg["cmd"];
+    for(size_t i = 0; i < cmd_qpos_.size(); ++i) {
+        cmd[info_.joints[i].name] = 0.0;
+    }
+    if (ws_session_) {
+        ws_session_->send_json(cmd_msg);
+    }
+}
+
 hardware_interface::CallbackReturn MujocoHardware::on_deactivate(const rclcpp_lifecycle::State& /*previous_state*/) {
+    clear_cmd_torque();
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn MujocoHardware::on_error(const rclcpp_lifecycle::State& /*previous_state*/) {
+    clear_cmd_torque();
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 std::vector<hardware_interface::StateInterface> MujocoHardware::export_state_interfaces() {
@@ -152,11 +166,11 @@ hardware_interface::return_type MujocoHardware::write(const rclcpp::Time & /*tim
 
         double cmd_torque = KP_[i] * qpos_error + KD_[i] * qvel_error + qtau_ff;
 
-        if (cmd_torque > MAX_MOTOR_TORQUE) {
-            cmd_torque = MAX_MOTOR_TORQUE;
-        } else if (cmd_torque < -MAX_MOTOR_TORQUE) {
-            cmd_torque = -MAX_MOTOR_TORQUE;
-        }
+        // if (cmd_torque > MAX_MOTOR_TORQUE) {
+        //     cmd_torque = MAX_MOTOR_TORQUE;
+        // } else if (cmd_torque < -MAX_MOTOR_TORQUE) {
+        //     cmd_torque = -MAX_MOTOR_TORQUE;
+        // }
         cmd[info_.joints[i].name] = cmd_torque;
     }
     if (ws_session_) {
@@ -171,7 +185,7 @@ hardware_interface::return_type MujocoHardware::write(const rclcpp::Time & /*tim
 
 
 WebSocketSession::WebSocketSession(boost::asio::ip::tcp::socket socket, MujocoHardware* hw)
-    : ws_(std::move(socket)), hw_(hw) {}
+    : ws_(std::move(socket)), hw_(hw), write_in_progress_(false) {}
 
 std::shared_ptr<WebSocketSession> WebSocketSession::create(boost::asio::ip::tcp::socket socket, MujocoHardware* hw){
     return std::make_shared<WebSocketSession>(std::move(socket), hw);
@@ -179,20 +193,38 @@ std::shared_ptr<WebSocketSession> WebSocketSession::create(boost::asio::ip::tcp:
 
 void WebSocketSession::send_json(const nlohmann::json& j) {
     std::shared_ptr<std::string> msg = std::make_shared<std::string>(j.dump());
-    boost::asio::post(
-        ws_.get_executor(),
-        [self = shared_from_this(), msg]() {
-            self->ws_.async_write(
-                boost::asio::buffer(*msg),
-                [self, msg](boost::beast::error_code ec, std::size_t)
-                {
-                    if (ec) {
-                        std::cerr << "send error: " << ec.message() << std::endl;
-                    } 
-                }
-            );
+    boost::asio::post(ws_.get_executor(),
+        [self = shared_from_this(), msg] {
+            self->send_queue_.push_back(msg);
+            if (!self->write_in_progress_) {
+                self->flush();
+            }
         }
     );
+}
+
+void WebSocketSession::flush(){
+    if (send_queue_.empty()) {
+        write_in_progress_ = false;
+        return;
+    }
+    
+    write_in_progress_ = true;
+    auto msg = send_queue_.front();
+    send_queue_.pop_front();
+
+    ws_.async_write(
+        boost::asio::buffer(*msg),
+        [self = shared_from_this(), msg](boost::beast::error_code ec, std::size_t)
+        {
+            if (ec) {
+                std::cerr << "send error: " << ec.message() << std::endl;
+            }
+            self->write_in_progress_ = false;
+            self->flush();
+        }
+    );
+    
 }
 
 

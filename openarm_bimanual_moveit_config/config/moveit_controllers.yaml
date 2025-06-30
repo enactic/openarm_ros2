@@ -50,12 +50,12 @@ moveit_simple_controller_manager:
   left_gripper_controller:
     type: GripperCommand
     joints:
-      - left_left_pris1
+      - left_gripper
     action_ns: gripper_cmd
     default: true
   right_gripper_controller:
     type: GripperCommand
     joints:
-      - right_left_pris1
+      - right_gripper
     action_ns: gripper_cmd
     default: true

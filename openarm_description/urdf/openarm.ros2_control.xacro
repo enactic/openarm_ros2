@@ -89,11 +89,17 @@
                 <state_interface name="velocity"/>
                 <!-- <state_interface name="effort"/> -->
             </joint>
-            <joint name="${prefix}left_pris1">
+            <joint name="${prefix}gripper">
                 <command_interface name="position"/>
                 <state_interface name="position"/>
                 <state_interface name="velocity"/>
             </joint>
+
+            <!-- <joint name="${prefix}gripper_mimic">
+                <state_interface name="position">
+                  <param name="initial_value">${initial_positions['gripper_mimic']}</param>
+                </state_interface>
+            </joint> -->
 
         </ros2_control>
     </xacro:macro>

@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <mutex>
+#include <deque>
 
 namespace openarm_mujoco_hardware {
 
@@ -37,13 +38,17 @@ public:
     friend class WebSocketSession;
 private:
     static constexpr size_t TOTAL_DOF = 8;  // Total degrees of freedom, including gripper
-    inline static constexpr std::array<double, TOTAL_DOF> KP_ = {180.0, 180.0, 40.0, 355.0,
-                                                 5.0,  5.0,  5.0,  0.5};
+    inline static constexpr std::array<double, TOTAL_DOF> KP_ = {3980.0, 880.0, 540.0, 2655.0,
+                                                 115.0,  115.0,  115.0,  25.0};
+    // inline static constexpr std::array<double, TOTAL_DOF> KD_ = {
+    //     15.0, 25.0, 10.0, 15.0,
+    //     3.0,  3.0, 3.0, 0.3
+    // };
     inline static constexpr std::array<double, TOTAL_DOF> KD_ = {
-        45.0, 45.0, 10.0, 35.0,
-        3.0,  3.0, 3.0, 0.1
+        0.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0
     };
-    static constexpr double MAX_MOTOR_TORQUE = 20.0;
+    static constexpr double MAX_MOTOR_TORQUE = 100.0;
 
     std::vector<double> qpos_;
     std::vector<double> qvel_;
@@ -54,6 +59,8 @@ private:
     std::vector<double> cmd_qtau_ff_;
 
     std::mutex state_mutex_;
+
+    void clear_cmd_torque();
 
     // websocket connection to mujoco
     boost::asio::ip::tcp::endpoint endpoint_;
@@ -81,15 +88,19 @@ public:
 
     void send_json(const nlohmann::json& j);
 private:
-    
-    void do_handshake();
-    void on_accept(boost::beast::error_code ec);
-    void do_read();
-    void on_read(boost::beast::error_code ec, std::size_t);
 
-    boost::beast::websocket::stream<boost::asio::ip::tcp::socket> ws_;
-    boost::beast::flat_buffer buffer_;
-    MujocoHardware* hw_;
+
+void flush();
+void do_handshake();
+void on_accept(boost::beast::error_code ec);
+void do_read();
+void on_read(boost::beast::error_code ec, std::size_t);
+
+boost::beast::websocket::stream<boost::asio::ip::tcp::socket> ws_;
+boost::beast::flat_buffer buffer_;
+MujocoHardware* hw_;
+std::deque<std::shared_ptr<std::string>> send_queue_;
+bool write_in_progress_;
 };
 };
 
