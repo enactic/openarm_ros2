@@ -94,7 +94,7 @@ def generate_launch_description():
             ),
             launch.actions.DeclareLaunchArgument(
                 name="gui",
-                default_value="True",
+                default_value="true",
                 description="Flag to enable joint_state_publisher_gui",
             ),
             launch.actions.DeclareLaunchArgument(

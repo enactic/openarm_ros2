@@ -17,7 +17,9 @@
 
 #include <string>
 
+#include "rclcpp/rclcpp.hpp"
 #include "hardware_interface/resource_manager.hpp"
+
 #include "ros2_control_test_assets/components_urdfs.hpp"
 #include "ros2_control_test_assets/descriptions.hpp"
 
@@ -124,5 +126,9 @@ class TestOpenArmHW : public ::testing::Test {
 TEST_F(TestOpenArmHW, load_openarm_hardware_7dof) {
   auto urdf = ros2_control_test_assets::urdf_head + openarm_hardware_7dof_ +
               ros2_control_test_assets::urdf_tail;
-  ASSERT_NO_THROW(hardware_interface::ResourceManager rm(urdf));
+  ASSERT_NO_THROW({
+    auto logger = rclcpp::get_logger("test_logger");
+    auto clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
+    hardware_interface::ResourceManager rm(urdf, clock, logger, true, 0);
+  });
 }
