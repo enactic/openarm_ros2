@@ -231,17 +231,19 @@ void WebSocketSession::on_read(boost::beast::error_code ec, std::size_t bytes_tr
         std::lock_guard<std::mutex> (hw_->state_mutex_);
         try{
             nlohmann::json j = nlohmann::json::parse(data);
-            const std::string key = j.value("key", "");
-            if(key == "state"){
-                const nlohmann::json& val = j.at("val");
+            // if "state" key exists, update the hardware state
+            if (j.contains("state")) {
+                const nlohmann::json& state = j["state"];
                 for (size_t i = 0; i < hw_->info_.joints.size(); ++i) {
-                    const std::string& joint = hw_->info_.joints[i].name;
-                    const nlohmann::json& joint_data = val.at(joint);
-                    if (joint_data.contains("qpos")) {
-                        hw_->qpos_[i] = joint_data.at("qpos").get<double>();
-                    }
-                    if (joint_data.contains("qvel")) {
-                        hw_->qvel_[i] = joint_data.at("qvel").get<double>();
+                    const auto& joint = hw_->info_.joints[i];
+                    if (state.contains(joint.name)) {
+                        const nlohmann::json& joint_data = state.at(joint.name);
+                        if (joint_data.contains("qpos")) {
+                            hw_->qpos_[i] = joint_data.at("qpos").get<double>();
+                        }
+                        if (joint_data.contains("qvel")) {
+                            hw_->qvel_[i] = joint_data.at("qvel").get<double>();
+                        }
                     }
                 }
             }
