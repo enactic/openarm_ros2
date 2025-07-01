@@ -38,12 +38,8 @@ public:
     friend class WebSocketSession;
 private:
     static constexpr size_t TOTAL_DOF = 8;  // Total degrees of freedom, including gripper
-    inline static constexpr std::array<double, TOTAL_DOF> KP_ = {3980.0, 880.0, 540.0, 2655.0,
+    inline static constexpr std::array<double, TOTAL_DOF> KP_ = {180.0, 580.0, 140.0, 155.0,
                                                  115.0,  115.0,  115.0,  25.0};
-    // inline static constexpr std::array<double, TOTAL_DOF> KD_ = {
-    //     15.0, 25.0, 10.0, 15.0,
-    //     3.0,  3.0, 3.0, 0.3
-    // };
     inline static constexpr std::array<double, TOTAL_DOF> KD_ = {
         0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 0.0, 0.0
