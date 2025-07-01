@@ -33,9 +33,4 @@ install(DIRECTORY launch meshes rviz urdf worlds
   DESTINATION share/${PROJECT_NAME}
 )
 
-install(PROGRAMS
-  scripts/joint_state_merger.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
 ament_package()
