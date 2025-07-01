@@ -41,8 +41,8 @@ private:
     inline static constexpr std::array<double, TOTAL_DOF> KP_ = {180.0, 180.0, 140.0, 155.0,
                                                  115.0,  115.0,  115.0,  25.0};
     inline static constexpr std::array<double, TOTAL_DOF> KD_ = {
-        0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0
+        0.01, 0.01, 0.01, 0.01,
+        0.01, 0.01, 0.01, 0.01
     };
     static constexpr double MAX_MOTOR_TORQUE = 100.0;
 
