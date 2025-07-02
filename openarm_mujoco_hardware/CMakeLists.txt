@@ -35,6 +35,10 @@ pluginlib_export_plugin_description_file(hardware_interface openarm_mujoco_hardw
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
 
+
+target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
+
+
 install(
   TARGETS ${PROJECT_NAME}
   DESTINATION lib
