@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "openarm_mujoco_hardware/openarm_mujoco_hardware.hpp"
+#include <openarm_mujoco_hardware/openarm_mujoco_hardware.hpp>
 
 namespace openarm_mujoco_hardware {
 
