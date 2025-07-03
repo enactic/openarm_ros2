@@ -38,7 +38,7 @@ target_include_directories(
   include
 )
 
-ament_target_dependencies(${PROJECT_NAME}
+ament_target_dependencies(${PROJECT_NAME} PUBLIC
   hardware_interface
   pluginlib
   rclcpp
@@ -47,9 +47,7 @@ ament_target_dependencies(${PROJECT_NAME}
 
 pluginlib_export_plugin_description_file(hardware_interface openarm_mujoco_hardware.xml)
 
-target_include_directories(${PROJECT_NAME} PRIVATE Boost::headers)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(${PROJECT_NAME} PRIVATE Boost::headers nlohmann_json::nlohmann_json)
 
 
 install(

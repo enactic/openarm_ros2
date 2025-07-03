@@ -1,4 +1,4 @@
-FROM ghcr.io/thomasonzhou/ros-humble-dev
+FROM ghcr.io/reazon-research/ros2:humble
 
 COPY ros_entrypoint.sh /ros_entrypoint.sh
 RUN . /opt/ros/humble/setup.sh && \
