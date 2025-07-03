@@ -4,7 +4,7 @@ This package provides a ros2_control hardware interface for simulating OpenArm u
 
 ## Usage
 
-Certain OpenArm packages have been configured to use this interface by specifying the `hardware_type` flag. 
+Certain OpenArm packages have been configured to use this interface by specifying the `hardware_type` flag.
 This flag defaults to `real`, which assumes the use of physical hardware.
 Setting the flag to `mock` uses an interface that writes commands to states directly (with some delays).
 Setting the flag to `sim` uses the MuJoCo hardware interface.
@@ -19,6 +19,8 @@ ros2 launch -d openarm_bimanual_moveit_config demo.launch.py hardware_type:=sim
 ```
 
 *It may be necessary to install the nlohmann-json-dev library before building*
+
+Please note that running multiple instances of the website will cause conflicting signals. Future configurations will allow for multiple instances to run simultaneously.
 
 ## Configuration
 
