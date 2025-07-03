@@ -81,7 +81,7 @@ class MujocoHardware : public hardware_interface::SystemInterface {
   std::shared_ptr<WebSocketSession> ws_session_;
   void start_accept();
 
-  static constexpr const char kMuJoCoWebSocketURL_ =
+  static const std::string kMuJoCoWebSocketURL_ =
       "https://thomasonzhou.github.io/mujoco_anywhere/";
 };
 
