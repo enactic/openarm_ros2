@@ -73,7 +73,7 @@ class MujocoHardware : public hardware_interface::SystemInterface {
   boost::asio::ip::tcp::endpoint endpoint_;
   boost::asio::ip::address address_;
   static constexpr double kDefaultWebsocketPort = 1337;
-  double websocket_port_;
+  unsigned short websocket_port_;
   boost::asio::io_context ioc_{};
   boost::asio::ip::tcp::acceptor acceptor_{ioc_};
   std::thread ioc_thread_;
