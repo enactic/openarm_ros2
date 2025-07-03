@@ -29,14 +29,26 @@ def generate_launch_description():
             description="Hardware interface type: 'real', 'sim' (MuJoCo), or 'mock'",
         )
     )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "mock_sensor_commands",
+            default_value="false",
+            description="Enable writable sensor interfaces when using mock hardware",
+        )
+    )
 
     hardware_type = LaunchConfiguration("hardware_type")
+    mock_sensor_commands = LaunchConfiguration("mock_sensor_commands")
 
     moveit_config = (
-        MoveItConfigsBuilder("openarm_bimanual", package_name="openarm_bimanual_moveit_config")
+        MoveItConfigsBuilder("openarm_bimanual",
+                             package_name="openarm_bimanual_moveit_config")
         .robot_description(
             file_path="config/openarm_bimanual.urdf.xacro",
-            mappings={"hardware_type": hardware_type},
+            mappings={
+                "hardware_type": hardware_type,
+                "mock_sensor_commands": mock_sensor_commands,
+            },
         )
         .to_moveit_configs()
     )

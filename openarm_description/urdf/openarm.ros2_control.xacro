@@ -18,6 +18,14 @@
     <xacro:macro name="openarm_ros2_control" params="name initial_positions_file websocket_port='' prefix:='' can_device='can0' hardware_type='real' mock_sensor_commands='{}'">
         <xacro:property name="initial_positions" value="${xacro.load_yaml(initial_positions_file)['initial_positions']}"/>
 
+        <!-- Set default websocket ports based on prefix if not provided -->
+        <xacro:if value="${hardware_type == 'sim' and websocket_port == ''}">
+            <xacro:property name="computed_websocket_port" value="${'1337' if prefix == 'right_' or prefix == '' else '1338'}"/>
+        </xacro:if>
+        <xacro:unless value="${hardware_type == 'sim' and websocket_port == ''}">
+            <xacro:property name="computed_websocket_port" value="${websocket_port}"/>
+        </xacro:unless>
+
         <ros2_control name="${prefix}${name}" type="system">
             <hardware>
                 <xacro:if value="${hardware_type == 'mock'}">
@@ -27,7 +35,9 @@
                 <xacro:if value="${hardware_type == 'sim'}">
                     <plugin>openarm_mujoco_hardware/MujocoHardware</plugin>
                     <param name="prefix">${prefix}</param>
-                    <param name="websocket_port">${websocket_port}</param>
+                    <xacro:if value="${computed_websocket_port != ''}">
+                        <param name="websocket_port">${computed_websocket_port}</param>
+                    </xacro:if>
                 </xacro:if>
                 <xacro:if value="${hardware_type == 'real'}">
                     <plugin>openarm_hardware/OpenArmHW</plugin>
