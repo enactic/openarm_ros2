@@ -34,7 +34,7 @@ hardware_interface::CallbackReturn MujocoHardware::on_init(
     websocket_port_ = kDefaultWebsocketPort;
   }
   std::cerr << "websocket port: " << websocket_port_ << std::endl;
-  address_ = boost::asio::ip::make_address("127.0.0.1");
+  address_ = boost::asio::ip::make_address("0.0.0.0");
   endpoint_ = boost::asio::ip::tcp::endpoint(address_, websocket_port_);
 
   // allocate space for joint states
