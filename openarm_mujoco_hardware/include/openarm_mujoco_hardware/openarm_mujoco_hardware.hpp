@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef MUJOCO_HARDWARE_INTERFACE_HPP_
-#define MUJOCO_HARDWARE_INTERFACE_HPP_
+#pragma once
 
 #include <boost/asio.hpp>
 #include <boost/beast/core.hpp>
@@ -122,11 +121,3 @@ class WebSocketSession : public std::enable_shared_from_this<WebSocketSession> {
   bool write_in_progress_;
 };
 };  // namespace openarm_mujoco_hardware
-
-#endif  // MUJOCO_HARDWARE_INTERFACE_HPP_
-
-// namespace net   = boost::asio;            // from <boost/asio.hpp>
-// namespace beast = boost::beast;           // from <boost/beast.hpp>
-// namespace ws    = beast::websocket;       // from <boost/beast/websocket.hpp>
-// namespace json  = boost::json;            // from <boost/json.hpp>
-// using tcp       = net::ip::tcp;           // from <boost/asio/ip/tcp.hpp>

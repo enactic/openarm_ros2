@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.22)
 project(openarm_mujoco_hardware)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -47,10 +47,9 @@ ament_target_dependencies(${PROJECT_NAME}
 
 pluginlib_export_plugin_description_file(hardware_interface openarm_mujoco_hardware.xml)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE Boost::headers)
 
-
-target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
 
 install(
