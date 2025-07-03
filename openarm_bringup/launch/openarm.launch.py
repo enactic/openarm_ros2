@@ -23,7 +23,12 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, RegisterEventHandler, TimerAction
 from launch.event_handlers import OnProcessExit, OnProcessStart
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import (
+    Command,
+    FindExecutable,
+    LaunchConfiguration,
+    PathJoinSubstitution,
+)
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -89,8 +94,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "robot_controller",
             default_value="joint_trajectory_controller",
-            choices=["forward_position_controller",
-                     "joint_trajectory_controller"],
+            choices=["forward_position_controller", "joint_trajectory_controller"],
             description="Robot controller to start.",
         )
     )
@@ -111,8 +115,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare(description_package),
-                 "urdf", description_file]
+                [FindPackageShare(description_package), "urdf", description_file]
             ),
             " ",
             "prefix:=",
@@ -133,8 +136,7 @@ def generate_launch_description():
         [FindPackageShare(runtime_config_package), "config", controllers_file]
     )
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare(description_package), "rviz",
-         "robot_description.rviz"]
+        [FindPackageShare(description_package), "rviz", "openarm.rviz"]
     )
 
     control_node = Node(
@@ -160,8 +162,11 @@ def generate_launch_description():
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_state_broadcaster",
-                   "--controller-manager", "/controller_manager"],
+        arguments=[
+            "joint_state_broadcaster",
+            "--controller-manager",
+            "/controller_manager",
+        ],
     )
 
     robot_controller_names = [robot_controller]
@@ -182,21 +187,22 @@ def generate_launch_description():
             Node(
                 package="controller_manager",
                 executable="spawner",
-                arguments=[controller, "-c",
-                           "/controller_manager", "--inactive"],
+                arguments=[controller, "-c", "/controller_manager", "--inactive"],
             )
         ]
 
     # Delay loading and activation of `joint_state_broadcaster` after start of ros2_control_node
-    delay_joint_state_broadcaster_spawner_after_ros2_control_node = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=control_node,
-            on_start=[
-                TimerAction(
-                    period=3.0,
-                    actions=[joint_state_broadcaster_spawner],
-                ),
-            ],
+    delay_joint_state_broadcaster_spawner_after_ros2_control_node = (
+        RegisterEventHandler(
+            event_handler=OnProcessStart(
+                target_action=control_node,
+                on_start=[
+                    TimerAction(
+                        period=3.0,
+                        actions=[joint_state_broadcaster_spawner],
+                    ),
+                ],
+            )
         )
     )
 

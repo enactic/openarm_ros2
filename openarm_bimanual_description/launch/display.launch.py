@@ -25,9 +25,9 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
     pkg_share = Path(
-        launch_ros.substitutions.FindPackageShare(package="openarm_bimanual_description").find(
-            "openarm_bimanual_description"
-        )
+        launch_ros.substitutions.FindPackageShare(
+            package="openarm_bimanual_description"
+        ).find("openarm_bimanual_description")
     )
     default_model_path = pkg_share / "urdf/openarm_bimanual.urdf.xacro"
     default_rviz_config_path = pkg_share / "rviz/robot_description.rviz"

@@ -38,7 +38,8 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration("use_sim_time")
     use_sim_time_launch_arg = DeclareLaunchArgument(
-        name="use_sim_time", default_value="false")
+        name="use_sim_time", default_value="false"
+    )
 
     robot_state_publisher_node = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -63,8 +64,11 @@ def generate_launch_description():
     }
 
     controller_params = PathJoinSubstitution(
-        [FindPackageShare(package="openarm_bimanual_bringup"),
-         "config", "controllers.yaml"]
+        [
+            FindPackageShare(package="openarm_bimanual_bringup"),
+            "config",
+            "controllers.yaml",
+        ]
     )
 
     controller_manager = Node(

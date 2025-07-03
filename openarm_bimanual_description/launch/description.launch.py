@@ -25,15 +25,16 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
     pkg_share = Path(
-        launch_ros.substitutions.FindPackageShare(package="openarm_bimanual_description").find(
-            "openarm_bimanual_description"
-        )
+        launch_ros.substitutions.FindPackageShare(
+            package="openarm_bimanual_description"
+        ).find("openarm_bimanual_description")
     )
     default_model_path = pkg_share / "urdf/openarm_bimanual.urdf.xacro"
 
     use_sim_time = LaunchConfiguration("use_sim_time")
     use_sim_time_launch_arg = DeclareLaunchArgument(
-        "use_sim_time", default_value="true")
+        "use_sim_time", default_value="true"
+    )
 
     robot_state_publisher_node = launch_ros.actions.Node(
         package="robot_state_publisher",
