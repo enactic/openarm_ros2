@@ -70,7 +70,7 @@ private:
     std::shared_ptr<WebSocketSession> ws_session_;
     void start_accept();
 
-
+    static constexpr const char kMuJoCoWebSocketURL_ = "https://thomasonzhou.github.io/mujoco_anywhere/";
 };
 
 class WebSocketSession : public std::enable_shared_from_this<WebSocketSession> {

@@ -159,7 +159,7 @@
         <joint name="left_rev1" value="0.1"/>
         <joint name="left_rev2" value="0"/>
         <joint name="left_rev3" value="0"/>
-        <joint name="left_rev4" value="2.7"/>
+        <joint name="left_rev4" value="2.5"/>
         <joint name="left_rev5" value="0"/>
         <joint name="left_rev6" value="0"/>
         <joint name="left_rev7" value="0"/>
@@ -167,7 +167,7 @@
         <joint name="right_rev1" value="-0.1"/>
         <joint name="right_rev2" value="0"/>
         <joint name="right_rev3" value="0"/>
-        <joint name="right_rev4" value="2.7"/>
+        <joint name="right_rev4" value="2.5"/>
         <joint name="right_rev5" value="0"/>
         <joint name="right_rev6" value="0"/>
         <joint name="right_rev7" value="0"/>

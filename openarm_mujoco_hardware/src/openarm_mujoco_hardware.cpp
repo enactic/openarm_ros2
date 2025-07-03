@@ -176,7 +176,7 @@ hardware_interface::return_type MujocoHardware::write(const rclcpp::Time & /*tim
     if (ws_session_) {
         ws_session_->send_json(cmd_msg);
     } else {
-        std::cerr << "MuJoCo WebSocket session is not active." << std::endl;
+        std::cerr << "MuJoCo WebSocket session is not active, please connect at " << kMuJoCoWebSocketURL_ << std::endl;
     }
 
     return hardware_interface::return_type::OK;
