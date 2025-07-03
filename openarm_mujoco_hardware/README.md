@@ -9,7 +9,6 @@ This flag defaults to `real`, which assumes the use of physical hardware.
 Setting the flag to `mock` uses an interface that writes commands to states directly (with some delays).
 Setting the flag to `sim` uses the MuJoCo hardware interface.
 
-
 For example, to use MoveIt2 with simulated bimanual hardware, first run MuJoCo by visiting:
 
 [github.com/thomasonzhou/mujoco_anywhere](https://github.com/thomasonzhou/mujoco_anywhere)
@@ -19,6 +18,7 @@ Then run the original command with the `hardware_type` flag:
 ros2 launch -d openarm_bimanual_moveit_config demo.launch.py hardware_type:=sim
 ```
 
+*It may be necessary to install the nlohmann-json-dev library before building*
 
 ## Configuration
 
