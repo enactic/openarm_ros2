@@ -33,7 +33,7 @@
 
         <xacro:include filename="$(find openarm_description)/urdf/openarm.ros2_control.xacro" />
         <xacro:arg name="initial_positions_file" default="$(find openarm_description)/config/initial_positions.yaml" />
-        <xacro:openarm_ros2_control name="OpenArmHW" prefix="${prefix}" initial_positions_file="$(arg initial_positions_file)" can_device="${can_device}" websocket_port="${1337 if side=='right' else 1338}"/>
+        <xacro:openarm_ros2_control name="OpenArmHW" prefix="${prefix}" initial_positions_file="$(arg initial_positions_file)" can_device="${can_device}" websocket_port="${1337 if side=='right' else 1338}" hardware_type="${hardware_type}"/>
 
         <link name="${prefix}dummy_link"/>
 

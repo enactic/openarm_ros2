@@ -14,10 +14,41 @@
 
 from moveit_configs_utils import MoveItConfigsBuilder
 from moveit_configs_utils.launches import generate_demo_launch
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution, FindExecutable
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    moveit_config = MoveItConfigsBuilder(
-        "openarm_bimanual", package_name="openarm_bimanual_moveit_config"
-    ).to_moveit_configs()
-    return generate_demo_launch(moveit_config)
+    declared_arguments = []
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "hardware_type",
+            default_value="real",
+            description="Hardware interface type: 'real', 'sim' (MuJoCo), or 'mock'",
+        )
+    )
+
+    hardware_type = LaunchConfiguration("hardware_type")
+
+    moveit_config = (
+        MoveItConfigsBuilder("openarm_bimanual", package_name="openarm_bimanual_moveit_config")
+        .robot_description(
+            file_path="config/openarm_bimanual.urdf.xacro",
+            mappings={"hardware_type": hardware_type},
+        )
+        .to_moveit_configs()
+    )
+
+    demo_ld = generate_demo_launch(moveit_config)
+
+    ld = LaunchDescription()
+
+    for arg in declared_arguments:
+        ld.add_action(arg)
+
+    for entity in demo_ld.entities:
+        ld.add_action(entity)
+
+    return ld

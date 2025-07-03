@@ -46,7 +46,10 @@ def generate_launch_description():
                 ),
             ]
         ),
-        launch_arguments=dict(use_sim_time=use_sim_time).items(),
+        launch_arguments=dict(
+            use_sim_time=use_sim_time,
+            hardware_type=LaunchConfiguration("hardware_type")
+        ).items(),
     )
 
     joint_state_publisher_node = launch_ros.actions.Node(
@@ -106,6 +109,11 @@ def generate_launch_description():
                 name="rvizconfig",
                 default_value=str(default_rviz_config_path),
                 description="Absolute path to rviz config file",
+            ),
+            launch.actions.DeclareLaunchArgument(
+                name="hardware_type",
+                default_value="real",
+                description="Hardware interface type: 'real', 'sim' (MuJoCo), or 'mock'",
             ),
             joint_state_publisher_node,
             joint_state_publisher_gui_node,

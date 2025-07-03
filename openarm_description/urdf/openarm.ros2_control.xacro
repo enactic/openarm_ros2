@@ -15,23 +15,25 @@
 　limitations under the License.
 -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:macro name="openarm_ros2_control" params="name initial_positions_file websocket_port='' prefix:='' can_device='can0' use_mock_hardware='false' mock_sensor_commands='{}'">
+    <xacro:macro name="openarm_ros2_control" params="name initial_positions_file websocket_port='' prefix:='' can_device='can0' hardware_type='real' mock_sensor_commands='{}'">
         <xacro:property name="initial_positions" value="${xacro.load_yaml(initial_positions_file)['initial_positions']}"/>
 
         <ros2_control name="${prefix}${name}" type="system">
             <hardware>
-                <xacro:if value="${use_mock_hardware}">
+                <xacro:if value="${hardware_type == 'mock'}">
                     <plugin>mock_components/GenericSystem</plugin>
                     <param name="mock_sensor_commands">${mock_sensor_commands}</param>
                 </xacro:if>
-                <xacro:unless value="${use_mock_hardware}">
-                    <plugin>openarm_hardware/OpenArmHW</plugin>
+                <xacro:if value="${hardware_type == 'sim'}">
+                    <plugin>openarm_mujoco_hardware/MujocoHardware</plugin>
                     <param name="prefix">${prefix}</param>
                     <param name="websocket_port">${websocket_port}</param>
-                    <!-- <plugin>openarm_hardware/OpenArmHW</plugin>
+                </xacro:if>
+                <xacro:if value="${hardware_type == 'real'}">
+                    <plugin>openarm_hardware/OpenArmHW</plugin>
                     <param name="prefix">${prefix}</param>
-                    <param name="can_device">${can_device}</param> -->
-                </xacro:unless>
+                    <param name="can_device">${can_device}</param>
+                </xacro:if>
             </hardware>
             <joint name="${prefix}rev1">
                 <command_interface name="position"/>

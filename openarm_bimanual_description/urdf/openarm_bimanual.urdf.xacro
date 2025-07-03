@@ -15,6 +15,7 @@
 　limitations under the License.
 -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm_bimanual">
+  <xacro:arg name="hardware_type" default="real" />
 
   <!-- Robot description parameters -->
   <xacro:arg name="prefix" default="" />

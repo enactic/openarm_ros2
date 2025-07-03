@@ -56,6 +56,11 @@ def generate_launch_description():
         default_value="can0",
         description="CAN device identifier to use",
     )
+    hardware_type_arg = DeclareLaunchArgument(
+        name="hardware_type",
+        default_value="real",
+        description="Hardware interface type: 'real', 'sim' (MuJoCo), or 'mock'",
+    )
 
     use_sim_time = LaunchConfiguration("use_sim_time")
     use_sim_time_launch_arg = DeclareLaunchArgument(
@@ -74,6 +79,8 @@ def generate_launch_description():
             LaunchConfiguration("prefix"),
             " can_device:=",
             LaunchConfiguration("can_device"),
+            " hardware_type:=",
+            LaunchConfiguration("hardware_type"),
         ]
     )
 
@@ -98,6 +105,7 @@ def generate_launch_description():
             zero_pos_arg,
             prefix_arg,
             can_device_arg,
+            hardware_type_arg,
             use_sim_time_launch_arg,
             robot_state_publisher_node,
         ]
