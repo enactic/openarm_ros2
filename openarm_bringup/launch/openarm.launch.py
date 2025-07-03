@@ -77,9 +77,9 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "use_mock_hardware",
-            default_value="false",
-            description="Start robot with mock hardware mirroring command to its states.",
+            "hardware_type",
+            default_value="real",
+            description="Hardware interface type: 'real', 'sim' (MuJoCo), or 'mock'",
         )
     )
     declared_arguments.append(
@@ -87,14 +87,15 @@ def generate_launch_description():
             "mock_sensor_commands",
             default_value="false",
             description="Enable mock command interfaces for sensors used for simple simulations. \
-            Used only if 'use_mock_hardware' parameter is true.",
+            Used only if 'hardware_type' parameter is 'mock'.",
         )
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "robot_controller",
             default_value="joint_trajectory_controller",
-            choices=["forward_position_controller", "joint_trajectory_controller"],
+            choices=["forward_position_controller",
+                     "joint_trajectory_controller"],
             description="Robot controller to start.",
         )
     )
@@ -105,7 +106,7 @@ def generate_launch_description():
     description_package = LaunchConfiguration("description_package")
     description_file = LaunchConfiguration("description_file")
     prefix = LaunchConfiguration("prefix")
-    use_mock_hardware = LaunchConfiguration("use_mock_hardware")
+    hardware_type = LaunchConfiguration("hardware_type")
     mock_sensor_commands = LaunchConfiguration("mock_sensor_commands")
     robot_controller = LaunchConfiguration("robot_controller")
 
@@ -115,14 +116,15 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare(description_package), "urdf", description_file]
+                [FindPackageShare(description_package),
+                 "urdf", description_file]
             ),
             " ",
             "prefix:=",
             prefix,
             " ",
-            "use_mock_hardware:=",
-            use_mock_hardware,
+            "hardware_type:=",
+            hardware_type,
             " ",
             "mock_sensor_commands:=",
             mock_sensor_commands,
@@ -187,7 +189,8 @@ def generate_launch_description():
             Node(
                 package="controller_manager",
                 executable="spawner",
-                arguments=[controller, "-c", "/controller_manager", "--inactive"],
+                arguments=[controller, "-c",
+                           "/controller_manager", "--inactive"],
             )
         ]
 
