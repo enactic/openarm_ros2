@@ -9,11 +9,11 @@ host +local:root
 docker run --env DISPLAY=$DISPLAY \
 --volume /tmp/.X11-unix:/tmp/.X11-unix \
 --network=host \
--it ghcr.io/thomasonzhou/openarm:v0.3 \
+-it ghcr.io/reazon-research/openarm:v0.3 \
 /bin/bash
 ```
 
-Open the MuJoCo sim at 
+Open the MuJoCo sim at
 [https://thomasonzhou.github.io/mujoco_anywhere/](https://thomasonzhou.github.io/mujoco_anywhere/)
 
 ```sh
@@ -23,5 +23,5 @@ ros2 launch -d openarm_bimanual_moveit_config demo.launch.py hardware_type:=sim
 
 # To build the latest image (v0.3)
 ```sh
-docker build --no-cache -t ghcr.io/thomasonzhou/openarm:v0.3 .
+docker build --no-cache -t ghcr.io/reazon-research/openarm:v0.3 .
 ```
