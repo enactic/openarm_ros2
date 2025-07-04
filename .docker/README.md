@@ -31,6 +31,18 @@ docker build --no-cache -t ghcr.io/reazon-research/openarm:v0.3 .
 
 ## On MacOS and Windows
 
+Please note that this method runs at a much lower frequency than ideal conditions, meaning the commands may not be fast enough for stable operation. 
+
+However, it is a good way to visualize the necessity of high frequency communication when using torque control.
+
+### MacOS Notes
+
+It may be necessary to enable Rosetta.
+
+### Windows Notes
+
+Use Git Bash to run the shell script.
+
 In the current directory, run:
 ```sh
 ./run-novnc.sh
@@ -53,3 +65,9 @@ Double-click on Terminator and launch an example with MoveIt2:
 . ~/ros2_ws/install/setup.bash && \
 ros2 launch -d openarm_bimanual_moveit_config demo.launch.py hardware_type:=sim
 ```
+
+## Debugging
+
+Open Developer Tools in the browser. When the MuJoCo OpenArm is connected, state and command data should be visible in the Console.
+
+If a connection is not established, try restarting either the browser or relaunch the ROS2 process.
