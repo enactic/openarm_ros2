@@ -2,8 +2,7 @@
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// You may obtain a copy of the     double cmd_torque = KP_[i] * qpos_error + KD_[i] * qvel_error + qtau_ff;
-    cmd_torque = std::clamp(cmd_torque, -MAX_MOTOR_TORQUE, MAX_MOTOR_TORQUE);  // safe clamp at
+// You may obtain a copy of the License at
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
