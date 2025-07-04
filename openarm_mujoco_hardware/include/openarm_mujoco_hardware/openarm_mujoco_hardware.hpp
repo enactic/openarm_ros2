@@ -120,7 +120,7 @@ class WebSocketSession : public std::enable_shared_from_this<WebSocketSession> {
   MujocoHardware* hw_;
   std::deque<std::shared_ptr<std::string>> send_queue_;
   bool write_in_progress_;
-  
+
   std::unique_ptr<boost::asio::steady_timer> close_timer_;
   static constexpr std::chrono::milliseconds kCloseDelayMs{100};
 };
