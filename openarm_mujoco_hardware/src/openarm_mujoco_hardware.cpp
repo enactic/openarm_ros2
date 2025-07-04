@@ -15,7 +15,7 @@
 
 #include <openarm_mujoco_hardware/openarm_mujoco_hardware.hpp>
 #include <algorithm>
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/logging.hpp>
 
 namespace openarm_mujoco_hardware {
 
