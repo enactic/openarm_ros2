@@ -38,6 +38,12 @@ In the current directory, run:
 
 Visit the localhost URL to open a GUI into Ubuntu.
 
+To stop the container, run 
+```sh
+docker compose down
+```
+
+
 Open the MuJoCo sim (inside or outside the GUI)
 [https://thomasonzhou.github.io/mujoco_anywhere/](https://thomasonzhou.github.io/mujoco_anywhere/)
 

@@ -93,6 +93,9 @@ class MujocoHardware : public hardware_interface::SystemInterface {
 
   std::shared_ptr<WebSocketSession> ws_session_;
   void start_accept();
+  void schedule_reconnect_timer();
+
+  std::unique_ptr<boost::asio::steady_timer> reconnect_timer_;
 
   const std::string kMuJoCoWebSocketURL_ =
       "https://thomasonzhou.github.io/mujoco_anywhere/";
@@ -106,6 +109,7 @@ class WebSocketSession : public std::enable_shared_from_this<WebSocketSession> {
   WebSocketSession(boost::asio::ip::tcp::socket socket, MujocoHardware* hw);
 
   void send_json(const nlohmann::json& j);
+  void close_with_delay();
 
  private:
   void flush();
@@ -119,5 +123,8 @@ class WebSocketSession : public std::enable_shared_from_this<WebSocketSession> {
   MujocoHardware* hw_;
   std::deque<std::shared_ptr<std::string>> send_queue_;
   bool write_in_progress_;
+  
+  std::unique_ptr<boost::asio::steady_timer> close_timer_;
+  static constexpr std::chrono::milliseconds kCloseDelayMs{100};
 };
 };  // namespace openarm_mujoco_hardware

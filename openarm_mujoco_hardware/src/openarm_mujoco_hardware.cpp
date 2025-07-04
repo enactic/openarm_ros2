@@ -37,6 +37,9 @@ hardware_interface::CallbackReturn MujocoHardware::on_init(
   address_ = boost::asio::ip::make_address("0.0.0.0");
   endpoint_ = boost::asio::ip::tcp::endpoint(address_, websocket_port_);
 
+  // Initialize connection state
+  reconnect_timer_ = std::make_unique<boost::asio::steady_timer>(ioc_);
+
   // allocate space for joint states
   const size_t DOF = info_.joints.size();
 
@@ -55,12 +58,27 @@ void MujocoHardware::start_accept() {
   acceptor_.async_accept([this](boost::beast::error_code ec,
                                 boost::asio::ip::tcp::socket socket) {
     if (ec) {
-      std::cerr << "error accepting connection: " << ec.message() << std::endl;
+      schedule_reconnect_timer();
+      return;
     }
-    std::cout << "new connection accepted." << std::endl;
+    
+    if (ws_session_) {
+      ws_session_->close_with_delay();
+    }
+    
     ws_session_ = WebSocketSession::create(std::move(socket), this);
     ws_session_->run();
+    
     this->start_accept();
+  });
+}
+
+void MujocoHardware::schedule_reconnect_timer() {
+  reconnect_timer_->expires_after(std::chrono::milliseconds(100));
+  reconnect_timer_->async_wait([this](boost::beast::error_code ec) {
+    if (!ec) {
+      start_accept();
+    }
   });
 }
 
@@ -219,7 +237,9 @@ hardware_interface::return_type MujocoHardware::write(
 
 WebSocketSession::WebSocketSession(boost::asio::ip::tcp::socket socket,
                                    MujocoHardware* hw)
-    : ws_(std::move(socket)), hw_(hw), write_in_progress_(false) {}
+    : ws_(std::move(socket)), hw_(hw), write_in_progress_(false) {
+  close_timer_ = std::make_unique<boost::asio::steady_timer>(ws_.get_executor());
+}
 
 std::shared_ptr<WebSocketSession> WebSocketSession::create(
     boost::asio::ip::tcp::socket socket, MujocoHardware* hw) {
@@ -250,7 +270,10 @@ void WebSocketSession::flush() {
                   [self = shared_from_this(), msg](boost::beast::error_code ec,
                                                    std::size_t) {
                     if (ec) {
-                      std::cerr << "send error: " << ec.message() << std::endl;
+                      if (self->hw_) {
+                        self->hw_->schedule_reconnect_timer();
+                      }
+                      return;
                     }
                     self->write_in_progress_ = false;
                     self->flush();
@@ -268,8 +291,12 @@ void WebSocketSession::do_handshake() {
 
 void WebSocketSession::on_accept(boost::beast::error_code ec) {
   if (ec) {
-    std::cerr << "handshake failed: " << ec.message() << std::endl;
+    if (hw_) {
+      hw_->schedule_reconnect_timer();
+    }
+    return;
   }
+  
   do_read();
 }
 
@@ -281,9 +308,12 @@ void WebSocketSession::do_read() {
 void WebSocketSession::on_read(boost::beast::error_code ec,
                                std::size_t bytes_transferred) {
   if (ec) {
-    std::cerr << "read error: " << ec.message() << std::endl;
+    if (hw_) {
+      hw_->schedule_reconnect_timer();
+    }
     return;
   }
+  
   std::string data = boost::beast::buffers_to_string(buffer_.data());
   {
     std::lock_guard<std::mutex>(hw_->state_mutex_);
@@ -314,6 +344,15 @@ void WebSocketSession::on_read(boost::beast::error_code ec,
   do_read();
 }
 
+void WebSocketSession::close_with_delay() {
+  close_timer_->expires_after(kCloseDelayMs);
+  close_timer_->async_wait([self = shared_from_this()](boost::beast::error_code ec) {
+    if (!ec) {
+      boost::beast::error_code close_ec;
+      self->ws_.close(boost::beast::websocket::close_code::normal, close_ec);
+    }
+  });
+}
 };  // namespace openarm_mujoco_hardware
 
 #include "pluginlib/class_list_macros.hpp"
