@@ -93,9 +93,6 @@ class MujocoHardware : public hardware_interface::SystemInterface {
 
   std::shared_ptr<WebSocketSession> ws_session_;
   void start_accept();
-  void schedule_reconnect_timer();
-
-  std::unique_ptr<boost::asio::steady_timer> reconnect_timer_;
 
   const std::string kMuJoCoWebSocketURL_ =
       "https://thomasonzhou.github.io/mujoco_anywhere/";

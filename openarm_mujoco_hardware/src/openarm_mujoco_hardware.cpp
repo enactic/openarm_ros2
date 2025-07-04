@@ -2,7 +2,8 @@
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// You may obtain a copy of the     double cmd_torque = KP_[i] * qpos_error + KD_[i] * qvel_error + qtau_ff;
+    cmd_torque = std::clamp(cmd_torque, -MAX_MOTOR_TORQUE, MAX_MOTOR_TORQUE);  // safe clamp at
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
@@ -13,6 +14,7 @@
 // limitations under the License.
 
 #include <openarm_mujoco_hardware/openarm_mujoco_hardware.hpp>
+#include <algorithm>
 
 namespace openarm_mujoco_hardware {
 
@@ -37,8 +39,6 @@ hardware_interface::CallbackReturn MujocoHardware::on_init(
   address_ = boost::asio::ip::make_address("0.0.0.0");
   endpoint_ = boost::asio::ip::tcp::endpoint(address_, websocket_port_);
 
-  // Initialize connection state
-  reconnect_timer_ = std::make_unique<boost::asio::steady_timer>(ioc_);
 
   // allocate space for joint states
   const size_t DOF = info_.joints.size();
@@ -58,8 +58,9 @@ void MujocoHardware::start_accept() {
   acceptor_.async_accept([this](boost::beast::error_code ec,
                                 boost::asio::ip::tcp::socket socket) {
     if (ec) {
-      schedule_reconnect_timer();
-      return;
+      RCLCPP_WARN(rclcpp::get_logger("MujocoHardware"),
+                  "accept error: %s — retrying", ec.message().c_str());
+      return start_accept();
     }
     
     if (ws_session_) {
@@ -73,14 +74,7 @@ void MujocoHardware::start_accept() {
   });
 }
 
-void MujocoHardware::schedule_reconnect_timer() {
-  reconnect_timer_->expires_after(std::chrono::milliseconds(100));
-  reconnect_timer_->async_wait([this](boost::beast::error_code ec) {
-    if (!ec) {
-      start_accept();
-    }
-  });
-}
+
 
 hardware_interface::CallbackReturn MujocoHardware::on_configure(
     const rclcpp_lifecycle::State& /*previous_state*/) {
@@ -218,11 +212,6 @@ hardware_interface::return_type MujocoHardware::write(
 
     double cmd_torque = KP_[i] * qpos_error + KD_[i] * qvel_error + qtau_ff;
 
-    // if (cmd_torque > MAX_MOTOR_TORQUE) {
-    //     cmd_torque = MAX_MOTOR_TORQUE;
-    // } else if (cmd_torque < -MAX_MOTOR_TORQUE) {
-    //     cmd_torque = -MAX_MOTOR_TORQUE;
-    // }
     cmd[info_.joints[i].name] = cmd_torque;
   }
   if (ws_session_) {
@@ -270,8 +259,10 @@ void WebSocketSession::flush() {
                   [self = shared_from_this(), msg](boost::beast::error_code ec,
                                                    std::size_t) {
                     if (ec) {
+                      RCLCPP_WARN(rclcpp::get_logger("WebSocketSession"),
+                                  "write error: %s — triggering reconnect", ec.message().c_str());
                       if (self->hw_) {
-                        self->hw_->schedule_reconnect_timer();
+                        self->hw_->start_accept();  // restart accept loop directly
                       }
                       return;
                     }
@@ -280,19 +271,32 @@ void WebSocketSession::flush() {
                   });
 }
 
-void WebSocketSession::run() { do_handshake(); }
-
-void WebSocketSession::do_handshake() {
+void WebSocketSession::run() { 
   ws_.set_option(boost::beast::websocket::stream_base::timeout::suggested(
       boost::beast::role_type::server));
+  
+  ws_.control_callback([self = shared_from_this()]
+      (boost::beast::websocket::frame_type kind, boost::beast::string_view) {
+        if (kind == boost::beast::websocket::frame_type::close) return; 
+        RCLCPP_WARN(rclcpp::get_logger("WebSocketSession"),
+                    "Abnormal frame, forcing close");
+        self->ws_.next_layer().shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+      });
+  
+  do_handshake(); 
+}
+
+void WebSocketSession::do_handshake() {
   ws_.async_accept(boost::beast::bind_front_handler(
       &WebSocketSession::on_accept, shared_from_this()));
 }
 
 void WebSocketSession::on_accept(boost::beast::error_code ec) {
   if (ec) {
+    RCLCPP_WARN(rclcpp::get_logger("WebSocketSession"),
+                "handshake error: %s — triggering reconnect", ec.message().c_str());
     if (hw_) {
-      hw_->schedule_reconnect_timer();
+      hw_->start_accept();
     }
     return;
   }
@@ -308,8 +312,10 @@ void WebSocketSession::do_read() {
 void WebSocketSession::on_read(boost::beast::error_code ec,
                                std::size_t bytes_transferred) {
   if (ec) {
+    RCLCPP_WARN(rclcpp::get_logger("WebSocketSession"),
+                "read error: %s — triggering reconnect", ec.message().c_str());
     if (hw_) {
-      hw_->schedule_reconnect_timer();
+      hw_->start_accept(); 
     }
     return;
   }
