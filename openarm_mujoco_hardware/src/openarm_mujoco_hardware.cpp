@@ -15,6 +15,7 @@
 
 #include <openarm_mujoco_hardware/openarm_mujoco_hardware.hpp>
 #include <algorithm>
+#include <rclcpp/rclcpp.hpp>
 
 namespace openarm_mujoco_hardware {
 
