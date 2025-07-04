@@ -22,7 +22,7 @@ Motor::Motor(DM_Motor_Type motorType, uint16_t slaveID, uint16_t masterID)
       SlaveID(slaveID),
       MasterID(masterID),
       isEnable(false),
-      NowControlMode(Control_Type::MIT)
+      NowControlMode(Control_Type::MIT),
       Pd(0.0),
       Vd(0.0),
       goal_position(0.0),
