@@ -53,6 +53,8 @@
   <exec_depend>moveit_setup_assistant</exec_depend>
   <exec_depend>openarm_bimanual_description</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>ros2_control</exec_depend>
+  <exec_depend>ros2_controllers</exec_depend>
   <exec_depend>rviz2</exec_depend>
   <exec_depend>rviz_common</exec_depend>
   <exec_depend>rviz_default_plugins</exec_depend>
