@@ -1,7 +1,7 @@
 services:
   ros2-desktop-vnc:
     container_name: ros2_desktop_vnc
-    image: ghcr.io/thomasonzhou/ros2:humble-vnc
+    image: thchzh/ros2:openarm-humble-vnc
     ports:
       - "80:80"
       - "1337:1337"
