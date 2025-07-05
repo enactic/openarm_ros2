@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <algorithm>
 #include <openarm_mujoco_hardware/openarm_mujoco_hardware.hpp>
 #include <rclcpp/logging.hpp>
 
