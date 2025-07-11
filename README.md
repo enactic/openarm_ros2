@@ -4,8 +4,8 @@
   <a href="https://build.ros2.org/job/Hdev__openarm__ubuntu_jammy_amd64/" alt="alt="ROS2 build status">
     <img src="https://build.ros2.org/buildStatus/icon?job=Hdev__openarm__ubuntu_jammy_amd64"/>
   </a>
-  <a href="https://github.com/reazon-research/openarm_ros2/tree/main/LICENSE" alt="Apache License 2.0">
-    <img src="https://img.shields.io/github/license/reazon-research/openarm_ros2"/>
+  <a href="https://github.com/enactic/openarm_ros2/tree/main/LICENSE" alt="Apache License 2.0">
+    <img src="https://img.shields.io/github/license/enactic/openarm_ros2"/>
   </a>
 </p>
 
@@ -48,7 +48,7 @@ source /opt/ros/humble/setup.bash # Change "humble" to your ROS 2 distro, ie:
                                   # source /opt/ros/jazzy/setup.bash 
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws/src
-git clone https://github.com/reazon-research/openarm_ros2.git
+git clone https://github.com/enactic/openarm_ros2.git
 ```
 
 3. [Install dependencies with rosdep](https://docs.ros.org/en/humble/Tutorials/Intermediate/Rosdep.html) and [build the packages with colcon](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html)
