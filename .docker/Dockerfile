@@ -1,4 +1,4 @@
-FROM thchzh/ros2:openarm-humble
+FROM osrf/ros:humble-desktop-full
 
 COPY ros_entrypoint.sh /ros_entrypoint.sh
 RUN . /opt/ros/humble/setup.sh && \
