@@ -123,7 +123,7 @@ def controller_spawner(context: LaunchContext, robot_controller):
 
 
 def generate_launch_description():
-    """Generate launch description for OpenArm unimanual configuration."""
+    """Generate launch description for OpenArm bimanual configuration."""
 
     # Declare launch arguments
     declared_arguments = [
@@ -171,7 +171,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "controllers_file",
-            default_value="openram_v10_bimanual_controllers.yaml",
+            default_value="openarm_v10_bimanual_controllers.yaml",
             description="Controllers file(s) to use. Can be a single file or comma-separated list of files.",
         ),
     ]
