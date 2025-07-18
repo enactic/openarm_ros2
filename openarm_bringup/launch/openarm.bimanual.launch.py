@@ -1,4 +1,4 @@
-# Copyright 2025 Reazon Holdings, Inc.
+# Copyright 2025 Enactic, Inc.
 # Copyright 2024 Stogl Robotics Consulting UG (haftungsbeschränkt)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -235,7 +235,7 @@ def generate_launch_description():
 
     # Timing and sequencing
     delayed_joint_state_broadcaster = TimerAction(
-        period=2.0,
+        period=1.0,
         actions=[joint_state_broadcaster_spawner],
     )
 
