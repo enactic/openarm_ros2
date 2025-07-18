@@ -52,11 +52,11 @@ def generate_robot_description(context: LaunchContext, description_package, desc
         xacro_path,
         mappings={
             "arm_type": arm_type_str,
-            "bimanual": "false",
+            "bimanual": "true",
             "use_fake_hardware": use_fake_hardware_str,
             "ros2_control": "true",
-            "can_interface": can_interface_str,
-            "arm_prefix": arm_prefix_str,
+            "left_can_interface": "can1",
+            "right_can_interface": "can0",
         }
     ).toprettyxml(indent="  ")
 
@@ -94,6 +94,32 @@ def robot_nodes_spawner(context: LaunchContext, description_package, description
     )
 
     return [robot_state_pub_node, control_node]
+
+
+def controller_spawner(context: LaunchContext, robot_controller):
+    """Spawn controller based on robot_controller argument."""
+
+    # Substitute launch configuration value
+    robot_controller_str = context.perform_substitution(robot_controller)
+
+    # Determine controller names based on robot_controller argument
+    if robot_controller_str == "forward_position_controller":
+        robot_controller_left = "left_forward_position_controller"
+        robot_controller_right = "right_forward_position_controller"
+    elif robot_controller_str == "joint_trajectory_controller":
+        robot_controller_left = "left_joint_trajectory_controller"
+        robot_controller_right = "right_joint_trajectory_controller"
+    else:
+        raise ValueError(f"Unknown robot_controller: {robot_controller_str}")
+
+    robot_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[robot_controller_left,
+                   robot_controller_right, "-c", "/controller_manager"],
+    )
+
+    return [robot_controller_spawner]
 
 
 def generate_launch_description():
@@ -145,7 +171,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "controllers_file",
-            default_value="openarm_v10_controllers.yaml",
+            default_value="openram_v10_bimanual_controllers.yaml",
             description="Controllers file(s) to use. Can be a single file or comma-separated list of files.",
         ),
     ]
@@ -195,27 +221,27 @@ def generate_launch_description():
     )
 
     # Controller spawners
-    robot_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[robot_controller, "-c", "/controller_manager"],
+    controller_spawner_func = OpaqueFunction(
+        function=controller_spawner,
+        args=[robot_controller]
     )
 
     gripper_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["gripper_controller", "-c", "/controller_manager"],
+        arguments=["left_gripper_controller",
+                   "right_gripper_controller", "-c", "/controller_manager"],
     )
 
     # Timing and sequencing
     delayed_joint_state_broadcaster = TimerAction(
-        period=1.0,
+        period=2.0,
         actions=[joint_state_broadcaster_spawner],
     )
 
     delayed_robot_controller = TimerAction(
         period=1.0,
-        actions=[robot_controller_spawner],
+        actions=[controller_spawner_func],
     )
     delayed_gripper_controller = TimerAction(
         period=1.0,
