@@ -31,93 +31,131 @@ controller_manager:
       type: joint_trajectory_controller/JointTrajectoryController
 
 
+    left_gripper_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    right_gripper_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
 left_arm_controller:
   ros__parameters:
     joints:
-      - left_rev1
-      - left_rev2
-      - left_rev3
-      - left_rev4
-      - left_rev5
-      - left_rev6
-      - left_rev7
+      - openarm_left_joint1
+      - openarm_left_joint2
+      - openarm_left_joint3
+      - openarm_left_joint4
+      - openarm_left_joint5
+      - openarm_left_joint6
+      - openarm_left_joint7
     command_interfaces:
-      []
+      - position
+      - velocity
     state_interfaces:
-      []
+      - position
+      - velocity
 right_arm_controller:
   ros__parameters:
     joints:
-      - right_rev1
-      - right_rev2
-      - right_rev3
-      - right_rev4
-      - right_rev5
-      - right_rev6
-      - right_rev7
+      - openarm_right_joint1
+      - openarm_right_joint2
+      - openarm_right_joint3
+      - openarm_right_joint4
+      - openarm_right_joint5
+      - openarm_right_joint6
+      - openarm_right_joint7
     command_interfaces:
-      []
+      - position
+      - velocity
     state_interfaces:
-      []
+      - position
+      - velocity
 left_gripper_controller:
   ros__parameters:
-    joint: left_gripper
+    joint: openarm_left_finger_joint1
 right_gripper_controller:
   ros__parameters:
-    joint: right_gripper
+    joint: openarm_right_finger_joint1
 left_side_controller:
   ros__parameters:
     joints:
-      - left_rev1
-      - left_rev2
-      - left_rev3
-      - left_rev4
-      - left_rev5
-      - left_rev6
-      - left_rev7
-      - left_gripper
+      - openarm_left_joint1
+      - openarm_left_joint2
+      - openarm_left_joint3
+      - openarm_left_joint4
+      - openarm_left_joint5
+      - openarm_left_joint6
+      - openarm_left_joint7
+      - openarm_left_finger_joint1
     command_interfaces:
-      []
+      - position
+      - velocity
     state_interfaces:
-      []
+      - position
+      - velocity
 right_side_controller:
   ros__parameters:
     joints:
-      - right_rev1
-      - right_rev2
-      - right_rev3
-      - right_rev4
-      - right_rev5
-      - right_rev6
-      - right_rev7
-      - right_gripper
+      - openarm_right_joint1
+      - openarm_right_joint2
+      - openarm_right_joint3
+      - openarm_right_joint4
+      - openarm_right_joint5
+      - openarm_right_joint6
+      - openarm_right_joint7
+      - openarm_right_finger_joint1
     command_interfaces:
-      []
+      - position
+      - velocity
     state_interfaces:
-      []
+      - position
+      - velocity
 upper_body_controller:
   ros__parameters:
     joints:
-      - left_rev1
-      - left_rev2
-      - left_rev3
-      - left_rev4
-      - left_rev5
-      - left_rev6
-      - left_rev7
-      - left_gripper
-      - right_rev1
-      - right_rev2
-      - right_rev3
-      - right_rev4
-      - right_rev5
-      - right_rev6
-      - right_rev7
-      - right_gripper
+      - openarm_left_joint1
+      - openarm_left_joint2
+      - openarm_left_joint3
+      - openarm_left_joint4
+      - openarm_left_joint5
+      - openarm_left_joint6
+      - openarm_left_joint7
+      - openarm_left_finger_joint1
+      - openarm_right_joint1
+      - openarm_right_joint2
+      - openarm_right_joint3
+      - openarm_right_joint4
+      - openarm_right_joint5
+      - openarm_right_joint6
+      - openarm_right_joint7
+      - openarm_right_finger_joint1
     command_interfaces:
-      []
+      - position
+      - velocity
     state_interfaces:
-      []
+      - position
+      - velocity
+left_gripper_controller:
+  ros__parameters:
+    joints:
+      - openarm_left_finger_joint1
+    command_interfaces:
+      - position
+      - velocity
+    state_interfaces:
+      - position
+      - velocity
+right_gripper_controller:
+  ros__parameters:
+    joints:
+      - openarm_right_finger_joint1
+    command_interfaces:
+      - position
+      - velocity
+    state_interfaces:
+      - position
+      - velocity
