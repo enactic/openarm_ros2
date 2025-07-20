@@ -17,7 +17,7 @@
 -->
 <package format="3">
   <name>openarm_hardware</name>
-  <version>0.3.0</version>
+  <version>1.0.0</version>
   <description>Hardware interface for  OpenArm</description>
   <maintainer email="t95zhou@uwaterloo.ca">Thomason Zhou</maintainer>
   <license>Apache-2.0</license>
