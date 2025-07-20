@@ -30,15 +30,6 @@ controller_manager:
     upper_body_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-
-    left_gripper_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
-
-
-    right_gripper_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
-
-
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 

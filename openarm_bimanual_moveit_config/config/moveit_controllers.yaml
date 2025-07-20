@@ -50,14 +50,6 @@ moveit_simple_controller_manager:
       - openarm_right_finger_joint1
     action_ns: gripper_cmd
     default: true
-  left_gripper_controller:
-    type: FollowJointTrajectory
-    joints:
-      - openarm_left_finger_joint1
-  right_gripper_controller:
-    type: FollowJointTrajectory
-    joints:
-      - openarm_right_finger_joint1
   left_side_controller:
     type: FollowJointTrajectory
     joints:
