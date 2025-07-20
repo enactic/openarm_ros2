@@ -19,7 +19,7 @@
     <xacro:arg name="hardware_type" default="real" />
 
     <!-- Import openarm_bimanual urdf file -->
-    <xacro:include filename="$(find openarm_bimanual_description)/urdf/openarm_bimanual.urdf.xacro" />
+    <xacro:include filename="$(find openarm_description)/urdf/robot/v10.urdf.xacro" />
 
     <link name="base_link"/>
     <joint name="world_to_pedestal" type="fixed">
