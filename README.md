@@ -14,18 +14,15 @@
 
 https://github.com/user-attachments/assets/90b44ef4-5cdc-4bf5-b56f-be2a5ff264b4
 
-
-
-- openarm_bimanual_description: dual arm urdf with torso and realsense head camera
-- openarm_bimanual_moveit_config: bimanual motion planning with OctoMap occupancy grid mapping
-- openarm_bimanual_bringup: setup scripts for bimanual openarm
+- openarm_description: OpenArm URDF and assets at [github.com/enactic/openarm_description](https://github.com/enactic/openarm_description)
+- openarm_bimanual_moveit_config: bimanual motion planning with [moveit2](https://github.com/moveit/moveit2)
 - openarm_bringup: setup scripts for single physical openarm
-- openarm_description: single arm urdf
 - openarm_hardware: hardware interface for ros2_control
-- openarm_moveit_config: motion planning with [moveit2](https://github.com/moveit/moveit2)
 
 
-### Description Packages
+### Description Package
+
+URDF generation scripts and assets are available in the [openarm_description](https://github.com/enactic/openarm_description) repository.
 
 Each link has a visual mesh and a collision mesh, as shown in the figures below:
   
@@ -34,7 +31,11 @@ Each link has a visual mesh and a collision mesh, as shown in the figures below:
 
 ### MoveIt2 Support
 
-https://github.com/user-attachments/assets/a0f962e5-6150-49ce-b18e-9914bcb322ef
+
+
+https://github.com/user-attachments/assets/3a722d5b-c465-4077-be94-f67c5a3353b2
+
+
 
 ---
 
