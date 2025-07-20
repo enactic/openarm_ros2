@@ -29,20 +29,24 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
+def namespace_from_context(context, arm_prefix):
+    arm_prefix_str = context.perform_substitution(arm_prefix)
+    if arm_prefix_str:
+        return arm_prefix_str.strip('/')
+    return None
+
+
 def generate_robot_description(context: LaunchContext, description_package, description_file,
-                               arm_type, use_fake_hardware, right_can_interface, left_can_interface, arm_prefix):
+                               arm_type, use_fake_hardware, right_can_interface, left_can_interface):
     """Generate robot description using xacro processing."""
 
-    # Substitute launch configuration values
     description_package_str = context.perform_substitution(description_package)
     description_file_str = context.perform_substitution(description_file)
     arm_type_str = context.perform_substitution(arm_type)
     use_fake_hardware_str = context.perform_substitution(use_fake_hardware)
     right_can_interface_str = context.perform_substitution(right_can_interface)
     left_can_interface_str = context.perform_substitution(left_can_interface)
-    arm_prefix_str = context.perform_substitution(arm_prefix)
 
-    # Build xacro file path
     xacro_path = os.path.join(
         get_package_share_directory(description_package_str),
         "urdf", "robot", description_file_str
@@ -67,43 +71,47 @@ def generate_robot_description(context: LaunchContext, description_package, desc
 def robot_nodes_spawner(context: LaunchContext, description_package, description_file,
                         arm_type, use_fake_hardware, controllers_file, right_can_interface, left_can_interface, arm_prefix):
     """Spawn both robot state publisher and control nodes with shared robot description."""
+    namespace = namespace_from_context(context, arm_prefix)
 
-    # Generate robot description once
     robot_description = generate_robot_description(
-        context, description_package, description_file, arm_type, use_fake_hardware, right_can_interface, left_can_interface, arm_prefix
+        context, description_package, description_file, arm_type, use_fake_hardware, right_can_interface, left_can_interface,
     )
 
-    # Get controllers file path
     controllers_file_str = context.perform_substitution(controllers_file)
     robot_description_param = {"robot_description": robot_description}
 
-    # Robot state publisher node
+    if namespace:
+        controllers_file_str = controllers_file_str.replace(
+            "openarm_v10_bimanual_controllers.yaml", "openarm_v10_bimanual_controllers_namespaced.yaml"
+        )
     robot_state_pub_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         name="robot_state_publisher",
         output="screen",
+        namespace=namespace,
         parameters=[robot_description_param],
     )
 
-    # Control node
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
         output="both",
+        namespace=namespace,
         parameters=[robot_description_param, controllers_file_str],
     )
 
     return [robot_state_pub_node, control_node]
 
 
-def controller_spawner(context: LaunchContext, robot_controller):
+def controller_spawner(context: LaunchContext, robot_controller, arm_prefix):
     """Spawn controller based on robot_controller argument."""
+    namespace = namespace_from_context(context, arm_prefix)
 
-    # Substitute launch configuration value
+    controller_manager_ref = f"/{namespace}/controller_manager" if namespace else "/controller_manager"
+
     robot_controller_str = context.perform_substitution(robot_controller)
 
-    # Determine controller names based on robot_controller argument
     if robot_controller_str == "forward_position_controller":
         robot_controller_left = "left_forward_position_controller"
         robot_controller_right = "right_forward_position_controller"
@@ -116,8 +124,9 @@ def controller_spawner(context: LaunchContext, robot_controller):
     robot_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
+        namespace=namespace,
         arguments=[robot_controller_left,
-                   robot_controller_right, "-c", "/controller_manager"],
+                   robot_controller_right, "-c", controller_manager_ref],
     )
 
     return [robot_controller_spawner]
@@ -163,7 +172,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "arm_prefix",
             default_value="",
-            description="Prefix for the arm.",
+            description="Prefix for the arm for topic namespacing.",
         ),
         DeclareLaunchArgument(
             "right_can_interface",
@@ -193,19 +202,18 @@ def generate_launch_description():
     rightcan_interface = LaunchConfiguration("right_can_interface")
     left_can_interface = LaunchConfiguration("left_can_interface")
     arm_prefix = LaunchConfiguration("arm_prefix")
-    # Configuration file paths
+
     controllers_file = PathJoinSubstitution(
         [FindPackageShare(runtime_config_package), "config",
          "v10_controllers", controllers_file]
     )
 
-    # Robot nodes spawner (both state publisher and control)
     robot_nodes_spawner_func = OpaqueFunction(
         function=robot_nodes_spawner,
         args=[description_package, description_file, arm_type,
               use_fake_hardware, controllers_file, rightcan_interface, left_can_interface, arm_prefix]
     )
-    # RViz configuration
+
     rviz_config_file = PathJoinSubstitution(
         [FindPackageShare(description_package), "rviz",
          "bimanual.rviz"]
@@ -220,24 +228,32 @@ def generate_launch_description():
     )
 
     # Joint state broadcaster spawner
-    joint_state_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_state_broadcaster",
-                   "--controller-manager", "/controller_manager"],
+    joint_state_broadcaster_spawner = OpaqueFunction(
+        function=lambda context: [Node(
+            package="controller_manager",
+            executable="spawner",
+            namespace=namespace_from_context(context, arm_prefix),
+            arguments=["joint_state_broadcaster",
+                       "--controller-manager",
+                       f"/{namespace_from_context(context, arm_prefix)}/controller_manager" if namespace_from_context(context, arm_prefix) else "/controller_manager"],
+        )]
     )
 
     # Controller spawners
     controller_spawner_func = OpaqueFunction(
         function=controller_spawner,
-        args=[robot_controller]
+        args=[robot_controller, arm_prefix]
     )
 
-    gripper_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["left_gripper_controller",
-                   "right_gripper_controller", "-c", "/controller_manager"],
+    gripper_controller_spawner = OpaqueFunction(
+        function=lambda context: [Node(
+            package="controller_manager",
+            executable="spawner",
+            namespace=namespace_from_context(context, arm_prefix),
+            arguments=["left_gripper_controller",
+                       "right_gripper_controller", "-c",
+                       f"/{namespace_from_context(context, arm_prefix)}/controller_manager" if namespace_from_context(context, arm_prefix) else "/controller_manager"],
+        )]
     )
 
     # Timing and sequencing
