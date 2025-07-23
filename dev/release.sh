@@ -19,7 +19,7 @@ set -eu
 if [ $# -ne 1 ]; then
     echo "Usage: $0 version"
     echo " e.g.: $0 1.0.0"
-    exit 0
+    exit 1
 fi
 
 version="$1"
@@ -31,7 +31,7 @@ cd "${base_dir}"
 if [ "${RELEASE_CHECK_ORIGIN:-yes}" = "yes" ]; then
     git_origin_url="$(git remote get-url origin)"
     if [ "${git_origin_url}" != "git@github.com:enactic/openarm_ros2.git" ]; then
-        echo "This script must be ran with working copy of enactic/openarm_ros2."
+        echo "This script must be run with working copy of enactic/openarm_ros2."
         echo "The origin's URL: ${git_origin_url}"
         exit 1
     fi
