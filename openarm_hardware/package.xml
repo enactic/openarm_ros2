@@ -19,7 +19,7 @@
   <name>openarm_hardware</name>
   <version>0.3.0</version>
   <description>Hardware interface for  OpenArm</description>
-  <maintainer email="t95zhou@uwaterloo.ca">Thomason Zhou</maintainer>
+  <maintainer email="openarm_dev@enactic.ai">Enactic, Inc.</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

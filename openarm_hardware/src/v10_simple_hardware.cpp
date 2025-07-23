@@ -242,13 +242,18 @@ hardware_interface::return_type OpenArm_v10HW::read(
     tau_states_[i] = arm_motors[i].get_torque();
   }
 
-  // Read gripper state if enabled
+    // Read gripper state if enabled
   if (hand_ && joint_names_.size() > ARM_DOF) {
     const auto& gripper_motors = openarm_->get_gripper().get_motors();
     if (!gripper_motors.empty()) {
-      pos_states_[ARM_DOF] = gripper_motors[0].get_position();
-      vel_states_[ARM_DOF] = gripper_motors[0].get_velocity();
-      tau_states_[ARM_DOF] = gripper_motors[0].get_torque();
+      // TODO the mappings are unimplemented, need to actually implement the mappings for pos, vel, tau
+              // Convert motor position (radians) to joint value (0-1)
+        double motor_pos = gripper_motors[0].get_position();
+        pos_states_[ARM_DOF] = motor_radians_to_joint(motor_pos);
+
+      // Velocity and torque can be passed through directly for now
+      vel_states_[ARM_DOF] = 0; // gripper_motors[0].get_velocity();
+      tau_states_[ARM_DOF] = 0; // gripper_motors[0].get_torque();
     }
   }
 
@@ -264,11 +269,13 @@ hardware_interface::return_type OpenArm_v10HW::write(
                           vel_commands_[i], tau_commands_[i]});
   }
   openarm_->get_arm().mit_control_all(arm_params);
-  // Control gripper if enabled
+    // Control gripper if enabled
   if (hand_ && joint_names_.size() > ARM_DOF) {
+    // Convert joint value (0-1) to motor position (radians)
+    double motor_command = joint_to_motor_radians(pos_commands_[ARM_DOF]);
+
     openarm_->get_gripper().mit_control_all(
-        {{5.0, 1.0, pos_commands_[ARM_DOF], vel_commands_[ARM_DOF],
-          tau_commands_[ARM_DOF]}});
+        {{5.0, 1.0, motor_command, 0, 0}});
   }
   std::this_thread::sleep_for(std::chrono::microseconds(300));
   openarm_->recv_all();
@@ -294,6 +301,17 @@ void OpenArm_v10HW::return_to_zero() {
   // // Wait for motors to settle
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   openarm_->recv_all();
+}
+
+// Gripper mapping helper functions
+double OpenArm_v10HW::joint_to_motor_radians(double joint_value) {
+  // Joint 0=closed -> motor 0 rad, Joint 1=open -> motor -1.0472 rad
+  return joint_value * (-1.0472);  // Scale from 0-1 to 0 to -1.0472
+}
+
+double OpenArm_v10HW::motor_radians_to_joint(double motor_radians) {
+  // Motor 0 rad=closed -> joint 0, Motor -1.0472 rad=open -> joint 1
+  return motor_radians / (-1.0472);  // Scale from 0 to -1.0472 to 0-1
 }
 
 }  // namespace openarm_hardware

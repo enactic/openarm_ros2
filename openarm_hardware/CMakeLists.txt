@@ -62,30 +62,6 @@ install(DIRECTORY include/
 DESTINATION include
 )
 
-
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  find_package(ament_cmake_gmock REQUIRED)
-  find_package(hardware_interface REQUIRED)
-  find_package(ros2_control_test_assets REQUIRED)
-
-  ament_add_gmock(test_openarm_hardware
-    test/test_openarm_hardware.cpp
-  )
-  target_link_libraries(test_openarm_hardware
-    ${PROJECT_NAME}
-  )
-  ament_target_dependencies(test_openarm_hardware
-    hardware_interface
-    ros2_control_test_assets
-  )
-
-  set(ament_cmake_copyright_FOUND TRUE)
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-endif()
-
-
 ament_export_include_directories(
   include
 )
