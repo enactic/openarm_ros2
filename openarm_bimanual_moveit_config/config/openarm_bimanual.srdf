@@ -82,6 +82,24 @@
         <joint name="openarm_right_joint6" value="0"/>
         <joint name="openarm_right_joint7" value="0"/>
     </group_state>
+    <group_state name="closed" group="left_gripper">
+        <joint name="openarm_left_finger_joint1" value="0"/>
+    </group_state>
+    <group_state name="closed" group="right_gripper">
+        <joint name="openarm_right_finger_joint1" value="0"/>
+    </group_state>
+    <group_state name="half closed" group="left_gripper">
+        <joint name="openarm_left_finger_joint1" value="0.022"/>
+    </group_state>
+    <group_state name="half_closed" group="right_gripper">
+        <joint name="openarm_right_finger_joint1" value="0.022"/>
+    </group_state>
+    <group_state name="open" group="left_gripper">
+        <joint name="openarm_left_finger_joint1" value="0.044"/>
+    </group_state>
+    <group_state name="open" group="right_gripper">
+        <joint name="openarm_right_finger_joint1" value="0.044"/>
+    </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="left_ee" parent_link="openarm_left_hand" group="left_gripper"/>
     <end_effector name="right_ee" parent_link="openarm_right_hand" group="right_gripper"/>
