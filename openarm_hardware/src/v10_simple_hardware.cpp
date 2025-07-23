@@ -242,18 +242,19 @@ hardware_interface::return_type OpenArm_v10HW::read(
     tau_states_[i] = arm_motors[i].get_torque();
   }
 
-    // Read gripper state if enabled
+  // Read gripper state if enabled
   if (hand_ && joint_names_.size() > ARM_DOF) {
     const auto& gripper_motors = openarm_->get_gripper().get_motors();
     if (!gripper_motors.empty()) {
-      // TODO the mappings are unimplemented, need to actually implement the mappings for pos, vel, tau
-              // Convert motor position (radians) to joint value (0-1)
-        double motor_pos = gripper_motors[0].get_position();
-        pos_states_[ARM_DOF] = motor_radians_to_joint(motor_pos);
+      // TODO the mappings are unimplemented, need to actually implement the
+      // mappings for pos, vel, tau Convert motor position (radians) to joint
+      // value (0-1)
+      double motor_pos = gripper_motors[0].get_position();
+      pos_states_[ARM_DOF] = motor_radians_to_joint(motor_pos);
 
       // Velocity and torque can be passed through directly for now
-      vel_states_[ARM_DOF] = 0; // gripper_motors[0].get_velocity();
-      tau_states_[ARM_DOF] = 0; // gripper_motors[0].get_torque();
+      vel_states_[ARM_DOF] = 0;  // gripper_motors[0].get_velocity();
+      tau_states_[ARM_DOF] = 0;  // gripper_motors[0].get_torque();
     }
   }
 
@@ -269,13 +270,12 @@ hardware_interface::return_type OpenArm_v10HW::write(
                           vel_commands_[i], tau_commands_[i]});
   }
   openarm_->get_arm().mit_control_all(arm_params);
-    // Control gripper if enabled
+  // Control gripper if enabled
   if (hand_ && joint_names_.size() > ARM_DOF) {
     // Convert joint value (0-1) to motor position (radians)
     double motor_command = joint_to_motor_radians(pos_commands_[ARM_DOF]);
 
-    openarm_->get_gripper().mit_control_all(
-        {{5.0, 1.0, motor_command, 0, 0}});
+    openarm_->get_gripper().mit_control_all({{5.0, 1.0, motor_command, 0, 0}});
   }
   std::this_thread::sleep_for(std::chrono::microseconds(300));
   openarm_->recv_all();
