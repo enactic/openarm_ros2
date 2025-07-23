@@ -102,6 +102,12 @@ Continue with the build.
 
 ---
 
+## Related links
+
+- 📚 Read the [documentation](https://docs.openarm.dev/software/ros2/install)
+- 💬 Join the community on [Discord](https://discord.gg/FsZaZ4z3We)
+- 📬 Contact us through <openarm@enactic.ai>
+
 ## License
 
 All packages of `openarm_ros2` are licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
