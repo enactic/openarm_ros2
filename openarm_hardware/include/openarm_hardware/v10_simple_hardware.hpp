@@ -100,7 +100,7 @@ class OpenArm_v10HW : public hardware_interface::SystemInterface {
   const uint32_t DEFAULT_GRIPPER_RECV_CAN_ID = 0x18;
 
   // Default gains
-  const std::vector<double> DEFAULT_KP = {80.0, 80.0, 20.0, 55.0,
+  const std::vector<double> DEFAULT_KP = {20.0, 20.0, 20.0, 20.0,
                                           5.0,  5.0,  5.0,  0.5};
   const std::vector<double> DEFAULT_KD = {2.75, 2.5, 0.7, 0.4,
                                           0.7,  0.6, 0.5, 0.1};
