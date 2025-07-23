@@ -233,7 +233,6 @@ hardware_interface::return_type OpenArm_v10HW::read(
   openarm_->refresh_all();
   openarm_->recv_all();
 
-
   // Read arm joint states
   const auto& arm_motors = openarm_->get_arm().get_motors();
   for (size_t i = 0; i < ARM_DOF && i < arm_motors.size(); ++i) {
