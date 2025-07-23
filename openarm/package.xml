@@ -24,7 +24,6 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <exec_depend>openarm_bimanual_moveit_config</exec_depend>
   <exec_depend>openarm_bringup</exec_depend>
   <exec_depend>openarm_description</exec_depend>
   <exec_depend>openarm_hardware</exec_depend>
