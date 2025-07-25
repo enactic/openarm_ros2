@@ -23,7 +23,7 @@ def generate_robot_description(
     description_package,
     description_file,
     arm_type,
-    hardware_type,
+    use_fake_hardware,
     right_can_interface,
     left_can_interface,
     arm_prefix,
@@ -32,7 +32,7 @@ def generate_robot_description(
     description_package_str = context.perform_substitution(description_package)
     description_file_str = context.perform_substitution(description_file)
     arm_type_str = context.perform_substitution(arm_type)
-    hardware_type_str = context.perform_substitution(hardware_type)
+    use_fake_hardware_str = context.perform_substitution(use_fake_hardware)
     right_can_interface_str = context.perform_substitution(right_can_interface)
     left_can_interface_str = context.perform_substitution(left_can_interface)
     arm_prefix_str = context.perform_substitution(arm_prefix)
@@ -49,7 +49,7 @@ def generate_robot_description(
         mappings={
             "arm_type": arm_type_str,
             "bimanual": "true",
-            "hardware_type": hardware_type_str,
+            "use_fake_hardware": use_fake_hardware_str,
             "ros2_control": "true",
             "left_can_interface": left_can_interface_str,
             "right_can_interface": right_can_interface_str,
@@ -65,7 +65,7 @@ def robot_nodes_spawner(
     description_package,
     description_file,
     arm_type,
-    hardware_type,
+    use_fake_hardware,
     controllers_file,
     right_can_interface,
     left_can_interface,
@@ -76,7 +76,7 @@ def robot_nodes_spawner(
         description_package,
         description_file,
         arm_type,
-        hardware_type,
+        use_fake_hardware,
         right_can_interface,
         left_can_interface,
         arm_prefix,
@@ -135,9 +135,7 @@ def generate_launch_description():
             default_value="v10.urdf.xacro",
         ),
         DeclareLaunchArgument("arm_type", default_value="v10"),
-        DeclareLaunchArgument("hardware_type",
-                              default_value="real",
-                              description="Use real/mock/mujoco hardware."),
+        DeclareLaunchArgument("use_fake_hardware", default_value="false"),
         DeclareLaunchArgument(
             "robot_controller",
             default_value="joint_trajectory_controller",
@@ -159,7 +157,7 @@ def generate_launch_description():
     description_package = LaunchConfiguration("description_package")
     description_file = LaunchConfiguration("description_file")
     arm_type = LaunchConfiguration("arm_type")
-    hardware_type = LaunchConfiguration("hardware_type")
+    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     robot_controller = LaunchConfiguration("robot_controller")
     runtime_config_package = LaunchConfiguration("runtime_config_package")
     controllers_file = LaunchConfiguration("controllers_file")
@@ -178,7 +176,7 @@ def generate_launch_description():
             description_package,
             description_file,
             arm_type,
-            hardware_type,
+            use_fake_hardware,
             controllers_file,
             right_can_interface,
             left_can_interface,
