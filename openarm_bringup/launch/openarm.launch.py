@@ -175,7 +175,7 @@ def generate_launch_description():
     # RViz configuration
     rviz_config_file = PathJoinSubstitution(
         [FindPackageShare(description_package), "rviz",
-         "robot_description.rviz"]
+         "arm_only.rviz"]
     )
 
     rviz_node = Node(
