@@ -30,7 +30,7 @@ controller_manager:
       type: joint_trajectory_controller/JointTrajectoryController
 
     left_gripper_controller:
-      type: position_controllers/GripperActionController
+      type: parallel_gripper_action_controller/GripperActionController
 
     right_forward_position_controller:
       type: forward_command_controller/ForwardCommandController
@@ -42,7 +42,7 @@ controller_manager:
       type: joint_trajectory_controller/JointTrajectoryController
 
     right_gripper_controller:
-      type: position_controllers/GripperActionController
+      type: parallel_gripper_action_controller/GripperActionController
 
 
 left_forward_position_controller:
@@ -108,6 +108,7 @@ left_gripper_controller:
       - position
     state_interfaces:
       - position
+      - velocity
 
 
 right_forward_position_controller:
@@ -173,3 +174,4 @@ right_gripper_controller:
       - position
     state_interfaces:
       - position
+      - velocity
