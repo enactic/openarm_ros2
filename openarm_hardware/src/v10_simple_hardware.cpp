@@ -202,8 +202,7 @@ hardware_interface::CallbackReturn OpenArm_v10HW::on_activate(
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   openarm_->recv_all();
 
-  // Return to zero position
-  return_to_zero();
+  set_current_pose();
 
   RCLCPP_INFO(rclcpp::get_logger("OpenArm_v10HW"), "OpenArm V10 activated");
   return CallbackReturn::SUCCESS;
@@ -294,6 +293,48 @@ void OpenArm_v10HW::return_to_zero() {
   }
   std::this_thread::sleep_for(std::chrono::microseconds(1000));
   openarm_->recv_all();
+}
+
+void OpenArm_v10HW::set_current_pose() {
+  RCLCPP_INFO(rclcpp::get_logger("OpenArm_v10HW"),
+            "Seeting current position...");
+  openarm_->refresh_all();
+  openarm_->recv_all();
+
+  const auto& arm_motors = openarm_->get_arm().get_motors();
+  const size_t n = std::min<std::size_t>(ARM_DOF, arm_motors.size());
+
+  // Set the current positions and zero the velocities
+  for (size_t i = 0; i < n; ++i) {
+    const double q   = arm_motors[i].get_position();
+    const double dq  = arm_motors[i].get_velocity();
+    const double tau = arm_motors[i].get_torque();
+
+    pos_states_[i] = q;
+    vel_states_[i] = dq;
+    tau_states_[i] = tau;
+
+    pos_commands_[i] = q;
+    vel_commands_[i] = 0.0;
+    tau_commands_[i] = 0.0;
+  }
+
+  // check if gripper exists and set current positions 
+  if (hand_ && joint_names_.size() > ARM_DOF) {
+    const auto& gripper_motors = openarm_->get_gripper().get_motors();
+    if (!gripper_motors.empty()) {
+      const double motor_pos = gripper_motors[0].get_position();
+      const double joint_pos = motor_radians_to_joint(motor_pos);
+
+      pos_states_[ARM_DOF] = joint_pos;
+      vel_states_[ARM_DOF] = 0.0;
+      tau_states_[ARM_DOF] = 0.0;
+
+      pos_commands_[ARM_DOF] = joint_pos;
+      vel_commands_[ARM_DOF] = 0.0;
+      tau_commands_[ARM_DOF] = 0.0;
+    }
+  }
 }
 
 // Gripper mapping helper functions
