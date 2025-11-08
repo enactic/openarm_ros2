@@ -203,6 +203,8 @@ hardware_interface::CallbackReturn OpenArm_v10HW::on_activate(
   openarm_->recv_all();
 
   set_current_pose();
+  // Return to zero position
+  return_to_zero();
 
   RCLCPP_INFO(rclcpp::get_logger("OpenArm_v10HW"), "OpenArm V10 activated");
   return CallbackReturn::SUCCESS;
