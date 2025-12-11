@@ -72,6 +72,7 @@ ament_export_dependencies(
   hardware_interface
   pluginlib
   rclcpp
+  openarm_can
 )
 
 ament_package()
