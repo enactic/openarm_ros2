@@ -26,6 +26,7 @@
 
   <depend>rclcpp</depend>
   <depend>hardware_interface</depend>
+  <depend>openarm_can</depend>
   <depend>pluginlib</depend>
 
   <test_depend>ament_lint_auto</test_depend>
