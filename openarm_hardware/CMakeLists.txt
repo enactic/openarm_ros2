@@ -30,7 +30,8 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(OpenArmCAN REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
-  src/v10_simple_hardware.cpp
+  # src/v10_simple_hardware.cpp
+  src/oy_hardware.cpp
 )
 
 target_include_directories(

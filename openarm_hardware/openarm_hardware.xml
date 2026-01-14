@@ -19,7 +19,15 @@
          type="openarm_hardware::OpenArm_v10HW"
          base_class_type="hardware_interface::SystemInterface">
     <description>
-      ros2_control hardware interface for OpenArm V10.
+      ros2_control hardware interface for OpenArm V10 (Damiao Motors).
+    </description>
+  </class>
+  <class name="openarm_hardware/OpenArmOYHW"
+         type="openarm_hardware::OpenArmOYHW"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      ros2_control hardware interface for OpenArm with OY Motors.
+      Configurable arm DOF via hardware parameters.
     </description>
   </class>
 </library>
