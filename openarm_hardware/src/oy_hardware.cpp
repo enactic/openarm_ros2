@@ -165,10 +165,7 @@ hardware_interface::CallbackReturn OpenArmOYHW::on_init(
 hardware_interface::CallbackReturn OpenArmOYHW::on_configure(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   // Refresh motor states during configuration
-  openarm_->get_arm().refresh_all();
-  if (hand_) {
-    openarm_->get_gripper().refresh_all();
-  }
+  openarm_->refresh_all();
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   openarm_->recv_all();
 
@@ -213,10 +210,7 @@ hardware_interface::CallbackReturn OpenArmOYHW::on_activate(
   RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"), "Activating OpenArm OY Motor...");
   
   // Enable all motors
-  openarm_->get_arm().enable_all();
-  if (hand_) {
-    openarm_->get_gripper().enable_all();
-  }
+  openarm_->enable_all();
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   openarm_->recv_all();
 
@@ -233,10 +227,7 @@ hardware_interface::CallbackReturn OpenArmOYHW::on_deactivate(
               "Deactivating OpenArm OY Motor...");
 
   // Disable all motors
-  openarm_->get_arm().disable_all();
-  if (hand_) {
-    openarm_->get_gripper().disable_all();
-  }
+  openarm_->disable_all();
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   openarm_->recv_all();
 
@@ -247,10 +238,7 @@ hardware_interface::CallbackReturn OpenArmOYHW::on_deactivate(
 hardware_interface::return_type OpenArmOYHW::read(
     const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
   // Refresh and receive all motor states
-  openarm_->get_arm().refresh_all();
-  if (hand_) {
-    openarm_->get_gripper().refresh_all();
-  }
+  openarm_->refresh_all();
   openarm_->recv_all();
 
   // Read arm joint states
@@ -271,8 +259,8 @@ hardware_interface::return_type OpenArmOYHW::read(
       pos_states_[ARM_DOF] = motor_radians_to_joint(motor_pos);
 
       // Unimplemented: Velocity and torque mapping
-      vel_states_[ARM_DOF] = 0;  // gripper_motors[0].get_velocity();
-      tau_states_[ARM_DOF] = 0;  // gripper_motors[0].get_torque();
+      vel_states_[ARM_DOF] = gripper_motors[0].get_velocity();
+      tau_states_[ARM_DOF] = gripper_motors[0].get_torque();
     }
   }
 
