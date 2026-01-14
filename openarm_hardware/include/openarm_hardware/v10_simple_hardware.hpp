@@ -102,9 +102,8 @@ class OpenArm_v10HW : public hardware_interface::SystemInterface {
 
   // Default gains
   const std::vector<double> DEFAULT_KP = {150.0, 150.0, 150.0, 120.0,
-                                          10.0, 10.0, 10.0};
-  const std::vector<double> DEFAULT_KD = {2.75, 2.5, 2.0, 2.0,
-                                          0.7,  0.6, 0.5};
+                                          10.0,  10.0,  10.0};
+  const std::vector<double> DEFAULT_KD = {2.75, 2.5, 2.0, 2.0, 0.7, 0.6, 0.5};
 
   const double GRIPPER_JOINT_0_POSITION = 0.044;
   const double GRIPPER_JOINT_1_POSITION = 0.0;
