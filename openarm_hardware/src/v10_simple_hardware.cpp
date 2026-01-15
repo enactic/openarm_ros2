@@ -60,6 +60,18 @@ bool OpenArm_v10HW::parse_config(const hardware_interface::HardwareInfo& info) {
     can_fd_ = (value == "true");
   }
 
+  // Parse control gains
+  for (size_t i = 1; i <= ARM_DOF; ++i) {
+    it = info.hardware_parameters.find("kp" + std::to_string(i));
+    if (it != info.hardware_parameters.end()) {
+      kp_[i - 1] = std::stod(it->second);
+    }
+    it = info.hardware_parameters.find("kd" + std::to_string(i));
+    if (it != info.hardware_parameters.end()) {
+      kd_[i - 1] = std::stod(it->second);
+    }
+  }
+
   RCLCPP_INFO(rclcpp::get_logger("OpenArm_v10HW"),
               "Configuration: CAN=%s, arm_prefix=%s, hand=%s, can_fd=%s",
               can_interface_.c_str(), arm_prefix_.c_str(),
@@ -260,8 +272,8 @@ hardware_interface::return_type OpenArm_v10HW::write(
   // Control arm motors with MIT control
   std::vector<openarm::damiao_motor::MITParam> arm_params;
   for (size_t i = 0; i < ARM_DOF; ++i) {
-    arm_params.push_back({DEFAULT_KP[i], DEFAULT_KD[i], pos_commands_[i],
-                          vel_commands_[i], tau_commands_[i]});
+    arm_params.push_back(
+        {kp_[i], kd_[i], pos_commands_[i], vel_commands_[i], tau_commands_[i]});
   }
   openarm_->get_arm().mit_control_all(arm_params);
   // Control gripper if enabled
@@ -269,7 +281,7 @@ hardware_interface::return_type OpenArm_v10HW::write(
     // TODO the true mappings are unimplemented.
     double motor_command = joint_to_motor_radians(pos_commands_[ARM_DOF]);
     openarm_->get_gripper().mit_control_all(
-        {{GRIPPER_DEFAULT_KP, GRIPPER_DEFAULT_KD, motor_command, 0, 0}});
+        {{GRIPPER_KP, GRIPPER_KD, motor_command, 0, 0}});
   }
   openarm_->recv_all(1000);
   return hardware_interface::return_type::OK;
@@ -282,15 +294,14 @@ void OpenArm_v10HW::return_to_zero() {
   // Return arm to zero with MIT control
   std::vector<openarm::damiao_motor::MITParam> arm_params;
   for (size_t i = 0; i < ARM_DOF; ++i) {
-    arm_params.push_back({DEFAULT_KP[i], DEFAULT_KD[i], 0.0, 0.0, 0.0});
+    arm_params.push_back({kp_[i], kd_[i], 0.0, 0.0, 0.0});
   }
   openarm_->get_arm().mit_control_all(arm_params);
 
   // Return gripper to zero if enabled
   if (hand_) {
     openarm_->get_gripper().mit_control_all(
-        {{GRIPPER_DEFAULT_KP, GRIPPER_DEFAULT_KD, GRIPPER_JOINT_0_POSITION, 0.0,
-          0.0}});
+        {{GRIPPER_KP, GRIPPER_KD, GRIPPER_JOINT_0_POSITION, 0.0, 0.0}});
   }
   std::this_thread::sleep_for(std::chrono::microseconds(1000));
   openarm_->recv_all();
