@@ -26,9 +26,9 @@
 
 namespace openarm_hardware {
 
-OpenArmOYHW::OpenArmOYHW() = default;
+OpenArm_OYHW::OpenArm_OYHW() = default;
 
-bool OpenArmOYHW::parse_config(const hardware_interface::HardwareInfo& info) {
+bool OpenArm_OYHW::parse_config(const hardware_interface::HardwareInfo& info) {
   // Parse CAN interface (default: can0)
   auto it = info.hardware_parameters.find("can_interface");
   can_interface_ = (it != info.hardware_parameters.end()) ? it->second : "can0";
@@ -67,7 +67,7 @@ bool OpenArmOYHW::parse_config(const hardware_interface::HardwareInfo& info) {
   return true;
 }
 
-void OpenArmOYHW::generate_joint_names() {
+void OpenArm_OYHW::generate_joint_names() {
   joint_names_.clear();
   // TODO: read from urdf properly and sort in the future.
   // Currently, the joint names are hardcoded for order consistency to align
@@ -82,19 +82,19 @@ void OpenArmOYHW::generate_joint_names() {
   if (hand_) {
     std::string gripper_joint_name = "openarm_" + arm_prefix_ + "finger_joint1";
     joint_names_.push_back(gripper_joint_name);
-    RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"), "Added gripper joint: %s",
+    RCLCPP_INFO(rclcpp::get_logger("OpenArm_OYHW"), "Added gripper joint: %s",
                 gripper_joint_name.c_str());
   } else {
-    RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"),
+    RCLCPP_INFO(rclcpp::get_logger("OpenArm_OYHW"),
                 "Gripper joint NOT added because hand_=false");
   }
 
-  RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"),
+  RCLCPP_INFO(rclcpp::get_logger("OpenArm_OYHW"),
               "Generated %zu joint names for arm prefix '%s'",
               joint_names_.size(), arm_prefix_.c_str());
 }
 
-hardware_interface::CallbackReturn OpenArmOYHW::on_init(
+hardware_interface::CallbackReturn OpenArm_OYHW::on_init(
     const hardware_interface::HardwareInfo& info) {
   if (hardware_interface::SystemInterface::on_init(info) !=
       CallbackReturn::SUCCESS) {
@@ -111,14 +111,14 @@ hardware_interface::CallbackReturn OpenArmOYHW::on_init(
   // Validate joint count (arm joints + optional gripper)
   size_t expected_joints = ARM_DOF + (hand_ ? 1 : 0);
   if (joint_names_.size() != expected_joints) {
-    RCLCPP_ERROR(rclcpp::get_logger("OpenArmOYHW"),
+    RCLCPP_ERROR(rclcpp::get_logger("OpenArm_OYHW"),
                  "Generated %zu joint names, expected %zu", joint_names_.size(),
                  expected_joints);
     return CallbackReturn::ERROR;
   }
 
   // Initialize OpenArm with configurable CAN-FD setting
-  RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"),
+  RCLCPP_INFO(rclcpp::get_logger("OpenArm_OYHW"),
               "Initializing OpenArm (OY Motor) on %s with CAN-FD %s...",
               can_interface_.c_str(), can_fd_ ? "enabled" : "disabled");
   openarm_ =
@@ -140,7 +140,7 @@ hardware_interface::CallbackReturn OpenArmOYHW::on_init(
 
   // Initialize gripper if enabled
   if (hand_) {
-    RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"), "Initializing gripper...");
+    RCLCPP_INFO(rclcpp::get_logger("OpenArm_OYHW"), "Initializing gripper...");
     openarm_->init_gripper_motor(DEFAULT_GRIPPER_MOTOR_TYPE,
                                  DEFAULT_GRIPPER_SEND_CAN_ID,
                                  DEFAULT_GRIPPER_RECV_CAN_ID);
@@ -155,14 +155,14 @@ hardware_interface::CallbackReturn OpenArmOYHW::on_init(
   vel_states_.resize(total_joints, 0.0);
   tau_states_.resize(total_joints, 0.0);
 
-  RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"),
+  RCLCPP_INFO(rclcpp::get_logger("OpenArm_OYHW"),
               "OpenArm OY Motor HW initialized successfully with %zu DOF",
               ARM_DOF + (hand_ ? 1 : 0));
 
   return CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn OpenArmOYHW::on_configure(
+hardware_interface::CallbackReturn OpenArm_OYHW::on_configure(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   // Refresh motor states during configuration
   openarm_->refresh_all();
@@ -173,7 +173,7 @@ hardware_interface::CallbackReturn OpenArmOYHW::on_configure(
 }
 
 std::vector<hardware_interface::StateInterface>
-OpenArmOYHW::export_state_interfaces() {
+OpenArm_OYHW::export_state_interfaces() {
   std::vector<hardware_interface::StateInterface> state_interfaces;
   for (size_t i = 0; i < joint_names_.size(); ++i) {
     state_interfaces.emplace_back(hardware_interface::StateInterface(
@@ -188,7 +188,7 @@ OpenArmOYHW::export_state_interfaces() {
 }
 
 std::vector<hardware_interface::CommandInterface>
-OpenArmOYHW::export_command_interfaces() {
+OpenArm_OYHW::export_command_interfaces() {
   std::vector<hardware_interface::CommandInterface> command_interfaces;
   // TODO: consider exposing only needed interfaces to avoid undefined behavior.
   for (size_t i = 0; i < joint_names_.size(); ++i) {
@@ -205,9 +205,9 @@ OpenArmOYHW::export_command_interfaces() {
   return command_interfaces;
 }
 
-hardware_interface::CallbackReturn OpenArmOYHW::on_activate(
+hardware_interface::CallbackReturn OpenArm_OYHW::on_activate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
-  RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"), "Activating OpenArm OY Motor...");
+  RCLCPP_INFO(rclcpp::get_logger("OpenArm_OYHW"), "Activating OpenArm OY Motor...");
   
   // Enable all motors
   openarm_->enable_all();
@@ -217,13 +217,13 @@ hardware_interface::CallbackReturn OpenArmOYHW::on_activate(
   // Return to zero position
   return_to_zero();
 
-  RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"), "OpenArm OY Motor activated");
+  RCLCPP_INFO(rclcpp::get_logger("OpenArm_OYHW"), "OpenArm OY Motor activated");
   return CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn OpenArmOYHW::on_deactivate(
+hardware_interface::CallbackReturn OpenArm_OYHW::on_deactivate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
-  RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"),
+  RCLCPP_INFO(rclcpp::get_logger("OpenArm_OYHW"),
               "Deactivating OpenArm OY Motor...");
 
   // Disable all motors
@@ -231,11 +231,11 @@ hardware_interface::CallbackReturn OpenArmOYHW::on_deactivate(
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   openarm_->recv_all();
 
-  RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"), "OpenArm OY Motor deactivated");
+  RCLCPP_INFO(rclcpp::get_logger("OpenArm_OYHW"), "OpenArm OY Motor deactivated");
   return CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type OpenArmOYHW::read(
+hardware_interface::return_type OpenArm_OYHW::read(
     const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
   // Refresh and receive all motor states
   openarm_->refresh_all();
@@ -258,7 +258,7 @@ hardware_interface::return_type OpenArmOYHW::read(
       double motor_pos = gripper_motors[0].get_position();
       pos_states_[ARM_DOF] = motor_radians_to_joint(motor_pos);
 
-      // Unimplemented: Velocity and torque mapping
+      //Velocity and torque mapping
       vel_states_[ARM_DOF] = gripper_motors[0].get_velocity();
       tau_states_[ARM_DOF] = gripper_motors[0].get_torque();
     }
@@ -267,7 +267,7 @@ hardware_interface::return_type OpenArmOYHW::read(
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type OpenArmOYHW::write(
+hardware_interface::return_type OpenArm_OYHW::write(
     const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
   // Control arm motors with MIT control
   // OY motor MITParam order: {q, dq, kp, kd, tau}
@@ -292,8 +292,8 @@ hardware_interface::return_type OpenArmOYHW::write(
   return hardware_interface::return_type::OK;
 }
 
-void OpenArmOYHW::return_to_zero() {
-  RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"),
+void OpenArm_OYHW::return_to_zero() {
+  RCLCPP_INFO(rclcpp::get_logger("OpenArm_OYHW"),
               "Returning to zero position...");
 
   // Return arm to zero with MIT control
@@ -317,13 +317,13 @@ void OpenArmOYHW::return_to_zero() {
 }
 
 // Gripper mapping helper functions
-double OpenArmOYHW::joint_to_motor_radians(double joint_value) {
+double OpenArm_OYHW::joint_to_motor_radians(double joint_value) {
   // Joint 0=closed -> motor 0 rad, Joint 0.044=open -> motor -1.0472 rad
   return (joint_value / GRIPPER_JOINT_0_POSITION) *
          GRIPPER_MOTOR_1_RADIANS;  // Scale from 0-0.044 to 0 to -1.0472
 }
 
-double OpenArmOYHW::motor_radians_to_joint(double motor_radians) {
+double OpenArm_OYHW::motor_radians_to_joint(double motor_radians) {
   // Motor 0 rad=closed -> joint 0, Motor -1.0472 rad=open -> joint 0.044
   return GRIPPER_JOINT_0_POSITION *
          (motor_radians /
@@ -334,5 +334,5 @@ double OpenArmOYHW::motor_radians_to_joint(double motor_radians) {
 
 #include "pluginlib/class_list_macros.hpp"
 
-PLUGINLIB_EXPORT_CLASS(openarm_hardware::OpenArmOYHW,
+PLUGINLIB_EXPORT_CLASS(openarm_hardware::OpenArm_OYHW,
                        hardware_interface::SystemInterface)

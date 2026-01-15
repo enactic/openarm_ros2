@@ -38,9 +38,9 @@ namespace openarm_hardware {
  * following the pattern from full_arm.cpp example.
  * Configurable for different arm configurations via hardware parameters.
  */
-class OpenArmOYHW : public hardware_interface::SystemInterface {
+class OpenArm_OYHW : public hardware_interface::SystemInterface {
  public:
-  OpenArmOYHW();
+  OpenArm_OYHW();
 
   TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
   hardware_interface::CallbackReturn on_init(
