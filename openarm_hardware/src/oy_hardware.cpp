@@ -60,7 +60,7 @@ bool OpenArm_oyHW::parse_config(const hardware_interface::HardwareInfo& info) {
     can_fd_ = (value == "true");
   }
 
-  RCLCPP_INFO(rclcpp::get_logger("OpenArmOYHW"),
+  RCLCPP_INFO(rclcpp::get_logger("OpenArm_oyHW"),
               "Configuration: CAN=%s, arm_prefix=%s, arm_dof=%zu, hand=%s, can_fd=%s",
               can_interface_.c_str(), arm_prefix_.c_str(), ARM_DOF,
               hand_ ? "enabled" : "disabled", can_fd_ ? "enabled" : "disabled");

@@ -146,9 +146,9 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "description_file",
-            default_value="v10.urdf.xacro",
+            default_value="oy.urdf.xacro",
         ),
-        DeclareLaunchArgument("arm_type", default_value="v10"),
+        DeclareLaunchArgument("arm_type", default_value="oy"),
         DeclareLaunchArgument("use_fake_hardware", default_value="false"),
         DeclareLaunchArgument(
             "robot_controller",
@@ -164,7 +164,7 @@ def generate_launch_description():
         DeclareLaunchArgument("left_can_interface", default_value="can1"),
         DeclareLaunchArgument(
             "controllers_file",
-            default_value="openarm_v10_bimanual_controllers.yaml",
+            default_value="openarm_oy_bimanual_controllers.yaml",
         ),
     ]
 
@@ -181,7 +181,7 @@ def generate_launch_description():
 
     controllers_file = PathJoinSubstitution(
         [FindPackageShare(runtime_config_package), "config",
-         "v10_controllers", controllers_file]
+         "oy_controllers", controllers_file]
     )
 
     robot_nodes_spawner_func = OpaqueFunction(
