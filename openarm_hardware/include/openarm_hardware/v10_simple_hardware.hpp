@@ -135,6 +135,7 @@ class OpenArm_v10HW : public hardware_interface::SystemInterface {
   void return_to_zero();
   bool parse_config(const hardware_interface::HardwareInfo& info);
   void generate_joint_names();
+  void set_current_pose();
 
   // Gripper mapping functions
   double joint_to_motor_radians(double joint_value);
