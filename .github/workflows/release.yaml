@@ -50,3 +50,7 @@ jobs:
             --title "OpenArm ROS 2 ${version}" \
             --verify-tag \
             openarm-ros2-${GITHUB_REF_NAME}.tar.gz*
+      - uses: watonomous/bloom-release-ros@v0.1.0
+        with:
+          ros_distro: 'humble'
+          debian_distro: 'jammy'
