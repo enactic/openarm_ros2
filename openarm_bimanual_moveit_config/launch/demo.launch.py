@@ -139,6 +139,41 @@ def controller_spawner(context: LaunchContext, robot_controller):
 
 
 def generate_launch_description():
+    """Generate launch description for OpenARM bimanual robot with MoveIt2 configuration.
+
+    This function creates a complete launch description that sets up a dual-arm (bimanual)
+    OpenARM robot system with MoveIt2 motion planning capabilities.
+
+    The launch description includes:
+        - Robot description and state publisher nodes via OpaqueFunction
+        - Joint state broadcaster for publishing joint states
+        - Arm trajectory controllers (forward position or joint trajectory)
+        - Gripper controllers for both left and right grippers
+        - MoveIt2 move_group node for motion planning
+        - RViz2 visualization with MoveIt configuration
+
+    Launch Arguments:
+        description_package (str): Package containing robot description. Default: "openarm_description"
+        description_file (str): URDF/xacro file name. Default: "oy.urdf.xacro"
+        arm_type (str): Type of arm configuration. Default: "oy"
+        use_fake_hardware (str): Whether to use simulated hardware. Default: "false"
+        robot_controller (str): Controller type to use. Default: "joint_trajectory_controller"
+            Choices: "forward_position_controller", "joint_trajectory_controller"
+        runtime_config_package (str): Package with runtime configs. Default: "openarm_bringup"
+        arm_prefix (str): Prefix for arm links/joints. Default: ""
+        right_can_interface (str): CAN interface for right arm. Default: "can0"
+        left_can_interface (str): CAN interface for left arm. Default: "can1"
+        controllers_file (str): Controllers YAML config file. Default: "openarm_oy_bimanual_controllers.yaml"
+
+    Note:
+        OpaqueFunction is used to defer node creation until launch time, allowing
+        dynamic configuration based on launch arguments that are only resolved
+        at runtime. This is necessary when node parameters depend on substitutions
+        that cannot be evaluated during launch file parsing.
+
+    Returns:
+        LaunchDescription: Complete launch description for the bimanual robot system.
+    """
     declared_arguments = [
         DeclareLaunchArgument(
             "description_package",
