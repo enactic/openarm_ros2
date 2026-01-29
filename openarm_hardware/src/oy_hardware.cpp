@@ -278,14 +278,14 @@ hardware_interface::return_type OpenArm_oyHW::write(
     arm_params.push_back({pos_commands_[i], vel_commands_[i], 
                           kp, kd, tau_commands_[i]});
   }
-  openarm_->get_arm().mit_control_all(arm_params);
+  openarm_->get_arm().oy_mit_control_all(arm_params);
 
   // Control gripper if enabled
   if (hand_ && joint_names_.size() > ARM_DOF) {
     // TODO the true mappings are unimplemented.
     double motor_command = joint_to_motor_radians(pos_commands_[ARM_DOF]);
     // OY motor MITParam order: {q, dq, kp, kd, tau}
-    openarm_->get_gripper().mit_control_all(
+    openarm_->get_gripper().oy_mit_control_all(
         {{motor_command, 0.0, GRIPPER_DEFAULT_KP, GRIPPER_DEFAULT_KD, 0.0}});
   }
   openarm_->recv_all(1000);
@@ -304,12 +304,12 @@ void OpenArm_oyHW::return_to_zero() {
     double kd = (i < DEFAULT_KD.size()) ? DEFAULT_KD[i] : DEFAULT_KD.back();
     arm_params.push_back({0.0, 0.0, kp, kd, 0.0});
   }
-  openarm_->get_arm().mit_control_all(arm_params);
+  openarm_->get_arm().oy_mit_control_all(arm_params);
 
   // Return gripper to zero if enabled
   if (hand_) {
     // OY motor MITParam order: {q, dq, kp, kd, tau}
-    openarm_->get_gripper().mit_control_all(
+    openarm_->get_gripper().oy_mit_control_all(
         {{GRIPPER_JOINT_0_POSITION, 0.0, GRIPPER_DEFAULT_KP, GRIPPER_DEFAULT_KD, 0.0}});
   }
   std::this_thread::sleep_for(std::chrono::microseconds(1000));

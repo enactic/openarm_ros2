@@ -64,6 +64,8 @@ def generate_robot_description(context: LaunchContext, description_package, desc
             "left_can_interface": left_can_interface_str,
         }
     ).toprettyxml(indent="  ")
+    # 輸出robot_description
+    # print(robot_description)
 
     return robot_description
 
