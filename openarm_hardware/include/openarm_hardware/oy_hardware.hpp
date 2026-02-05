@@ -105,8 +105,8 @@ class OpenArm_oyHW : public hardware_interface::SystemInterface {
   // Order: Joint 1-7 + Gripper
   const std::vector<double> DEFAULT_KP = {20.0, 20.0, 20.0, 20.0,
                                           5.0,  5.0,  5.0,  0.5};
-  const std::vector<double> DEFAULT_KD = {2.75, 2.5, 0.7, 0.4,
-                                          0.7,  0.6, 0.5, 0.1};
+  const std::vector<double> DEFAULT_KD = {2.75, 2.5, 0.2, 0.2,
+                                          0.2,  0.2, 2.75, 0.1};
 
   const double GRIPPER_JOINT_0_POSITION = 0.044;
   const double GRIPPER_JOINT_1_POSITION = 0.0;
