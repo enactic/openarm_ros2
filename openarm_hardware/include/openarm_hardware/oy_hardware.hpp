@@ -103,10 +103,11 @@ class OpenArm_oyHW : public hardware_interface::SystemInterface {
 
   // Default gains for OY motors (may need tuning)
   // Order: Joint 1-7 + Gripper
-  const std::vector<double> DEFAULT_KP = {20.0, 20.0, 20.0, 20.0,
-                                          5.0,  5.0,  5.0,  0.5};
-  const std::vector<double> DEFAULT_KD = {2.75, 2.5, 0.2, 0.2,
-                                          0.2,  0.2, 2.75, 0.1};
+  // 針對帶載機械臂優化（減小 KD 消除震動）
+const std::vector<double> DEFAULT_KP = {100.0, 50.0, 40.0, 30.0,
+                                        20.0, 15.0, 10.0,  2.0};
+const std::vector<double> DEFAULT_KD = {3.0,  3.0,  1.2,  1.0,   
+                                        0.6,  0.3,  0.4,  0.15};
 
   const double GRIPPER_JOINT_0_POSITION = 0.044;
   const double GRIPPER_JOINT_1_POSITION = 0.0;
