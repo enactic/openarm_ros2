@@ -247,6 +247,12 @@ hardware_interface::return_type OpenArm_oyHW::read(
     pos_states_[i] = arm_motors[i].get_position();
     vel_states_[i] = arm_motors[i].get_velocity();
     tau_states_[i] = arm_motors[i].get_torque();
+    //print joint name and states for debugging
+    // RCLCPP_INFO(rclcpp::get_logger("OpenArm_oyHW"), "Joint %s: pos=%.3f, vel=%.3f, tau=%.3f",
+    //             joint_names_[i].c_str(),
+    //             pos_states_[i],
+    //             vel_states_[i],
+    //             tau_states_[i]);
   }
 
   // Read gripper state if enabled
@@ -275,9 +281,16 @@ hardware_interface::return_type OpenArm_oyHW::write(
   for (size_t i = 0; i < ARM_DOF; ++i) {
     double kp = (i < DEFAULT_KP.size()) ? DEFAULT_KP[i] : DEFAULT_KP.back();
     double kd = (i < DEFAULT_KD.size()) ? DEFAULT_KD[i] : DEFAULT_KD.back();
+    //print kp kd pos vel tau for debugging
+    // if( i == 0 && pos_commands_[i] != 0.0) {  // Only print for the first joint if there's a command
+    //   RCLCPP_INFO(rclcpp::get_logger("OpenArm_oyHW"),
+    //               "Commanding joint %zu: pos_cmd=%.4f, vel_cmd=%.4f, kp=%.2f, kd=%.2f, tau_cmd=%.4f",
+    //               i, pos_commands_[i], vel_commands_[i], kp, kd, tau_commands_[i]);
+    // }
     arm_params.push_back({pos_commands_[i], vel_commands_[i], 
                           kp, kd, tau_commands_[i]});
   }
+      
   openarm_->get_arm().oy_mit_control_all(arm_params);
 
   // Control gripper if enabled

@@ -104,9 +104,9 @@ class OpenArm_oyHW : public hardware_interface::SystemInterface {
   // Default gains for OY motors (may need tuning)
   // Order: Joint 1-7 + Gripper
   // 帶載機械臂優化：降低 KP 避免過衝，適當提高 KD 增加阻尼抑制震盪
-  const std::vector<double> DEFAULT_KP = {35.0, 35.0, 15.0, 15.0,
+  const std::vector<double> DEFAULT_KP = {40.0, 40.0, 15.0, 15.0,
                                         2.0, 2.0,  2.0,  2.0};
-  const std::vector<double> DEFAULT_KD = {3.5,  3.5,  1.5,  1.2,
+  const std::vector<double> DEFAULT_KD = {2.0,  2.0,  1.5,  1.2,
                                         0.2,  0.2,  0.2,  0.15};
 
   // Default gains
