@@ -90,7 +90,8 @@ def robot_nodes_spawner(context: LaunchContext, description_package, description
         package="controller_manager",
         executable="ros2_control_node",
         output="both",
-        parameters=[robot_description_param, controllers_file_str],
+        parameters=[controllers_file_str],
+        remappings=[("~/robot_description", "/robot_description")],
     )
 
     return [robot_state_pub_node, control_node]
@@ -198,13 +199,13 @@ def generate_launch_description():
     robot_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=[robot_controller, "-c", "/controller_manager"],
+        arguments=[robot_controller, "--controller-manager", "/controller_manager"],
     )
 
     gripper_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["gripper_controller", "-c", "/controller_manager"],
+        arguments=["gripper_controller", "--controller-manager", "/controller_manager"],
     )
 
     # Timing and sequencing
@@ -213,13 +214,17 @@ def generate_launch_description():
         actions=[joint_state_broadcaster_spawner],
     )
 
-    delayed_robot_controller = TimerAction(
-        period=1.0,
-        actions=[robot_controller_spawner],
+    delayed_robot_controller = RegisterEventHandler(
+        OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[robot_controller_spawner],
+        )
     )
-    delayed_gripper_controller = TimerAction(
-        period=1.0,
-        actions=[gripper_controller_spawner],
+    delayed_gripper_controller = RegisterEventHandler(
+        OnProcessExit(
+            target_action=robot_controller_spawner,
+            on_exit=[gripper_controller_spawner],
+        )
     )
 
     return LaunchDescription(
