@@ -199,7 +199,7 @@ def generate_launch_description():
     robot_controller = LaunchConfiguration("robot_controller")
     runtime_config_package = LaunchConfiguration("runtime_config_package")
     controllers_file = LaunchConfiguration("controllers_file")
-    rightcan_interface = LaunchConfiguration("right_can_interface")
+    right_can_interface = LaunchConfiguration("right_can_interface")
     left_can_interface = LaunchConfiguration("left_can_interface")
     arm_prefix = LaunchConfiguration("arm_prefix")
 
@@ -211,7 +211,7 @@ def generate_launch_description():
     robot_nodes_spawner_func = OpaqueFunction(
         function=robot_nodes_spawner,
         args=[description_package, description_file, arm_type,
-              use_fake_hardware, controllers_file, rightcan_interface, left_can_interface, arm_prefix]
+              use_fake_hardware, controllers_file, right_can_interface, left_can_interface, arm_prefix]
     )
 
     rviz_config_file = PathJoinSubstitution(
