@@ -71,6 +71,16 @@ bool OpenArm_v10HW::parse_config(const hardware_interface::HardwareInfo& info) {
       kd_[i - 1] = std::stod(it->second);
     }
   }
+  if (hand_) {
+    it = info.hardware_parameters.find("kph");
+    if (it != info.hardware_parameters.end()) {
+      gripper_kp_ = std::stod(it->second);
+    }
+    it = info.hardware_parameters.find("kdh");
+    if (it != info.hardware_parameters.end()) {
+      gripper_kd_ = std::stod(it->second);
+    }
+  }
 
   RCLCPP_INFO(rclcpp::get_logger("OpenArm_v10HW"),
               "Configuration: CAN=%s, arm_prefix=%s, hand=%s, can_fd=%s",
@@ -281,7 +291,7 @@ hardware_interface::return_type OpenArm_v10HW::write(
     // TODO the true mappings are unimplemented.
     double motor_command = joint_to_motor_radians(pos_commands_[ARM_DOF]);
     openarm_->get_gripper().mit_control_all(
-        {{GRIPPER_KP, GRIPPER_KD, motor_command, 0, 0}});
+        {{gripper_kp_, gripper_kd_, motor_command, 0.0, 0.0}});
   }
   openarm_->recv_all(1000);
   return hardware_interface::return_type::OK;
@@ -301,7 +311,7 @@ void OpenArm_v10HW::return_to_zero() {
   // Return gripper to zero if enabled
   if (hand_) {
     openarm_->get_gripper().mit_control_all(
-        {{GRIPPER_KP, GRIPPER_KD, GRIPPER_JOINT_0_POSITION, 0.0, 0.0}});
+        {{gripper_kp_, gripper_kd_, GRIPPER_JOINT_0_POSITION, 0.0, 0.0}});
   }
   std::this_thread::sleep_for(std::chrono::microseconds(1000));
   openarm_->recv_all();

@@ -111,6 +111,9 @@ class OpenArm_v10HW : public hardware_interface::SystemInterface {
   const double GRIPPER_KP = 5.0;
   const double GRIPPER_KD = 0.1;
 
+  double gripper_kp_ = GRIPPER_KP;
+  double gripper_kd_ = GRIPPER_KD;
+
   // Configuration
   std::string can_interface_;
   std::string arm_prefix_;
