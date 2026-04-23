@@ -72,11 +72,11 @@ bool OpenArm_v10HW::parse_config(const hardware_interface::HardwareInfo& info) {
     }
   }
   if (hand_) {
-    it = info.hardware_parameters.find("kph");
+    it = info.hardware_parameters.find("kp_hand");
     if (it != info.hardware_parameters.end()) {
       gripper_kp_ = std::stod(it->second);
     }
-    it = info.hardware_parameters.find("kdh");
+    it = info.hardware_parameters.find("kd_hand");
     if (it != info.hardware_parameters.end()) {
       gripper_kd_ = std::stod(it->second);
     }
