@@ -224,8 +224,7 @@ hardware_interface::CallbackReturn OpenArm_v10HW::on_activate(
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   openarm_->recv_all();
 
-  // Return to zero position
-  return_to_zero();
+  set_current_pose();
 
   RCLCPP_INFO(rclcpp::get_logger("OpenArm_v10HW"), "OpenArm V10 activated");
   return CallbackReturn::SUCCESS;
@@ -317,6 +316,20 @@ void OpenArm_v10HW::return_to_zero() {
   openarm_->recv_all();
 }
 
+void OpenArm_v10HW::set_current_pose() {
+  RCLCPP_INFO(rclcpp::get_logger("OpenArm_v10HW"),
+              "Setting current position...");
+
+  // Use read() to populate state arrays
+  read(rclcpp::Time(), rclcpp::Duration(0, 0));
+
+  // Copy current states to commands and zero velocities/torques
+  for (size_t i = 0; i < joint_names_.size(); ++i) {
+    pos_commands_[i] = pos_states_[i];
+    vel_commands_[i] = 0.0;
+    tau_commands_[i] = 0.0;
+  }
+}
 // Gripper mapping helper functions
 double OpenArm_v10HW::joint_to_motor_radians(double joint_value) {
   // Joint 0=closed -> motor 0 rad, Joint 0.044=open -> motor -1.0472 rad
