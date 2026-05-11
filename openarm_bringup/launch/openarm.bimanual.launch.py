@@ -64,6 +64,8 @@ def generate_robot_description(context: LaunchContext, description_package, desc
             "left_can_interface": left_can_interface_str,
         }
     ).toprettyxml(indent="  ")
+    # 輸出robot_description
+    # print(robot_description)
 
     return robot_description
 
@@ -82,7 +84,7 @@ def robot_nodes_spawner(context: LaunchContext, description_package, description
 
     if namespace:
         controllers_file_str = controllers_file_str.replace(
-            "openarm_v10_bimanual_controllers.yaml", "openarm_v10_bimanual_controllers_namespaced.yaml"
+            "openarm_oy_bimanual_controllers.yaml", "openarm_oy_bimanual_controllers_namespaced.yaml"
         )
     robot_state_pub_node = Node(
         package="robot_state_publisher",
@@ -144,13 +146,13 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "description_file",
-            default_value="v10.urdf.xacro",
+            default_value="oy.urdf.xacro",
             description="URDF/XACRO description file with the robot.",
         ),
         DeclareLaunchArgument(
             "arm_type",
-            default_value="v10",
-            description="Type of arm (e.g., v10).",
+            default_value="oy",
+            description="Type of arm (e.g., oy, v10).",
         ),
         DeclareLaunchArgument(
             "use_fake_hardware",
@@ -186,7 +188,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "controllers_file",
-            default_value="openarm_v10_bimanual_controllers.yaml",
+            default_value="openarm_oy_bimanual_controllers.yaml",
             description="Controllers file(s) to use. Can be a single file or comma-separated list of files.",
         ),
     ]
@@ -205,7 +207,7 @@ def generate_launch_description():
 
     controllers_file = PathJoinSubstitution(
         [FindPackageShare(runtime_config_package), "config",
-         "v10_controllers", controllers_file]
+         "oy_controllers", controllers_file]
     )
 
     robot_nodes_spawner_func = OpaqueFunction(

@@ -15,11 +15,19 @@
 -->
 
 <library path="openarm_hardware">
-  <class name="openarm_hardware/OpenArm_v10HW"
+  <!-- <class name="openarm_hardware/OpenArm_v10HW"
          type="openarm_hardware::OpenArm_v10HW"
          base_class_type="hardware_interface::SystemInterface">
     <description>
-      ros2_control hardware interface for OpenArm V10.
+      ros2_control hardware interface for OpenArm V10 (Damiao Motors).
+    </description>
+  </class> -->
+<class name="openarm_hardware/OpenArm_oyHW"
+         type="openarm_hardware::OpenArm_oyHW"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      ros2_control hardware interface for OpenArm with OY Motors.
+      Configurable arm DOF via hardware parameters.
     </description>
   </class>
 </library>
