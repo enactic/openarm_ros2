@@ -20,6 +20,7 @@ ros2 launch openarm_bringup openarm.launch.py arm_type:=v10 hardware_type:=real
 - `arm_type` - Arm type (default: v10)
 - `hardware_type` - Use real/mock/mujoco hardware (default: real)
 - `can_interface` - CAN interface to use (default: can0)
+- `can_fd` - Use CAN-FD. Set to `false` for CAN 2.0 (default: true)
 - `robot_controller` - Controller type: `joint_trajectory_controller` or `forward_position_controller`
 
 ## What Gets Launched
