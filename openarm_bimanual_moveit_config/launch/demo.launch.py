@@ -145,9 +145,13 @@ def controller_spawner(context: LaunchContext, robot_controller):
     ]
 
 
-def moveit_nodes_spawner(context: LaunchContext, arm_type, use_fake_hardware):
+def moveit_nodes_spawner(context: LaunchContext, arm_type, use_fake_hardware,
+                         right_can_interface, left_can_interface, can_fd):
     arm_type_str = context.perform_substitution(arm_type)
     use_fake_hardware_str = context.perform_substitution(use_fake_hardware)
+    right_can_interface_str = context.perform_substitution(right_can_interface)
+    left_can_interface_str = context.perform_substitution(left_can_interface)
+    can_fd_str = context.perform_substitution(can_fd)
 
     description_pkg_path = get_package_share_directory("openarm_description")
     moveit_pkg_path = get_package_share_directory(
@@ -174,6 +178,9 @@ def moveit_nodes_spawner(context: LaunchContext, arm_type, use_fake_hardware):
                 "bimanual": "true",
                 "use_fake_hardware": use_fake_hardware_str,
                 "ros2_control": "true",
+                "left_can_interface": left_can_interface_str,
+                "right_can_interface": right_can_interface_str,
+                "can_fd": can_fd_str,
             }
         )
         .robot_description_semantic(file_path=f"config/{config_dir}/openarm_bimanual.srdf")
@@ -282,7 +289,8 @@ def generate_launch_description():
 
     moveit_nodes_func = OpaqueFunction(
         function=moveit_nodes_spawner,
-        args=[arm_type, use_fake_hardware]
+        args=[arm_type, use_fake_hardware,
+              right_can_interface, left_can_interface, can_fd]
     )
 
     jsb_spawner = Node(
