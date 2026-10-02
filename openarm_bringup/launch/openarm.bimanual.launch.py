@@ -55,13 +55,15 @@ def namespace_from_context(context, arm_prefix):
 
 
 def generate_robot_description(context: LaunchContext, description_package, description_file,
-                               arm_type, use_fake_hardware, right_can_interface, left_can_interface):
+                               arm_type, use_fake_hardware, right_can_interface, left_can_interface,
+                               can_fd):
     """Generate robot description using xacro processing."""
     description_package_str = context.perform_substitution(description_package)
     arm_type_str = context.perform_substitution(arm_type)
     use_fake_hardware_str = context.perform_substitution(use_fake_hardware)
     right_can_interface_str = context.perform_substitution(right_can_interface)
     left_can_interface_str = context.perform_substitution(left_can_interface)
+    can_fd_str = context.perform_substitution(can_fd)
 
     folder_name, file_name = resolve_arm_config(arm_type_str)
 
@@ -79,6 +81,7 @@ def generate_robot_description(context: LaunchContext, description_package, desc
             "ros2_control": "true",
             "right_can_interface": right_can_interface_str,
             "left_can_interface": left_can_interface_str,
+            "can_fd": can_fd_str,
         }
     ).toprettyxml(indent="  ")
 
@@ -87,13 +90,13 @@ def generate_robot_description(context: LaunchContext, description_package, desc
 
 def robot_nodes_spawner(context: LaunchContext, description_package, description_file,
                         arm_type, use_fake_hardware, controllers_file,
-                        right_can_interface, left_can_interface, arm_prefix):
+                        right_can_interface, left_can_interface, can_fd, arm_prefix):
     """Spawn both robot state publisher and control nodes with shared robot description."""
     namespace = namespace_from_context(context, arm_prefix)
 
     robot_description = generate_robot_description(
         context, description_package, description_file, arm_type,
-        use_fake_hardware, right_can_interface, left_can_interface,
+        use_fake_hardware, right_can_interface, left_can_interface, can_fd,
     )
 
     controllers_file_str = context.perform_substitution(controllers_file)
@@ -206,6 +209,11 @@ def generate_launch_description():
             description="CAN interface to use for the left arm.",
         ),
         DeclareLaunchArgument(
+            "can_fd",
+            default_value="true",
+            description="Use CAN-FD. Set to false for CAN 2.0.",
+        ),
+        DeclareLaunchArgument(
             "controllers_file",
             default_value="openarm_bimanual_controllers.yaml",
             description="Controllers file to use.",
@@ -221,6 +229,7 @@ def generate_launch_description():
     controllers_file = LaunchConfiguration("controllers_file")
     right_can_interface = LaunchConfiguration("right_can_interface")
     left_can_interface = LaunchConfiguration("left_can_interface")
+    can_fd = LaunchConfiguration("can_fd")
     arm_prefix = LaunchConfiguration("arm_prefix")
 
     controllers_file = PathJoinSubstitution(
@@ -232,7 +241,7 @@ def generate_launch_description():
         function=robot_nodes_spawner,
         args=[description_package, description_file, arm_type,
               use_fake_hardware, controllers_file,
-              right_can_interface, left_can_interface, arm_prefix]
+              right_can_interface, left_can_interface, can_fd, arm_prefix]
     )
 
     rviz_config_file = PathJoinSubstitution(

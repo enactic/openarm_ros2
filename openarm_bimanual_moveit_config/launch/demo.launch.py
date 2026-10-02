@@ -52,12 +52,14 @@ def generate_robot_description(
     use_fake_hardware,
     right_can_interface,
     left_can_interface,
+    can_fd,
 ):
     description_package_str = context.perform_substitution(description_package)
     arm_type_str = context.perform_substitution(arm_type)
     use_fake_hardware_str = context.perform_substitution(use_fake_hardware)
     right_can_interface_str = context.perform_substitution(right_can_interface)
     left_can_interface_str = context.perform_substitution(left_can_interface)
+    can_fd_str = context.perform_substitution(can_fd)
 
     folder_name, file_name = resolve_arm_config(arm_type_str)
 
@@ -75,6 +77,7 @@ def generate_robot_description(
             "ros2_control": "true",
             "left_can_interface": left_can_interface_str,
             "right_can_interface": right_can_interface_str,
+            "can_fd": can_fd_str,
         },
     ).toprettyxml(indent="  ")
 
@@ -87,6 +90,7 @@ def robot_nodes_spawner(
     controllers_file,
     right_can_interface,
     left_can_interface,
+    can_fd,
     arm_prefix,
 ):
     robot_description = generate_robot_description(
@@ -96,6 +100,7 @@ def robot_nodes_spawner(
         use_fake_hardware,
         right_can_interface,
         left_can_interface,
+        can_fd,
     )
 
     controllers_file_str = context.perform_substitution(controllers_file)
@@ -140,9 +145,13 @@ def controller_spawner(context: LaunchContext, robot_controller):
     ]
 
 
-def moveit_nodes_spawner(context: LaunchContext, arm_type, use_fake_hardware):
+def moveit_nodes_spawner(context: LaunchContext, arm_type, use_fake_hardware,
+                         right_can_interface, left_can_interface, can_fd):
     arm_type_str = context.perform_substitution(arm_type)
     use_fake_hardware_str = context.perform_substitution(use_fake_hardware)
+    right_can_interface_str = context.perform_substitution(right_can_interface)
+    left_can_interface_str = context.perform_substitution(left_can_interface)
+    can_fd_str = context.perform_substitution(can_fd)
 
     description_pkg_path = get_package_share_directory("openarm_description")
     moveit_pkg_path = get_package_share_directory(
@@ -169,6 +178,9 @@ def moveit_nodes_spawner(context: LaunchContext, arm_type, use_fake_hardware):
                 "bimanual": "true",
                 "use_fake_hardware": use_fake_hardware_str,
                 "ros2_control": "true",
+                "left_can_interface": left_can_interface_str,
+                "right_can_interface": right_can_interface_str,
+                "can_fd": can_fd_str,
             }
         )
         .robot_description_semantic(file_path=f"config/{config_dir}/openarm_bimanual.srdf")
@@ -239,6 +251,7 @@ def generate_launch_description():
         DeclareLaunchArgument("arm_prefix", default_value=""),
         DeclareLaunchArgument("right_can_interface", default_value="can0"),
         DeclareLaunchArgument("left_can_interface", default_value="can1"),
+        DeclareLaunchArgument("can_fd", default_value="true"),
         DeclareLaunchArgument(
             "controllers_file",
             default_value="openarm_bimanual_moveit_controllers.yaml"),
@@ -252,6 +265,7 @@ def generate_launch_description():
     controllers_file = LaunchConfiguration("controllers_file")
     right_can_interface = LaunchConfiguration("right_can_interface")
     left_can_interface = LaunchConfiguration("left_can_interface")
+    can_fd = LaunchConfiguration("can_fd")
     arm_prefix = LaunchConfiguration("arm_prefix")
 
     controllers_file = PathJoinSubstitution(
@@ -268,13 +282,15 @@ def generate_launch_description():
             controllers_file,
             right_can_interface,
             left_can_interface,
+            can_fd,
             arm_prefix,
         ],
     )
 
     moveit_nodes_func = OpaqueFunction(
         function=moveit_nodes_spawner,
-        args=[arm_type, use_fake_hardware]
+        args=[arm_type, use_fake_hardware,
+              right_can_interface, left_can_interface, can_fd]
     )
 
     jsb_spawner = Node(
