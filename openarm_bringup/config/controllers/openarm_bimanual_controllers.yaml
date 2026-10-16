@@ -13,7 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-controller_manager:
+# Every node name is prefixed with /**/, which matches it in any namespace, so the
+# same file works with and without the launch file's arm_prefix argument.
+/**/controller_manager:
   ros__parameters:
     update_rate: 750  # Hz
 
@@ -44,7 +46,7 @@ controller_manager:
     right_gripper_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-left_forward_position_controller:
+/**/left_forward_position_controller:
   ros__parameters:
     joints:
       - openarm_left_joint1
@@ -60,7 +62,7 @@ left_forward_position_controller:
     state_interfaces:
       - position
 
-left_forward_velocity_controller:
+/**/left_forward_velocity_controller:
   ros__parameters:
     joints:
       - openarm_left_joint1
@@ -76,7 +78,7 @@ left_forward_velocity_controller:
     state_interfaces:
       - velocity
 
-left_joint_trajectory_controller:
+/**/left_joint_trajectory_controller:
   ros__parameters:
     joints:
       - openarm_left_joint1
@@ -112,7 +114,7 @@ left_joint_trajectory_controller:
       openarm_left_joint6: { trajectory: 0.0, goal: 0.0 }
       openarm_left_joint7: { trajectory: 0.0, goal: 0.0 }
 
-left_gripper_controller:
+/**/left_gripper_controller:
   ros__parameters:
     joints:
       - openarm_left_finger_joint1
@@ -126,7 +128,7 @@ left_gripper_controller:
       stopped_velocity_tolerance: 0.0
       goal_time: 0.0
 
-right_forward_position_controller:
+/**/right_forward_position_controller:
   ros__parameters:
     joints:
       - openarm_right_joint1
@@ -142,7 +144,7 @@ right_forward_position_controller:
     state_interfaces:
       - position
 
-right_forward_velocity_controller:
+/**/right_forward_velocity_controller:
   ros__parameters:
     joints:
       - openarm_right_joint1
@@ -158,7 +160,7 @@ right_forward_velocity_controller:
     state_interfaces:
       - velocity
 
-right_joint_trajectory_controller:
+/**/right_joint_trajectory_controller:
   ros__parameters:
     joints:
       - openarm_right_joint1
@@ -193,7 +195,7 @@ right_joint_trajectory_controller:
       openarm_right_joint6: { trajectory: 0.0, goal: 0.0 }
       openarm_right_joint7: { trajectory: 0.0, goal: 0.0 }
 
-right_gripper_controller:
+/**/right_gripper_controller:
   ros__parameters:
     joints:
       - openarm_right_finger_joint1
