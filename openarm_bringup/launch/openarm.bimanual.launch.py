@@ -102,12 +102,6 @@ def robot_nodes_spawner(context: LaunchContext, description_package, description
     controllers_file_str = context.perform_substitution(controllers_file)
     robot_description_param = {"robot_description": robot_description}
 
-    if namespace:
-        controllers_file_str = controllers_file_str.replace(
-            "openarm_bimanual_controllers.yaml",
-            "openarm_bimanual_controllers_namespaced.yaml"
-        )
-
     robot_state_pub_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
