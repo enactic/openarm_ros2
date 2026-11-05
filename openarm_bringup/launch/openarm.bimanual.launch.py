@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import os
+import xml.etree.ElementTree as ET
 import xacro
 
 from ament_index_python.packages import get_package_share_directory
@@ -54,16 +55,42 @@ def namespace_from_context(context, arm_prefix):
     return None
 
 
+def apply_can_overrides(robot_description, left_can_interface, right_can_interface, can_fd):
+    """Apply explicit launch overrides to the standard bimanual hardware systems."""
+    can_fd = can_fd.strip().lower()
+    if can_fd not in ("", "true", "false", "0", "1"):
+        raise ValueError("can_fd must be true, false, 1, 0, or empty.")
+    can_fd = {"1": "true", "0": "false"}.get(can_fd, can_fd)
+    if not (left_can_interface or right_can_interface or can_fd):
+        return robot_description
+
+    robot = ET.fromstring(robot_description)
+    for side, interface in (("left", left_can_interface), ("right", right_can_interface)):
+        overrides = {name: value for name, value in (
+            ("can_interface", interface.strip()), ("can_fd", can_fd)) if value}
+        if not overrides:
+            continue
+        system_name = f"openarm_{side}_hardware_interface"
+        hardware = robot.find(f"ros2_control[@name='{system_name}']/hardware")
+        if hardware is None:
+            raise ValueError(
+                f"Cannot apply CAN overrides: missing {system_name}.")
+        for name, value in overrides.items():
+            parameter = hardware.find(f"param[@name='{name}']")
+            if parameter is None:
+                parameter = ET.SubElement(hardware, "param", name=name)
+            parameter.text = value
+    return ET.tostring(robot, encoding="unicode")
+
+
 def generate_robot_description(context: LaunchContext, description_package, description_file,
-                               arm_type, use_fake_hardware, right_can_interface, left_can_interface,
-                               can_fd):
+                               arm_type, use_fake_hardware, robot_preset,
+                               left_can_interface, right_can_interface, can_fd):
     """Generate robot description using xacro processing."""
     description_package_str = context.perform_substitution(description_package)
     arm_type_str = context.perform_substitution(arm_type)
     use_fake_hardware_str = context.perform_substitution(use_fake_hardware)
-    right_can_interface_str = context.perform_substitution(right_can_interface)
-    left_can_interface_str = context.perform_substitution(left_can_interface)
-    can_fd_str = context.perform_substitution(can_fd)
+    robot_preset_str = context.perform_substitution(robot_preset)
 
     folder_name, file_name = resolve_arm_config(arm_type_str)
 
@@ -79,24 +106,29 @@ def generate_robot_description(context: LaunchContext, description_package, desc
             "bimanual": "true",
             "use_fake_hardware": use_fake_hardware_str,
             "ros2_control": "true",
-            "right_can_interface": right_can_interface_str,
-            "left_can_interface": left_can_interface_str,
-            "can_fd": can_fd_str,
+            "robot_preset": robot_preset_str,
         }
     ).toprettyxml(indent="  ")
 
-    return robot_description
+    return apply_can_overrides(
+        robot_description,
+        context.perform_substitution(left_can_interface),
+        context.perform_substitution(right_can_interface),
+        context.perform_substitution(can_fd),
+    )
 
 
 def robot_nodes_spawner(context: LaunchContext, description_package, description_file,
                         arm_type, use_fake_hardware, controllers_file,
-                        right_can_interface, left_can_interface, can_fd, arm_prefix):
+                        robot_preset, arm_prefix,
+                        left_can_interface, right_can_interface, can_fd):
     """Spawn both robot state publisher and control nodes with shared robot description."""
     namespace = namespace_from_context(context, arm_prefix)
 
     robot_description = generate_robot_description(
         context, description_package, description_file, arm_type,
-        use_fake_hardware, right_can_interface, left_can_interface, can_fd,
+        use_fake_hardware, robot_preset,
+        left_can_interface, right_can_interface, can_fd,
     )
 
     controllers_file_str = context.perform_substitution(controllers_file)
@@ -193,19 +225,21 @@ def generate_launch_description():
             description="Prefix for the arm for topic namespacing.",
         ),
         DeclareLaunchArgument(
-            "right_can_interface",
-            default_value="can0",
-            description="CAN interface to use for the right arm.",
+            "robot_preset",
+            default_value="default_bimanual",
+            description="Description preset containing component hardware settings.",
         ),
         DeclareLaunchArgument(
-            "left_can_interface",
-            default_value="can1",
-            description="CAN interface to use for the left arm.",
+            "left_can_interface", default_value="",
+            description="Left CAN device override; empty uses the preset.",
         ),
         DeclareLaunchArgument(
-            "can_fd",
-            default_value="true",
-            description="Use CAN-FD. Set to false for CAN 2.0.",
+            "right_can_interface", default_value="",
+            description="Right CAN device override; empty uses the preset.",
+        ),
+        DeclareLaunchArgument(
+            "can_fd", default_value="",
+            description="CAN-FD override for both arms; empty uses the preset.",
         ),
         DeclareLaunchArgument(
             "controllers_file",
@@ -221,8 +255,9 @@ def generate_launch_description():
     robot_controller = LaunchConfiguration("robot_controller")
     runtime_config_package = LaunchConfiguration("runtime_config_package")
     controllers_file = LaunchConfiguration("controllers_file")
-    right_can_interface = LaunchConfiguration("right_can_interface")
+    robot_preset = LaunchConfiguration("robot_preset")
     left_can_interface = LaunchConfiguration("left_can_interface")
+    right_can_interface = LaunchConfiguration("right_can_interface")
     can_fd = LaunchConfiguration("can_fd")
     arm_prefix = LaunchConfiguration("arm_prefix")
 
@@ -235,7 +270,8 @@ def generate_launch_description():
         function=robot_nodes_spawner,
         args=[description_package, description_file, arm_type,
               use_fake_hardware, controllers_file,
-              right_can_interface, left_can_interface, can_fd, arm_prefix]
+              robot_preset, arm_prefix,
+              left_can_interface, right_can_interface, can_fd]
     )
 
     rviz_config_file = PathJoinSubstitution(
