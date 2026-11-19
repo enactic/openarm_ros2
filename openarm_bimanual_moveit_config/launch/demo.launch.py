@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import xml.etree.ElementTree as ET
 import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription, LaunchContext
@@ -45,21 +46,48 @@ def resolve_arm_config(arm_type_str: str) -> tuple[str, str]:
     return "openarm_v2.0", "openarm_v20.urdf.xacro"
 
 
+def apply_can_overrides(robot_description, left_can_interface, right_can_interface, can_fd):
+    """Apply explicit launch overrides to the standard bimanual hardware systems."""
+    can_fd = can_fd.strip().lower()
+    if can_fd not in ("", "true", "false", "0", "1"):
+        raise ValueError("can_fd must be true, false, 1, 0, or empty.")
+    can_fd = {"1": "true", "0": "false"}.get(can_fd, can_fd)
+    if not (left_can_interface or right_can_interface or can_fd):
+        return robot_description
+
+    robot = ET.fromstring(robot_description)
+    for side, interface in (("left", left_can_interface), ("right", right_can_interface)):
+        overrides = {name: value for name, value in (
+            ("can_interface", interface.strip()), ("can_fd", can_fd)) if value}
+        if not overrides:
+            continue
+        system_name = f"openarm_{side}_hardware_interface"
+        hardware = robot.find(f"ros2_control[@name='{system_name}']/hardware")
+        if hardware is None:
+            raise ValueError(
+                f"Cannot apply CAN overrides: missing {system_name}.")
+        for name, value in overrides.items():
+            parameter = hardware.find(f"param[@name='{name}']")
+            if parameter is None:
+                parameter = ET.SubElement(hardware, "param", name=name)
+            parameter.text = value
+    return ET.tostring(robot, encoding="unicode")
+
+
 def generate_robot_description(
     context: LaunchContext,
     description_package,
     arm_type,
     use_fake_hardware,
-    right_can_interface,
+    robot_preset,
     left_can_interface,
+    right_can_interface,
     can_fd,
 ):
     description_package_str = context.perform_substitution(description_package)
     arm_type_str = context.perform_substitution(arm_type)
     use_fake_hardware_str = context.perform_substitution(use_fake_hardware)
-    right_can_interface_str = context.perform_substitution(right_can_interface)
-    left_can_interface_str = context.perform_substitution(left_can_interface)
-    can_fd_str = context.perform_substitution(can_fd)
+    robot_preset_str = context.perform_substitution(robot_preset)
 
     folder_name, file_name = resolve_arm_config(arm_type_str)
 
@@ -68,18 +96,23 @@ def generate_robot_description(
         "assets", "robot", folder_name, "urdf", file_name
     )
 
-    return xacro.process_file(
+    robot_description = xacro.process_file(
         xacro_path,
         mappings={
             "arm_type": arm_type_str,
             "bimanual": "true",
             "use_fake_hardware": use_fake_hardware_str,
             "ros2_control": "true",
-            "left_can_interface": left_can_interface_str,
-            "right_can_interface": right_can_interface_str,
-            "can_fd": can_fd_str,
+            "robot_preset": robot_preset_str,
         },
     ).toprettyxml(indent="  ")
+
+    return apply_can_overrides(
+        robot_description,
+        context.perform_substitution(left_can_interface),
+        context.perform_substitution(right_can_interface),
+        context.perform_substitution(can_fd),
+    )
 
 
 def robot_nodes_spawner(
@@ -88,18 +121,20 @@ def robot_nodes_spawner(
     arm_type,
     use_fake_hardware,
     controllers_file,
-    right_can_interface,
-    left_can_interface,
-    can_fd,
+    robot_preset,
     arm_prefix,
+    left_can_interface,
+    right_can_interface,
+    can_fd,
 ):
     robot_description = generate_robot_description(
         context,
         description_package,
         arm_type,
         use_fake_hardware,
-        right_can_interface,
+        robot_preset,
         left_can_interface,
+        right_can_interface,
         can_fd,
     )
 
@@ -121,7 +156,9 @@ def robot_nodes_spawner(
         parameters=[robot_description_param, controllers_file_str],
     )
 
-    return [robot_state_pub_node, control_node]
+    return [robot_state_pub_node, control_node] + moveit_nodes_spawner(
+        context, arm_type, use_fake_hardware, robot_preset, robot_description
+    )
 
 
 def controller_spawner(context: LaunchContext, robot_controller):
@@ -146,12 +183,10 @@ def controller_spawner(context: LaunchContext, robot_controller):
 
 
 def moveit_nodes_spawner(context: LaunchContext, arm_type, use_fake_hardware,
-                         right_can_interface, left_can_interface, can_fd):
+                         robot_preset, robot_description):
     arm_type_str = context.perform_substitution(arm_type)
     use_fake_hardware_str = context.perform_substitution(use_fake_hardware)
-    right_can_interface_str = context.perform_substitution(right_can_interface)
-    left_can_interface_str = context.perform_substitution(left_can_interface)
-    can_fd_str = context.perform_substitution(can_fd)
+    robot_preset_str = context.perform_substitution(robot_preset)
 
     description_pkg_path = get_package_share_directory("openarm_description")
     moveit_pkg_path = get_package_share_directory(
@@ -178,9 +213,7 @@ def moveit_nodes_spawner(context: LaunchContext, arm_type, use_fake_hardware,
                 "bimanual": "true",
                 "use_fake_hardware": use_fake_hardware_str,
                 "ros2_control": "true",
-                "left_can_interface": left_can_interface_str,
-                "right_can_interface": right_can_interface_str,
-                "can_fd": can_fd_str,
+                "robot_preset": robot_preset_str,
             }
         )
         .robot_description_semantic(file_path=f"config/{config_dir}/openarm_bimanual.srdf")
@@ -194,6 +227,7 @@ def moveit_nodes_spawner(context: LaunchContext, arm_type, use_fake_hardware,
         .to_moveit_configs()
     )
 
+    moveit_config.robot_description = {"robot_description": robot_description}
     moveit_params = moveit_config.to_dict()
 
     pilz_cartesian_limits_path = os.path.join(
@@ -249,9 +283,11 @@ def generate_launch_description():
         DeclareLaunchArgument("runtime_config_package",
                               default_value="openarm_bringup"),
         DeclareLaunchArgument("arm_prefix", default_value=""),
-        DeclareLaunchArgument("right_can_interface", default_value="can0"),
-        DeclareLaunchArgument("left_can_interface", default_value="can1"),
-        DeclareLaunchArgument("can_fd", default_value="true"),
+        DeclareLaunchArgument(
+            "robot_preset", default_value="default_bimanual"),
+        DeclareLaunchArgument("left_can_interface", default_value=""),
+        DeclareLaunchArgument("right_can_interface", default_value=""),
+        DeclareLaunchArgument("can_fd", default_value=""),
         DeclareLaunchArgument(
             "controllers_file",
             default_value="openarm_bimanual_moveit_controllers.yaml"),
@@ -263,8 +299,9 @@ def generate_launch_description():
     robot_controller = LaunchConfiguration("robot_controller")
     runtime_config_package = LaunchConfiguration("runtime_config_package")
     controllers_file = LaunchConfiguration("controllers_file")
-    right_can_interface = LaunchConfiguration("right_can_interface")
+    robot_preset = LaunchConfiguration("robot_preset")
     left_can_interface = LaunchConfiguration("left_can_interface")
+    right_can_interface = LaunchConfiguration("right_can_interface")
     can_fd = LaunchConfiguration("can_fd")
     arm_prefix = LaunchConfiguration("arm_prefix")
 
@@ -280,17 +317,12 @@ def generate_launch_description():
             arm_type,
             use_fake_hardware,
             controllers_file,
-            right_can_interface,
-            left_can_interface,
-            can_fd,
+            robot_preset,
             arm_prefix,
+            left_can_interface,
+            right_can_interface,
+            can_fd,
         ],
-    )
-
-    moveit_nodes_func = OpaqueFunction(
-        function=moveit_nodes_spawner,
-        args=[arm_type, use_fake_hardware,
-              right_can_interface, left_can_interface, can_fd]
     )
 
     jsb_spawner = Node(
@@ -315,7 +347,6 @@ def generate_launch_description():
         declared_arguments
         + [
             robot_nodes_spawner_func,
-            moveit_nodes_func,
             TimerAction(period=2.0, actions=[jsb_spawner]),
             TimerAction(period=1.0, actions=[controller_spawner_func]),
             TimerAction(period=1.0, actions=[gripper_spawner]),
