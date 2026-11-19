@@ -316,7 +316,7 @@ void OpenArmHW::return_to_zero() {
   // Return gripper to zero if enabled
   if (hand_) {
     openarm_->get_gripper().mit_control_all(
-        {{gripper_kp_, gripper_kd_, GRIPPER_JOINT_0_POSITION, 0.0, 0.0}});
+        {{gripper_kp_, gripper_kd_, joint_to_motor_radians(0.0), 0.0, 0.0}});
   }
   std::this_thread::sleep_for(std::chrono::microseconds(1000));
   openarm_->recv_all();
@@ -342,7 +342,7 @@ void OpenArmHW::return_to_zero() {
 
     if (hand_) {
       openarm_->get_gripper().mit_control_all(
-          {{GRIPPER_KP, GRIPPER_KD, GRIPPER_JOINT_0_POSITION, 0.0, 0.0}});
+          {{GRIPPER_KP, GRIPPER_KD, joint_to_motor_radians(0.0), 0.0, 0.0}});
     }
 
     openarm_->recv_all();
