@@ -85,6 +85,8 @@ limitations under the License.
     <passive_joint name="openarm_left_finger_joint2"/>
     <passive_joint name="openarm_right_finger_joint2"/>
 
+    <disable_collisions link1="openarm_body_link0" link2="openarm_left_base_link" reason="Adjacent"/>
+    <disable_collisions link1="openarm_body_link0" link2="openarm_right_base_link" reason="Adjacent"/>
     <disable_collisions link1="openarm_body_link0" link2="openarm_right_link1" reason="Adjacent"/>
     <disable_collisions link1="openarm_left_base_link" link2="openarm_left_link1" reason="Adjacent"/>
     <disable_collisions link1="openarm_right_base_link" link2="openarm_right_link1" reason="Adjacent"/>

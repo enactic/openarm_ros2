@@ -1,0 +1,15 @@
+# Copyright 2026 Enactic, Inc.
+# SPDX-License-Identifier: Apache-2.0
+# Keep the historical port assignment independent of preset ordering.
+openarm_left_hardware_interface:
+  hardware_plugin: openarm_mujoco_hardware/MujocoHardware
+  websocket_port: 1338
+  scene_group: pedestal
+  wait_for_state: true
+  connection_timeout: 60.0
+openarm_right_hardware_interface:
+  hardware_plugin: openarm_mujoco_hardware/MujocoHardware
+  websocket_port: 1337
+  scene_group: pedestal
+  wait_for_state: true
+  connection_timeout: 60.0
