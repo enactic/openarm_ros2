@@ -2,46 +2,36 @@
 # SPDX-License-Identifier: Apache-2.0
 """Shared model and controller setup for bringup and MoveIt."""
 
+import importlib.util
 from pathlib import Path
-import xml.etree.ElementTree as ET
+import tempfile
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import (
-    DeclareLaunchArgument,
-    EmitEvent,
-    OpaqueFunction,
-    RegisterEventHandler,
-)
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, RegisterEventHandler
 from launch.conditions import IfCondition
-from launch.event_handlers import OnProcessExit
-from launch.events import Shutdown
+from launch.event_handlers import OnShutdown
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 import xacro
 import yaml
 
+V1_ARM_TYPES = {"v1.0", "v10", "v1_0",
+                "openarm_v1.0", "openarm_v10", "openarm_v1_0"}
+V2_ARM_TYPES = {"v2.0", "v20", "v2_0",
+                "openarm_v2.0", "openarm_v20", "openarm_v2_0"}
+# real: built-in OpenArm hardware; mock: mock_components; mujoco: the
+# ros-controls MuJoCo plugin; external: no ros2_control, another process
+# consumes the controller command topics and publishes joint_states.
+HARDWARE_TYPES = {"real", "mock", "mujoco", "external"}
+
 
 def resolve_model(arm_type, robot_preset):
     if robot_preset:
         preset = robot_preset
-    elif arm_type in {
-        "v1.0",
-        "v10",
-        "v1_0",
-        "openarm_v1.0",
-        "openarm_v10",
-        "openarm_v1_0",
-    }:
+    elif arm_type in V1_ARM_TYPES:
         preset = "v1/default_bimanual"
-    elif arm_type in {
-        "v2.0",
-        "v20",
-        "v2_0",
-        "openarm_v2.0",
-        "openarm_v20",
-        "openarm_v2_0",
-    }:
+    elif arm_type in V2_ARM_TYPES:
         preset = "v2/default_bimanual"
     else:
         raise ValueError(f"Unknown arm_type: {arm_type}")
@@ -54,7 +44,7 @@ def resolve_model(arm_type, robot_preset):
 
 def resolve_hardware(hardware_type, use_fake_hardware):
     if hardware_type:
-        if hardware_type not in {"real", "mock", "mujoco"}:
+        if hardware_type not in HARDWARE_TYPES:
             raise ValueError(f"Unknown hardware_type: {hardware_type}")
         return hardware_type
     value = use_fake_hardware.lower()
@@ -63,31 +53,64 @@ def resolve_hardware(hardware_type, use_fake_hardware):
     return "mock" if value in {"true", "1"} else "real"
 
 
+def resolve_mujoco_model(path):
+    """Return the MJCF path, falling back to an installed openarm_mujoco."""
+    if path:
+        return str(Path(path).expanduser().resolve())
+    spec = importlib.util.find_spec("openarm_mujoco")
+    for root in (spec.submodule_search_locations or []) if spec else []:
+        candidate = Path(root) / "v2/pedestal/pedestal.xml"
+        if candidate.is_file():
+            return str(candidate)
+    raise ValueError(
+        "hardware_type:=mujoco needs mujoco_model:=<MJCF path> or an installed openarm_mujoco"
+    )
+
+
+def write_hardware_config(config, cleanup):
+    directory = tempfile.TemporaryDirectory(prefix="openarm-hardware-")
+    cleanup.append(directory)
+    path = Path(directory.name) / "hardware.yaml"
+    path.write_text(yaml.safe_dump(config))
+    return str(path)
+
+
 def start_robot(context, with_moveit=False):
     def arg(name): return LaunchConfiguration(name).perform(context)
     preset, version = resolve_model(arg("arm_type"), arg("robot_preset"))
     backend = resolve_hardware(arg("hardware_type"), arg("use_fake_hardware"))
     if backend == "mujoco" and version != "openarm_v2.0":
         raise ValueError(
-            "The current Web MuJoCo bridge supports the standard V2 bimanual preset"
-        )
+            "The MuJoCo backend supports the standard V2 bimanual preset")
     package = Path(get_package_share_directory("openarm_bringup"))
     description_package = Path(
         get_package_share_directory(arg("description_package")))
-    entry = package / "urdf/openarm.urdf.xacro"
+    entry = description_package / "urdf/openarm.urdf.xacro"
+    sim_time = backend == "mujoco"
+    cleanup = []
+
+    # The hardware configuration file replaces the preset systems; see
+    # openarm_description's README. Without one, mock and real use the
+    # description's built-in systems.
+    hardware_config = arg("hardware_config")
+    if not hardware_config and backend == "mujoco":
+        config = yaml.safe_load(
+            (package / "config/hardware/mujoco.yaml").read_text())
+        for system in config["systems"].values():
+            system.setdefault("params", {}).update(
+                mujoco_model=resolve_mujoco_model(arg("mujoco_model")),
+                headless=arg("mujoco_headless").lower() in {"true", "1"})
+        hardware_config = write_hardware_config(config, cleanup)
     mappings = {
-        "description_root": str(description_package),
         "robot_preset": preset,
+        "ros2_control": "false" if backend == "external" else "true",
         "use_fake_hardware": "true" if backend == "mock" else "false",
-        "hardware_config": str(package / "config/hardware/mujoco.yaml")
-        if backend == "mujoco"
-        else "",
-        "mujoco_command_interface": arg("mujoco_command_interface"),
-        **{
-            name: arg(name)
-            for name in ("left_can_interface", "right_can_interface", "can_fd")
-        },
+        "hardware_config": hardware_config,
     }
+    if backend == "real" and not hardware_config:
+        mappings.update({name: arg(name) for name in (
+            "left_can_interface", "right_can_interface", "can_fd")})
+
     moveit = None
     if with_moveit:
         from moveit_configs_utils import MoveItConfigsBuilder
@@ -111,22 +134,7 @@ def start_robot(context, with_moveit=False):
         description = xacro.process_file(str(entry), mappings=mappings).toxml()
     # Use this exact expansion in every consumer, including MoveIt and RViz.
     model = {"robot_description": description}
-    root = ET.fromstring(description)
-    systems = root.findall("ros2_control")
-    if backend == "mujoco":
-        expected = set(
-            yaml.safe_load(
-                (package / "config/hardware/mujoco.yaml").read_text())
-        )
-        if {s.get("name") for s in systems} != expected or any(
-            s.findtext(
-                "hardware/plugin") != "openarm_mujoco_hardware/MujocoHardware"
-            for s in systems
-        ):
-            raise ValueError(
-                "MuJoCo backend configuration must cover every active control system"
-            )
-        get_package_share_directory("openarm_mujoco_hardware")
+    clock = {"use_sim_time": sim_time}
     namespace = arg("arm_prefix").strip("/")
     manager_name = (
         f"/{namespace}/controller_manager" if namespace else "/controller_manager"
@@ -138,77 +146,52 @@ def start_robot(context, with_moveit=False):
             / "config/controllers"
             / controllers_file
         )
-    manager_parameters = [model, str(controllers_file)]
-    if backend == "mujoco":
-        manager_parameters.append(
-            {
-                "hardware_components_initial_state.inactive": [
-                    s.get("name") for s in systems
-                ]
-            }
-        )
     actions = [
         Node(
             package="robot_state_publisher",
             executable="robot_state_publisher",
             namespace=namespace,
-            parameters=[model],
-            output="screen",
-        ),
-        Node(
-            package="controller_manager",
-            executable="ros2_control_node",
-            namespace=namespace,
-            parameters=manager_parameters,
+            parameters=[model, clock],
             output="screen",
         ),
     ]
-    controller = arg("robot_controller")
-    controller_names = [
-        "joint_state_broadcaster",
-        f"left_{controller}",
-        f"right_{controller}",
-        "left_gripper_controller",
-        "right_gripper_controller",
-    ]
-    spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        namespace=namespace,
-        arguments=[
-            *controller_names,
-            "-c",
-            manager_name,
-            "--controller-manager-timeout",
-            "60",
-        ],
-    )
-    if backend == "mujoco":
-        ready = Node(
-            package="openarm_mujoco_hardware",
-            executable="activate_when_connected.py",
-            arguments=[manager_name, *[s.get("name") for s in systems]],
-            output="screen",
+    if cleanup:
+        def remove_temporary_files(event, context):
+            for directory in cleanup:
+                directory.cleanup()
+
+        actions.append(RegisterEventHandler(
+            OnShutdown(on_shutdown=remove_temporary_files)))
+    if backend != "external":
+        # The MuJoCo plugin steps the simulation inside its own control node.
+        actions.append(
+            Node(
+                package="mujoco_ros2_control" if backend == "mujoco" else "controller_manager",
+                executable="ros2_control_node",
+                namespace=namespace,
+                parameters=[model, str(controllers_file), clock],
+                output="screen",
+            )
         )
-        actions += [
-            RegisterEventHandler(
-                OnProcessExit(
-                    target_action=ready,
-                    on_exit=lambda event, _: [spawner]
-                    if event.returncode == 0
-                    else [
-                        EmitEvent(
-                            event=Shutdown(
-                                reason="MuJoCo hardware did not become ready"
-                            )
-                        )
-                    ],
-                )
-            ),
-            ready,
-        ]
-    else:
-        actions.append(spawner)
+        controller = arg("robot_controller")
+        actions.append(
+            Node(
+                package="controller_manager",
+                executable="spawner",
+                namespace=namespace,
+                arguments=[
+                    "joint_state_broadcaster",
+                    f"left_{controller}",
+                    f"right_{controller}",
+                    "left_gripper_controller",
+                    "right_gripper_controller",
+                    "-c",
+                    manager_name,
+                    "--controller-manager-timeout",
+                    "60",
+                ],
+            )
+        )
     if moveit:
         moveit_package = Path(
             get_package_share_directory("openarm_bimanual_moveit_config")
@@ -225,7 +208,7 @@ def start_robot(context, with_moveit=False):
                 package="moveit_ros_move_group",
                 executable="move_group",
                 namespace=namespace,
-                parameters=[params],
+                parameters=[params, clock],
                 output="screen",
             )
         )
@@ -239,7 +222,7 @@ def start_robot(context, with_moveit=False):
             executable="rviz2",
             namespace=namespace,
             arguments=["-d", str(rviz_config)],
-            parameters=[params],
+            parameters=[params, clock],
             output="log",
             condition=IfCondition(LaunchConfiguration("use_rviz")),
         )
@@ -266,15 +249,21 @@ def generate_launch_description(with_moveit=False):
         DeclareLaunchArgument(
             "hardware_type",
             default_value="",
-            choices=["", "real", "mock", "mujoco"],
+            choices=["", *sorted(HARDWARE_TYPES)],
             description="Overrides use_fake_hardware when supplied",
         ),
         DeclareLaunchArgument("use_fake_hardware", default_value="true"),
         DeclareLaunchArgument(
-            "mujoco_command_interface",
-            default_value="position",
-            choices=["position", "effort"],
+            "hardware_config",
+            default_value="",
+            description="openarm_description hardware configuration replacing the preset systems",
         ),
+        DeclareLaunchArgument(
+            "mujoco_model",
+            default_value="",
+            description="MJCF scene for hardware_type:=mujoco; defaults to openarm_mujoco's V2 pedestal",
+        ),
+        DeclareLaunchArgument("mujoco_headless", default_value="false"),
         DeclareLaunchArgument(
             "robot_controller",
             default_value="joint_trajectory_controller",

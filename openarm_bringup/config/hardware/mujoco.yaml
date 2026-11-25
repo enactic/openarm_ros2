@@ -1,15 +1,21 @@
 # Copyright 2026 Enactic, Inc.
 # SPDX-License-Identifier: Apache-2.0
-# Keep the historical port assignment independent of preset ordering.
-openarm_left_hardware_interface:
-  hardware_plugin: openarm_mujoco_hardware/MujocoHardware
-  websocket_port: 1338
-  scene_group: pedestal
-  wait_for_state: true
-  connection_timeout: 60.0
-openarm_right_hardware_interface:
-  hardware_plugin: openarm_mujoco_hardware/MujocoHardware
-  websocket_port: 1337
-  scene_group: pedestal
-  wait_for_state: true
-  connection_timeout: 60.0
+# openarm_description hardware configuration for hardware_type:=mujoco.
+# The launch adds mujoco_model and headless to params. All joints share one
+# system because each MujocoSystemInterface instance runs its own simulation.
+systems:
+  MujocoSystem:
+    plugin: mujoco_ros2_control/MujocoSystemInterface
+    params:
+      initial_keyframe: home
+    command_interfaces: [position]
+    state_interfaces: [position, velocity, effort]
+    components:
+      primary_arm:
+        joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7]
+      primary_arm_end_effector:
+        joints: [joint1]
+      secondary_arm:
+        joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7]
+      secondary_arm_end_effector:
+        joints: [joint1]
