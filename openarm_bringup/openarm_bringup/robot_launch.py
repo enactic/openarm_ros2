@@ -83,9 +83,6 @@ def start_robot(context, with_moveit=False):
     def arg(name): return LaunchConfiguration(name).perform(context)
     preset, version = resolve_model(arg("arm_type"), arg("robot_preset"))
     backend = resolve_hardware(arg("hardware_type"), arg("use_fake_hardware"))
-    if backend == "mujoco" and version != "openarm_v2.0":
-        raise ValueError(
-            "The MuJoCo backend supports the standard V2 bimanual preset")
     package = Path(get_package_share_directory("openarm_bringup"))
     description_package = Path(
         get_package_share_directory(arg("description_package")))
@@ -93,18 +90,24 @@ def start_robot(context, with_moveit=False):
     sim_time = backend == "mujoco"
     cleanup = []
 
-    # The hardware configuration file replaces the preset systems; see
-    # openarm_description's README. Without one, mock and real use the
-    # description's built-in systems.
+    # A hardware configuration replaces the preset systems; see
+    # openarm_description's README. mock and mujoco read
+    # config/hardware/<version>/<backend>.yaml, and real still uses the
+    # description's built-in OpenArm systems.
     hardware_config = arg("hardware_config")
-    if not hardware_config and backend == "mujoco":
-        config = yaml.safe_load(
-            (package / "config/hardware/mujoco.yaml").read_text())
-        for system in config["systems"].values():
-            system.setdefault("params", {}).update(
-                mujoco_model=resolve_mujoco_model(arg("mujoco_model")),
-                headless=arg("mujoco_headless").lower() in {"true", "1"})
-        hardware_config = write_hardware_config(config, cleanup)
+    if not hardware_config and backend in {"mock", "mujoco"}:
+        config_file = package / "config/hardware" / version / f"{backend}.yaml"
+        if not config_file.is_file():
+            raise ValueError(
+                f"hardware_type:={backend} has no configuration for {version}: {config_file}")
+        hardware_config = str(config_file)
+        if backend == "mujoco":
+            config = yaml.safe_load(config_file.read_text())
+            for system in config["systems"].values():
+                system.setdefault("params", {}).update(
+                    mujoco_model=resolve_mujoco_model(arg("mujoco_model")),
+                    headless=arg("mujoco_headless").lower() in {"true", "1"})
+            hardware_config = write_hardware_config(config, cleanup)
     mappings = {
         "robot_preset": preset,
         "ros2_control": "false" if backend == "external" else "true",
