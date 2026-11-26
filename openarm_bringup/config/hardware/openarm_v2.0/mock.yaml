@@ -1,0 +1,39 @@
+# Copyright 2026 Enactic, Inc.
+# SPDX-License-Identifier: Apache-2.0
+# openarm_description hardware configuration for hardware_type:=mock.
+# mock_components/GenericSystem copies each command to its state. The systems
+# keep the preset's per-arm grouping and joint order (idx) and start from
+# init_pos.
+systems:
+  openarm_left_hardware_interface:
+    plugin: mock_components/GenericSystem
+    params:
+      mock_sensor_commands: false
+      position_state_following_offset: 0.0
+    command_interfaces: [position, velocity, effort]
+    state_interfaces: [position, velocity, effort]
+    components:
+      primary_arm:
+        joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7]
+        idx: [1, 2, 3, 4, 5, 6, 7]
+        init_pos: default
+      primary_arm_end_effector:
+        joints: [joint1]
+        idx: [8]
+        init_pos: default
+  openarm_right_hardware_interface:
+    plugin: mock_components/GenericSystem
+    params:
+      mock_sensor_commands: false
+      position_state_following_offset: 0.0
+    command_interfaces: [position, velocity, effort]
+    state_interfaces: [position, velocity, effort]
+    components:
+      secondary_arm:
+        joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7]
+        idx: [1, 2, 3, 4, 5, 6, 7]
+        init_pos: default
+      secondary_arm_end_effector:
+        joints: [joint1]
+        idx: [8]
+        init_pos: default
