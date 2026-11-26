@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 """Shared model and controller setup for bringup and MoveIt."""
 
-import importlib.util
 from pathlib import Path
 import tempfile
 
@@ -54,17 +53,22 @@ def resolve_hardware(hardware_type, use_fake_hardware):
 
 
 def resolve_mujoco_model(path):
-    """Return the MJCF path, falling back to an installed openarm_mujoco."""
+    """Return the given MJCF scene, or openarm_mujoco's V2 pedestal scene."""
     if path:
-        return str(Path(path).expanduser().resolve())
-    spec = importlib.util.find_spec("openarm_mujoco")
-    for root in (spec.submodule_search_locations or []) if spec else []:
-        candidate = Path(root) / "v2/pedestal/pedestal.xml"
-        if candidate.is_file():
-            return str(candidate)
-    raise ValueError(
-        "hardware_type:=mujoco needs mujoco_model:=<MJCF path> or an installed openarm_mujoco"
-    )
+        model = Path(path).expanduser().resolve()
+    else:
+        try:
+            # openarm_mujoco.v2 also imports the mujoco Python package.
+            from openarm_mujoco.v2 import openarm_pedestal_xml
+        except ImportError as error:
+            raise ValueError(
+                "hardware_type:=mujoco needs mujoco_model:=<MJCF path>, or openarm_mujoco "
+                f"importable from the launch Python environment ({error})"
+            ) from error
+        model = Path(openarm_pedestal_xml())
+    if not model.is_file():
+        raise ValueError(f"MuJoCo model not found: {model}")
+    return str(model)
 
 
 def write_hardware_config(config, cleanup):
@@ -261,7 +265,7 @@ def generate_launch_description(with_moveit=False):
         DeclareLaunchArgument(
             "mujoco_model",
             default_value="",
-            description="MJCF scene for hardware_type:=mujoco; defaults to openarm_mujoco's V2 pedestal",
+            description="MJCF scene for hardware_type:=mujoco; defaults to openarm_mujoco's V2 pedestal (openarm_pedestal_xml())",
         ),
         DeclareLaunchArgument("mujoco_headless", default_value="false"),
         DeclareLaunchArgument(

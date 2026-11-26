@@ -3,6 +3,11 @@
 # openarm_description hardware configuration for hardware_type:=mujoco.
 # The launch adds mujoco_model and headless to params. All joints share one
 # system because each MujocoSystemInterface instance runs its own simulation.
+#
+# The simulation starts from the MJCF keyframe named by initial_keyframe, and
+# mujoco_ros2_control then ignores the URDF initial values. init_pos selects
+# the same pose (joint4 at pi/2, everything else at zero) so that the URDF
+# matches the keyframe; keep the two in sync when either changes.
 systems:
   MujocoSystem:
     plugin: mujoco_ros2_control/MujocoSystemInterface
@@ -13,9 +18,13 @@ systems:
     components:
       primary_arm:
         joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7]
+        init_pos: folded
       primary_arm_end_effector:
         joints: [joint1]
+        init_pos: default
       secondary_arm:
         joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7]
+        init_pos: folded
       secondary_arm_end_effector:
         joints: [joint1]
+        init_pos: default
